@@ -1,0 +1,1 @@
+folder for all the project code, root will have main i.e index file
