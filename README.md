@@ -30,7 +30,7 @@
       <a href="#features">Features</a>
     </li>
     <li><a href="#showcase">Project Showcase</a></li>
-    <!-- <li><a href="#contributors">Contributors</a></li> -->
+    <li><a href="#contributors">Contributors</a></li>
   </ol>
 </details>
 
@@ -82,11 +82,16 @@ Will update project demo, preview, uasge and etc here.
 
 
 <!-- CONTRIBUTING -->
-<!-- ## Contributors -->
+## Contributors
 
-<!-- <a href="https://github.com/ao3Bean/CSE299_Project/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=ao3Bean/CSE299_Project" alt="contrib.rocks image" />
-</a> -->
+<ol>
+  <li>Mahjabin Noor Nabila - <a href="https://github.com/ao3Bean">ao3Bean</a></li>
+  <li>Ananya Sarkar - <a href="https://github.com/ananya0511sarkar-prog">ananya0511sarkar-prog</a></li>
+  <li>Nazia Faruque Diya - <a href="https://github.com/diyanazia-coder">diyanazia-coder</a></li>
+</ol>
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
