@@ -29,6 +29,7 @@
     <li>
       <a href="#features">Features</a>
     </li>
+    <li><a href="#setting-up">Setting Up</a></li>
     <li><a href="#showcase">Project Showcase</a></li>
     <li><a href="#contributors">Contributors</a></li>
   </ol>
@@ -69,6 +70,42 @@ Other details will be updated as the project progresses.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+
+<!-- Setting Up -->
+## Setting Up
+
+### 1. Clone the repository
+```bash
+git clone "https://github.com/ao3Bean/CSE299_Project.git"
+```
+### 2. Create and activate virtual environment
+
+#### Windows
+Create virtual environment
+```bash
+python -m venv env 
+```
+Activate virtual environment
+```bash
+env\Scripts\activate
+```
+#### macOS/Linux
+Create virtual environment
+```bash
+python3 -m venv env 
+```
+Activate virtual environment
+```bash
+source env/bin/activate
+```
+### 3. Install dependecies
+
+```bash
+pip install -r requirements.txt
+```
+
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 <!-- USAGE EXAMPLES -->
