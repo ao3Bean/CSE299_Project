@@ -79,6 +79,9 @@ Other details will be updated as the project progresses.
 <!-- Setting Up -->
 ## Setting Up
 
+### Prerequisites:
+- Python 3.11+
+
 ### 1. Clone the repository
 ```bash
 git clone "https://github.com/ao3Bean/CSE299_Project.git"
@@ -103,15 +106,24 @@ Activate virtual environment
 ```bash
 source env/bin/activate
 ```
+
 ### 3. Install dependecies
 
 ```bash
 pip install -r requirements.txt
 ```
+### 4. Configure environment variables
+Copy the example environment file (.env.example) inside the same directory.
 
-
+__Windows__
+```bash
+copy .env.example .env
+```
+__macOS/Linux__
+```bash
+cp .env.example .env
+```
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 
 <!-- USAGE EXAMPLES -->
 ## Showcase
