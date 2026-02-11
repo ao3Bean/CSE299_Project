@@ -7,6 +7,7 @@
   </a>
 
 <h2 align="center">CSE 299 - Junior Capstone Project</h3>
+<h3 align="center">Cadence</h3>
 
   <p align="center">
     This is the repository for our CSE 299 project and it contains all the code and documentation.
@@ -43,6 +44,8 @@
 <!-- [![Product Name Screen Shot][product-screenshot]](https://example.com) -->
 This is the repository for our CSE 299 Junior Capstone Project.
 Other details will be updated as the project progresses.
+
+ Our project Cadence is a web-based virtual co-working platform intended to support focused study and work through shared presence and synchronized activity rather than continuous direct interaction.
  
 <!-- Here's a blank template to get started. To avoid retyping too much info, do a search and replace with your text editor for the following: `github_username`, `repo_name`, `twitter_handle`, `linkedin_username`, `email_client`, `email`, `project_title`, `project_description`, `project_license` -->
 
@@ -52,9 +55,11 @@ Other details will be updated as the project progresses.
 
 ## Tech Stack
 
+* [![Djnago][djangoproject.com]][django-url]
+
 <!-- * [![Next][Next.js]][Next-url]
-* [![React][React.js]][React-url]
-* [![Vue][Vue.js]][Vue-url]
+<!-- * [![React][React.js]][React-url] -->
+<!-- * [![Vue][Vue.js]][Vue-url]
 * [![Angular][Angular.io]][Angular-url]
 * [![Svelte][Svelte.dev]][Svelte-url]
 * [![Laravel][Laravel.com]][Laravel-url]
@@ -162,3 +167,6 @@ Will update project demo, preview, uasge and etc here.
 [Bootstrap-url]: https://getbootstrap.com
 [JQuery.com]: https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jquery&logoColor=white
 [JQuery-url]: https://jquery.com 
+
+[djangoproject.com]: https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=green
+[django-url]:https://www.djangoproject.com/
