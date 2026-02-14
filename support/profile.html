@@ -10,9 +10,10 @@
   <div class="login-box">
     <div class="title-bar">USER PROFILE</div>
 
-    <!-- Static placeholder info (later Django will replace this) -->
-    <p class="profile-line"><strong>USERNAME:</strong> demo_user</p>
-    <p class="profile-line"><strong>EMAIL:</strong> demo@gmail.com</p>
+    
+    <p class="profile-line"><strong>USERNAME:</strong> <span id="profile-username">demo_user</span></p>
+    <p class="profile-line"><strong>EMAIL:</strong> <span id="profile-email">demo@gmail.com</span></p>
+
 
     <div class="profile-section">
       <p class="profile-label">AVATAR</p>
@@ -29,5 +30,12 @@
       <a class="btn-link" href="index.html">LOGOUT</a>
     </div>
   </div>
+  <script>
+  const username = localStorage.getItem("cadence_username") || "demo_user";
+  const email = localStorage.getItem("cadence_email") || "demo@gmail.com";
+
+  document.getElementById("profile-username").textContent = username;
+  document.getElementById("profile-email").textContent = email;
+</script>
 </body>
 </html>
