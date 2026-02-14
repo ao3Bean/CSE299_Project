@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cadence Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="login-box">
+  <div class="login-box">
+  <div class="title-bar">CADENCE LOGIN</div>
+  <input placeholder="Username">
+  <input type="password" placeholder="Password">
+  <button>OK</button>
+</div>
+  <div class="title-bar">CADENCE</div>
+
+    <!-- LOGIN FORM -->
+    <form id="login-form">
+      <h3>Login</h3>
+      <input type="text" placeholder="Username" required>
+      <input type="password" placeholder="Password" required>
+      <button type="submit">LOGIN</button>
+      <p class="switch">No account? <a href="#" onclick="showSignup()">Sign up</a></p>
+    </form>
+
+    <!-- SIGNUP FORM -->
+    <form id="signup-form" style="display:none;">
+      <h3>Sign Up</h3>
+      <input type="text" placeholder="Username" required>
+      <input type="email" placeholder="Email" required>
+      <input type="password" placeholder="Password" required>
+      <button type="submit">CREATE ACCOUNT</button>
+      <p class="switch">Already have one? <a href="#" onclick="showLogin()">Login</a></p>
+    </form>
+  </div>
+
+  <script>
+    function showSignup() {
+      document.getElementById("login-form").style.display = "none";
+      document.getElementById("signup-form").style.display = "block";
+    }
+
+    function showLogin() {
+      document.getElementById("signup-form").style.display = "none";
+      document.getElementById("login-form").style.display = "block";
+    }
+  </script>
+
+</body>
+</html>
