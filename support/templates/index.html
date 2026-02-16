@@ -18,13 +18,17 @@
     <div class="#navbarNav">
         <nav class="navbar">
             <div class="logo">
-                <h2>Cadence</h2>
+                <h2>
+                    <a href="{% url 'index' %}">
+                        Cadence
+                    </a>
+                </h2>
             </div>
             <div class="nav-links">
                 <a href="#">Features</a>
                 <a href="#">About</a>
-                <a href="#">Login</a>
-                <a href="#" class="btn">Get Started</a>
+                <a href="{% url 'login' %}">Login</a>
+                <a href="{% url 'login' %}" class="btn">Get Started</a>
             </div>
         </nav>
     </div>
@@ -88,7 +92,7 @@
                 Join Cadence today and create a rhythm that works for you.
                 Invite friends, set intentions, and start showing up — together.
             </p>
-            <a href="#" class="btn">Create an Account</a>
+            <a href="{% url 'login' %}" class="btn">Create an Account</a>
         </div>
     </div>
 

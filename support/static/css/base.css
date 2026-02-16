@@ -109,7 +109,7 @@
     background: var(--secondary);
     color: var(--text-color);
     font-weight: 600;
-    text-decoration: none;
+    text-decoration: none !important;
     box-shadow: var(--btn-shadow);
     border-radius: var(--border-radius-btn);
     transition: all 0.15s ease;
