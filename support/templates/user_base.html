@@ -1,0 +1,104 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}Cadence - Dashboard{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/user_base.css' %}">
+{% block extra_css %}{% endblock %}
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+
+    <!-- Toggle -->
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+      &rsaquo;&rsaquo;
+    </button>
+
+    <!-- Logo -->
+    <div class="sidebar-logo">
+      <div class="logo-mark">CD</div>
+      <span class="logo-text">Cadence</span>
+    </div>
+
+    <!-- Main nav -->
+    <nav class="sidebar-nav" aria-label="Main navigation">
+
+      <a href="#" class="nav-item active">
+        <span class="nav-icon">&#9783;</span>
+        <span class="nav-label">Dashboard</span>
+        <span class="nav-tooltip">Dashboard</span>
+      </a>
+
+      <a href="#" class="nav-item">
+        <span class="nav-icon">&#9654;</span>
+        <span class="nav-label">Rooms</span>
+        <span class="nav-tooltip">Rooms</span>
+      </a>
+
+      <a href="#" class="nav-item">
+        <span class="nav-icon">&#9201;</span>
+        <span class="nav-label">Focus</span>
+        <span class="nav-tooltip">Focus</span>
+      </a>
+
+      <a href="#" class="nav-item">
+        <span class="nav-icon">&#10003;</span>
+        <span class="nav-label">Tasks</span>
+        <span class="nav-tooltip">Tasks</span>
+      </a>
+
+      <div class="nav-divider"></div>
+
+      <a href="#" class="nav-item">
+        <span class="nav-icon">&#9786;</span>
+        <span class="nav-label">Community</span>
+        <span class="nav-tooltip">Community</span>
+      </a>
+
+      <a href="#" class="nav-item">
+        <span class="nav-icon">&#9881;</span>
+        <span class="nav-label">Settings</span>
+        <span class="nav-tooltip">Settings</span>
+      </a>
+
+    </nav>
+
+    <!-- Bottom Bit-->
+    <div class="sidebar-bottom">
+
+      <a href="#" class="user-card">
+        <div class="user-avatar">
+          []
+        </div>
+        <div class="user-info">
+          <div class="user-name">[...]</div>
+          <div class="user-status">&#9679; Online</div>
+        </div>
+      </a>
+
+      <!-- TODO: Need to update with backend later  -->
+      <a href="{% url 'index' %}" class="logout-btn"> 
+        <span class="nav-icon">&#10132;</span>
+        <span class="nav-label">Log out</span>
+      </a>
+
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <div class="main-wrapper" id="mainWrapper">
+    <main class="main-content">
+      {% block content %}
+      <!-- All our other page content here -->
+      {% endblock %}
+    </main>
+  </div>
+
+  <script src="{% static 'js/sidebar.js' %}"></script>
+  <!-- {% block extra_js %}{% endblock %} -->
+</body>
+</html>
