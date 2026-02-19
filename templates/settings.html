@@ -1,0 +1,139 @@
+{% extends "user_base.html" %}
+{% load static %}
+
+{% block title %}Settings - Cadence{% endblock %}
+
+{% block content %}
+  <div class="card">
+    <h2>Settings</h2>
+    <p style="opacity:0.85;">Customize your Cadence experience.</p>
+  </div>
+
+  <div class="card" style="margin-top:16px;">
+    <h3>Focus Timer</h3>
+
+    <label style="display:block; margin-top:12px;">
+      Focus duration (minutes)
+      <input id="focusMin" type="number" min="10" max="90" value="25" style="width:100%; margin-top:8px;">
+    </label>
+
+    <label style="display:block; margin-top:12px;">
+      Break duration (minutes)
+      <input id="breakMin" type="number" min="3" max="30" value="5" style="width:100%; margin-top:8px;">
+    </label>
+
+    <label style="display:block; margin-top:12px;">
+      Long break duration (minutes)
+      <input id="longBreakMin" type="number" min="5" max="45" value="15" style="width:100%; margin-top:8px;">
+    </label>
+  </div>
+
+  <div class="card" style="margin-top:16px;">
+    <h3>Presence & Privacy</h3>
+
+    <label style="display:flex; gap:10px; align-items:center; margin-top:12px;">
+      <input id="showStatus" type="checkbox" checked>
+      Show my activity status (focus/break/idle)
+    </label>
+
+    <label style="display:flex; gap:10px; align-items:center; margin-top:12px;">
+      <input id="allowDM" type="checkbox">
+      Allow direct messages (future feature)
+    </label>
+
+    <label style="display:flex; gap:10px; align-items:center; margin-top:12px;">
+      <input id="privateByDefault" type="checkbox">
+      Make new rooms private by default
+    </label>
+  </div>
+
+  <div class="card" style="margin-top:16px;">
+    <h3>Interface</h3>
+
+    <label style="display:block; margin-top:12px;">
+      Theme
+      <select id="theme" style="width:100%; margin-top:8px;">
+        <option value="cozy">Cozy</option>
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+      </select>
+    </label>
+
+    <label style="display:flex; gap:10px; align-items:center; margin-top:12px;">
+      <input id="reduceMotion" type="checkbox">
+      Reduce motion
+    </label>
+  </div>
+
+  <div class="card" style="margin-top:16px;">
+    <h3>Actions</h3>
+    <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:10px;">
+      <button class="logout-btn" type="button" onclick="saveSettings()">Save Settings</button>
+      <button class="logout-btn" type="button" onclick="resetSettings()">Reset</button>
+    </div>
+    <p id="saveMsg" style="margin-top:10px; opacity:0.85;"></p>
+  </div>
+
+  <script>
+    
+    const defaults = {
+      focusMin: 25,
+      breakMin: 5,
+      longBreakMin: 15,
+      showStatus: true,
+      allowDM: false,
+      privateByDefault: false,
+      theme: "cozy",
+      reduceMotion: false,
+    };
+
+    function getSettings(){
+      try {
+        return { ...defaults, ...(JSON.parse(localStorage.getItem("cadence_settings")) || {}) };
+      } catch {
+        return { ...defaults };
+      }
+    }
+
+    function setForm(s){
+      document.getElementById("focusMin").value = s.focusMin;
+      document.getElementById("breakMin").value = s.breakMin;
+      document.getElementById("longBreakMin").value = s.longBreakMin;
+      document.getElementById("showStatus").checked = !!s.showStatus;
+      document.getElementById("allowDM").checked = !!s.allowDM;
+      document.getElementById("privateByDefault").checked = !!s.privateByDefault;
+      document.getElementById("theme").value = s.theme;
+      document.getElementById("reduceMotion").checked = !!s.reduceMotion;
+    }
+
+    function readForm(){
+      return {
+        focusMin: Number(document.getElementById("focusMin").value),
+        breakMin: Number(document.getElementById("breakMin").value),
+        longBreakMin: Number(document.getElementById("longBreakMin").value),
+        showStatus: document.getElementById("showStatus").checked,
+        allowDM: document.getElementById("allowDM").checked,
+        privateByDefault: document.getElementById("privateByDefault").checked,
+        theme: document.getElementById("theme").value,
+        reduceMotion: document.getElementById("reduceMotion").checked,
+      };
+    }
+
+    function saveSettings(){
+      const s = readForm();
+      localStorage.setItem("cadence_settings", JSON.stringify(s));
+      document.getElementById("saveMsg").textContent = "Saved ✓";
+      setTimeout(() => document.getElementById("saveMsg").textContent = "", 1500);
+    }
+
+    function resetSettings(){
+      localStorage.removeItem("cadence_settings");
+      setForm(getSettings());
+      document.getElementById("saveMsg").textContent = "Reset to default ✓";
+      setTimeout(() => document.getElementById("saveMsg").textContent = "", 1500);
+    }
+
+    
+    setForm(getSettings());
+  </script>
+{% endblock %}

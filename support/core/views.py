@@ -10,3 +10,7 @@ def login(request):
 
 def user_dashboard(request):
     return render(request, "user_dashboard.html")
+
+def settings_view(request):
+    return render(request, "settings.html")
+
