@@ -6,7 +6,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>{% block title %}Cadence - Dashboard{% endblock %}</title>
   <link rel="stylesheet" href="{% static 'css/user_base.css' %}">
-{% block extra_css %}{% endblock %}
+  {% block extra_css %}{% endblock %}
+
+  <script>
+    try {
+      if (localStorage.getItem('cw_sidebar_expanded') === '1' && window.matchMedia('(min-width: 640px)').matches) {
+        document.documentElement.classList.add('sidebar-expanded');
+      }
+    
+    } catch(e) {
+      console.error('An error occurred while setting the sidebar state:', e);
+    }
+  </script>
 </head>
 <body>
 
@@ -34,19 +45,19 @@
         <span class="nav-tooltip">Dashboard</span>
       </a>
 
-      <a href="#" class="nav-item">
+      <a href="{% url 'rooms' %}" class="nav-item {% block nav_rooms %}{% endblock %}">
         <span class="nav-icon">&#9654;</span>
         <span class="nav-label">Rooms</span>
         <span class="nav-tooltip">Rooms</span>
       </a>
 
-      <a href="#" class="nav-item">
+      <a href="{% url 'focus' %}" class="nav-item {% block nav_focus %}{% endblock %}">
         <span class="nav-icon">&#9201;</span>
         <span class="nav-label">Focus</span>
         <span class="nav-tooltip">Focus</span>
       </a>
 
-      <a href="#" class="nav-item">
+      <a href="{% url 'tasks' %}" class="nav-item {% block nav_tasks %}{% endblock %}">
         <span class="nav-icon">&#10003;</span>
         <span class="nav-label">Tasks</span>
         <span class="nav-tooltip">Tasks</span>
@@ -54,13 +65,13 @@
 
       <div class="nav-divider"></div>
 
-      <a href="#" class="nav-item">
+      <a href="{% url 'community' %}" class="nav-item {% block nav_community %}{% endblock %}">
         <span class="nav-icon">&#9786;</span>
         <span class="nav-label">Community</span>
         <span class="nav-tooltip">Community</span>
       </a>
 
-      <a href="{% url 'settings' %}" class="nav-item">
+      <a href="{% url 'settings' %}" class="nav-item {% block nav_settings %}{% endblock %}">
         <span class="nav-icon">&#9881;</span>
         <span class="nav-label">Settings</span>
         <span class="nav-tooltip">Settings</span>
@@ -99,7 +110,7 @@
     </main>
   </div>
 
-  <script src="{% static 'js/sidebar.js' %}"></script>
+  <script src="{% static 'js/sidebar.js' %}" defer ></script>
   <!-- {% block extra_js %}{% endblock %} -->
 </body>
 </html>

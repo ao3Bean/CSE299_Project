@@ -43,7 +43,7 @@
     color: var(--text-color);
     min-height: 100vh;
     display: flex;
-    overflow: hidden;
+    overflow: scroll;
   }
   
   .sidebar {
@@ -51,22 +51,38 @@
     top: 0; left: 0;
     height: 100vh;
     width: var(--sidebar-collapsed);
-    background: var(--window);
+    background: var(--card);
     border-right: 1.5px solid var(--border);
     border-radius: 0px 8px 0px 0px;
     box-shadow: 4px 4px 1px var(--border);
     display: flex;
     flex-direction: column;
     z-index: 100;
-    transition: width var(--transition);
+    transition: width var(--transition, 0.28s cubic-bezier(.4, 0, .2, 1));
     overflow: hidden;
   }
   
   .sidebar.expanded {
     width: var(--sidebar-expanded);
   }
+
+  html.sidebar-expanded .main-wrapper {
+    margin-left: var(--sidebar-expanded);
+  }
   
+  html .sidebar.expanded .sidebar {
+    width: var(--sidebar-expanded);
+  }
   
+
+  #sidebar {
+    visibility: hidden;
+  }
+  
+  #sidebar.ready {
+    visibility: visible;
+  }
+
   .sidebar-toggle {
     display: flex;
     align-items: center;
@@ -76,7 +92,7 @@
     margin: 14px auto 8px;
     border: 2px solid var(--border);
     border-radius: 10px;
-    background: var(--secondary);
+    /* background: var(--secondary); */
     box-shadow: var(--btn-shadow);
     cursor: pointer;
     flex-shrink: 0;
@@ -162,7 +178,9 @@
       background var(--transition),
       border-color var(--transition),
       box-shadow var(--transition),
-      transform 0.15s;
+      transform 0.15s,
+      color var(--transition);
+
   }
   
   .nav-item:hover {
@@ -173,7 +191,7 @@
   }
   
   .nav-item.active {
-    background: var(--secondary);
+    background: var(--accent2);
     border-color: var(--border);
     box-shadow: var(--btn-shadow);
   }
@@ -352,9 +370,26 @@
     min-height: 100vh;
     transition: margin-left var(--transition);
     overflow-y: auto;
+
+    opacity: 0;
+    transform: translateY(10px);
+    animation: fadeSlide 0.1s ease-out forwards;
+    
   }
   
+  @keyframes fadeSlide {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+  }
+
   body.sidebar-expanded .main-wrapper {
+    margin-left: var(--sidebar-expanded);
+  }
+
+
+  html.sidebar-expanded .main-wrapper {
     margin-left: var(--sidebar-expanded);
   }
   
@@ -497,6 +532,10 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: 20px;
+  }
+
+  .dashboard-grid-style{
+    background: var(--card);
   }
   
   .dash-card {

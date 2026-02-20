@@ -1,4 +1,82 @@
 {% extends "user_base.html" %}
+{% load static %}
+{% block title %}Rooms - Cadence{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/rooms.css' %}">{% endblock %}
+{% block nav_rooms %} active {% endblock %}
 {% block content %}
-<h1>Rooms Page</h1>
+
+<div class="dashboard-container">
+
+  <!-- Search Bar -->
+    <div class="rooms-search-wrap">
+        <input
+            type="text"
+            class="rooms-search"
+            placeholder="🔍  Search your saved spaces..."
+        />
+    </div>
+
+  <!-- Main Card Container -->
+    <div class="card rooms-panel">
+        <h2 class="rooms-panel-title">Saved Spaces</h2>
+    <div class="rooms-grid">
+
+        <!-- Create Room Button -->
+        <a href="#" class="dash-card rooms-create-card">
+            <div class="rooms-create-icon">＋</div>
+        </a>
+
+        <!-- Room Cards — will replace with DTL loop laterrr endwhile similar to php-->
+        <a href="#" class="dash-card dash-card-orange">
+            <div class="dash-card-icon">🖥️</div>
+            <h3 class="dash-card-title">placeholder</h3>
+            <p class="dash-card-desc">Solo focus session, no distractions.</p>
+            <div class="dash-card-arrow">&rarr;</div>
+        </a>
+
+        <a href="#" class="dash-card dash-card-coral">
+            <div class="dash-card-icon">☕</div>
+            <h3 class="dash-card-title">Morning Brew</h3>
+            <p class="dash-card-desc">Casual co-working with lo-fi vibes.</p>
+            <div class="dash-card-arrow">&rarr;</div>
+        </a>
+
+        <a href="#" class="dash-card dash-card-blue">
+            <div class="dash-card-icon">📐</div>
+            <h3 class="dash-card-title">Design Sprint</h3>
+            <p class="dash-card-desc">Collaborative creative sessions.</p>
+            <div class="dash-card-arrow">&rarr;</div>
+        </a>
+
+        <a href="#" class="dash-card dash-card-light-blue">
+            <div class="dash-card-icon">📚</div>
+            <h3 class="dash-card-title">Study Hall</h3>
+            <p class="dash-card-desc">Quiet study room for focused reading.</p>
+            <div class="dash-card-arrow">&rarr;</div>
+        </a>
+
+        <a href="#" class="dash-card dash-card-green">
+            <div class="dash-card-icon">🌿</div>
+            <h3 class="dash-card-title">Chill Zone</h3>
+            <p class="dash-card-desc">Light tasks and relaxed productivity.</p>
+            <div class="dash-card-arrow">&rarr;</div>
+        </a>
+    </div>
+
+    <!-- Pagination 
+     ?page={{ page_obj.previous_page_number }} and 
+     ?page={{ page_obj.next_page_number }} smth similar when we do backend-->
+    <div class="rooms-pagination">
+        <button class="rooms-page-btn" aria-label="Previous">&larr;</button>
+            <span class="rooms-page-indicator">
+            <span class="rooms-page-dot rooms-page-dot--active"></span>
+            <span class="rooms-page-dot"></span>
+            <span class="rooms-page-dot"></span>
+            </span>
+        <button class="rooms-page-btn" aria-label="Next">&rarr;</button>
+    </div>
+
+  </div>
+</div>
+
 {% endblock %}
