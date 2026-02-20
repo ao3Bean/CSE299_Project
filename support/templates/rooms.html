@@ -22,25 +22,36 @@
     <div class="rooms-grid">
 
         <!-- Create Room Button -->
-        <a href="#" class="dash-card rooms-create-card">
+       <a href="{% url 'rooms' %}" class="dash-card rooms-create-card">
             <div class="rooms-create-icon">＋</div>
         </a>
 
         <!-- Room Cards — will replace with DTL loop laterrr endwhile similar to php-->
+       {% for room in rooms %}
+        <a href="#" class="dash-card dash-card-{{ room.color|default:'orange' }}">
+            <div class="dash-card-icon">{{ room.icon|default:"🖥️" }}</div>
+           <h3 class="dash-card-title">{{ room.name|default:"Placeholder Room" }}</h3>
+           <p class="dash-card-desc">
+        {{ room.description|default:"Solo focus session, no distractions." }}
+        </p>
+        <div class="dash-card-arrow">&rarr;</div>
+        </a>
+     {% empty %}
+   
         <a href="#" class="dash-card dash-card-orange">
             <div class="dash-card-icon">🖥️</div>
-            <h3 class="dash-card-title">placeholder</h3>
+         <h3 class="dash-card-title">Solo Mode</h3>
             <p class="dash-card-desc">Solo focus session, no distractions.</p>
             <div class="dash-card-arrow">&rarr;</div>
         </a>
 
         <a href="#" class="dash-card dash-card-coral">
             <div class="dash-card-icon">☕</div>
-            <h3 class="dash-card-title">Morning Brew</h3>
+           <h3 class="dash-card-title">Morning Brew</h3>
             <p class="dash-card-desc">Casual co-working with lo-fi vibes.</p>
             <div class="dash-card-arrow">&rarr;</div>
         </a>
-
+  
         <a href="#" class="dash-card dash-card-blue">
             <div class="dash-card-icon">📐</div>
             <h3 class="dash-card-title">Design Sprint</h3>
@@ -61,6 +72,7 @@
             <p class="dash-card-desc">Light tasks and relaxed productivity.</p>
             <div class="dash-card-arrow">&rarr;</div>
         </a>
+  {% endfor %}
     </div>
 
     <!-- Pagination 
