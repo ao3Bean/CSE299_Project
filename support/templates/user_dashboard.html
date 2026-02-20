@@ -1,14 +1,65 @@
 {% extends "user_base.html" %}
 {% load static %}
 {% block title %}User Room - Cadence{% endblock %}
-{% block extra_css %}  
-{% endblock %}
+{% block extra_css %}{% endblock %}
+{% block nav_dashboard %} active {% endblock %}
 {% block content %}
-<div class="main-content">
-  <div class="card">
-    <h2>Welcome Back!, User!</h2>
-    <p>Here you can manage your rooms, view your profile, and adjust your settings.</p>
+<div class="dashboard-container">
+
+
+  <!-- Welcome Banner -->
+  <div class="welcome-banner card">
+    <div class="welcome-content">
+      <h1 class="welcome-title">Welcome back 👋</h1>
+      <div class="quick-stats">
+        <span class="stat-item">🎯 3 active sessions</span>
+        <span class="stat-item">⏱️ 2h 15m today</span>
+        <span class="stat-item">✓ 8 tasks completed</span>
+      </div>
+    </div>
   </div>
+
+  <!-- Dashboard Grid -->
+  <div class="dashboard-grid">
+
+    <a href="#" class="dash-card dash-card-light-blue">
+      <div class="dash-card-icon">&#9654;</div>
+      <h3 class="dash-card-title">Rooms</h3>
+      <p class="dash-card-desc">Join or browse co-working rooms</p>
+      <div class="dash-card-arrow">&rarr;</div>
+    </a>
+
+    <a href="#" class="dash-card dash-card-orange">
+      <div class="dash-card-icon">&#9201;</div>
+      <h3 class="dash-card-title">Focus</h3>
+      <p class="dash-card-desc">Start a focused work session</p>
+      <div class="dash-card-arrow">&rarr;</div>
+    </a>
+
+    <a href="#" class="dash-card dash-card-blue">
+      <div class="dash-card-icon">&#10003;</div>
+      <h3 class="dash-card-title">Tasks</h3>
+      <p class="dash-card-desc">Manage your to-do list</p>
+      <div class="dash-card-arrow">&rarr;</div>
+    </a>
+
+    <a href="#" class="dash-card dash-card-coral">
+      <div class="dash-card-icon">&#9786;</div>
+      <h3 class="dash-card-title">Community</h3>
+      <p class="dash-card-desc">Connect with other members</p>
+      <div class="dash-card-arrow">&rarr;</div>
+    </a>
+
+    <a href="#" class="dash-card dash-card-green">
+      <div class="dash-card-icon">&#9786;</div>
+      <h3 class="dash-card-title">Friends</h3>
+      <p class="dash-card-desc">Connect with besties!</p>
+      <div class="dash-card-arrow">&rarr;</div>
+    </a>
+
+  </div>
+
+</div>
 {% endblock %}
 
 <!-- 
