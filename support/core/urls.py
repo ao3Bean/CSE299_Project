@@ -11,5 +11,10 @@ urlpatterns = [
     #path('url_name/', views.view_function_name, name='url_name')
     #so from '' it goes to index than we can redirect to v1/
     path("settings/", views.settings_view, name="settings"),
+    path('rooms/', views.rooms, name='rooms'),
+    path('focus/', views.focus, name='focus'),
+    path('tasks/', views.tasks, name='tasks'),
+    path('community/', views.community, name='community'),
+    path('friends/', views.friends, name='friends'),
 
 ]

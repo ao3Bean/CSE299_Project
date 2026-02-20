@@ -14,3 +14,17 @@ def user_dashboard(request):
 def settings_view(request):
     return render(request, "settings.html")
 
+def rooms(request):
+    return render(request, "rooms.html")
+
+def focus(request):
+    return render(request, "focus.html")
+
+def tasks(request): 
+    return render(request, "tasks.html")
+
+def community(request): 
+    return render(request, "community.html")
+
+def friends(request): 
+    return render(request, "friends.html")
