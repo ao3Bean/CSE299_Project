@@ -1,0 +1,73 @@
+{% extends "user_base.html" %}
+{% load static %}
+
+{% block title %}User Profile - Cadence{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/profile_styling.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="main-content">
+   
+    <div class="profile-section">
+
+        <img src="{% static 'profile_pic.png' %}" class="profile-avatar">
+
+        <img src="{% static 'bulb.gif' %}" class="bulb-icon">
+
+        
+
+        <div class="profile-name">
+            {{ request.user.username|default:"Cadence User" }}
+        </div>
+
+        <div class="profile-email">
+            {{ request.user.email|default:"user@cadence.com" }}
+        </div>
+
+    </div>
+
+    <div class="clock-container">
+    <img src="{% static 'clock.gif' %}" alt="Clock" class="clock-gif">
+    </div>
+
+    <div class="about-box">
+        <div class="about-title">About Info</div>
+
+        <div class="about-content">
+            
+          <a href="#" class="about-link">📊 View Analytics</a>
+
+         <div class="about-item">
+            🎨 Hobbies: Drawing, Music, Coding
+         </div>
+
+         <div class="about-item">
+            🎯 Focus Goal: 3 hours daily
+         </div>
+
+            <!-- NEW DATABASE FIELDS (added, not replacing anything) -->
+
+        <div class="about-item">
+            💇 Hair: {{ request.user.userprofile.hair|default:"Not set" }}
+        </div>
+
+        <div class="about-item">
+            🙂 Face Expression: {{ request.user.userprofile.face_expression|default:"Not set" }}
+        </div>
+
+        <div class="about-item">
+            👕 Clothes: {{ request.user.userprofile.clothes|default:"Not set" }}
+        </div>
+
+        <div class="about-item">
+            🎨 Skin Color: {{ request.user.userprofile.skin_color|default:"Not set" }}
+        </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
