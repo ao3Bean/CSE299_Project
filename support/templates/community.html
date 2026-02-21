@@ -1,0 +1,70 @@
+{% extends "user_base.html" %}
+{% load static %}
+{% block title %}Rooms - Cadence{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/rooms.css' %}">{% endblock %}
+{% block nav_community %} active {% endblock %}
+{% block content %}
+
+<div class="dashboard-container">
+
+  <!-- Search Bar -->
+    <div class="rooms-search-wrap">
+        <input
+            type="text"
+            class="rooms-search"
+            placeholder="🔍  Search for the most productive rooms!"
+        />
+    </div>
+
+    <div class="card rooms-panel">
+        <h2 class="rooms-panel-title">Community Explore</h2>
+        <div class="rooms-grid">
+
+            <a href="#" class="dash-card dash-card-orange">
+                <div class="dash-card-icon">@</div>
+                <h3 class="dash-card-title">Popular Room</h3>
+                <p class="dash-card-desc">Solo focus session, no distractions.</p>
+                <div class="dash-card-arrow">&rarr;</div>
+            </a>
+        </div>
+
+        <!-- Pagination 
+        ?page={{ page_obj.previous_page_number }} and 
+        ?page={{ page_obj.next_page_number }} smth similar when we do backend-->
+        <div class="rooms-pagination">
+            <button class="rooms-page-btn" aria-label="Previous">&larr;</button>
+                <span class="rooms-page-indicator">
+                <span class="rooms-page-dot rooms-page-dot--active"></span>
+                <span class="rooms-page-dot"></span>
+                <span class="rooms-page-dot"></span>
+                </span>
+            <button class="rooms-page-btn" aria-label="Next">&rarr;</button>
+        </div>
+    </div>
+    <br>
+    <div class="card rooms-panel">
+        <h2 class="rooms-panel-title">User Activity</h2>
+        
+        <div class="rooms-grid">
+
+            <a href="#" class="dash-card dash-card-coral">
+                <div class="dash-card-icon">~</div>
+                <h3 class="dash-card-title">Notice Board</h3>
+                <p class="dash-card-desc">Join the conversation!</p>
+                <div class="dash-card-arrow">&rarr;</div>
+            </a>
+        </div>
+
+        <div class="rooms-pagination">
+            <button class="rooms-page-btn" aria-label="Previous">&larr;</button>
+                <span class="rooms-page-indicator">
+                <span class="rooms-page-dot rooms-page-dot--active"></span>
+                <span class="rooms-page-dot"></span>
+                <span class="rooms-page-dot"></span>
+                </span>
+            <button class="rooms-page-btn" aria-label="Next">&rarr;</button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
