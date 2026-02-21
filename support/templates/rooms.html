@@ -19,26 +19,27 @@
   <!-- Main Card Container -->
     <div class="card rooms-panel">
         <h2 class="rooms-panel-title">Saved Spaces</h2>
-    <div class="rooms-grid">
+    <div class="rooms-grid"> 
 
         <!-- Create Room Button -->
-       <a href="{% url 'rooms' %}" class="dash-card rooms-create-card">
+        <!-- will link later to different page -->
+       <a href="#" class="dash-card rooms-create-card"> 
             <div class="rooms-create-icon">＋</div>
         </a>
 
         <!-- Room Cards — will replace with DTL loop laterrr endwhile similar to php-->
-       {% for room in rooms %}
+    {% for room in rooms %}
         <a href="#" class="dash-card dash-card-{{ room.color|default:'orange' }}">
             <div class="dash-card-icon">{{ room.icon|default:"🖥️" }}</div>
-           <h3 class="dash-card-title">{{ room.name|default:"Placeholder Room" }}</h3>
-           <p class="dash-card-desc">
-        {{ room.description|default:"Solo focus session, no distractions." }}
-        </p>
-        <div class="dash-card-arrow">&rarr;</div>
+            <h3 class="dash-card-title">{{ room.name|default:"Placeholder Room" }}</h3>
+            <p class="dash-card-desc">
+            {{ room.description|default:"Solo focus session, no distractions." }}
+            </p>
+            <div class="dash-card-arrow">&rarr;</div>
         </a>
-     {% empty %}
+        {% empty %}
    
-        <a href="#" class="dash-card dash-card-orange">
+        <a href="{% url 'chatroom' %}" class="dash-card dash-card-orange">
             <div class="dash-card-icon">🖥️</div>
          <h3 class="dash-card-title">Solo Mode</h3>
             <p class="dash-card-desc">Solo focus session, no distractions.</p>

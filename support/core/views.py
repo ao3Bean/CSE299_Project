@@ -30,6 +30,8 @@ def community(request):
 
 def friends(request): 
     return render(request, "friends.html")
+def chatroom(request): 
+    return render(request, "chatroom.html")
 
 def user_profile(request):
     return render(request, "user_profile.html")

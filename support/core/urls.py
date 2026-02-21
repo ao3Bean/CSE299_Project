@@ -16,6 +16,7 @@ urlpatterns = [
     path('tasks/', views.tasks, name='tasks'),
     path('community/', views.community, name='community'),
     path('friends/', views.friends, name='friends'),
+    path('chatroom/', views.chatroom, name='chatroom'),
     path("profile/", views.user_profile, name="user_profile"),
 
 ]

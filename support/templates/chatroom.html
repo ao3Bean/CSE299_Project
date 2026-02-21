@@ -1,0 +1,298 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}Cadence – {{ room.name }}{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/chatroom.css' %}">
+  <script>
+    try {
+      if (localStorage.getItem('cw_sidebar_expanded') === '1' && window.matchMedia('(min-width: 640px)').matches) {
+        document.documentElement.classList.add('sidebar-expanded');
+      }
+    } catch(e) {}
+  </script>
+</head>
+<body>
+  <!-- side bar -->
+  <aside class="sidebar" id="sidebar">
+
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">&#187;&#187;</button>
+
+    <!-- Logo -->
+    <div class="sidebar-logo">
+      <div class="logo-mark">CD</div>
+      <span class="logo-text">Cadence</span>
+    </div>
+
+    <!-- Room Actions -->
+    <nav class="sidebar-nav" aria-label="Room actions">
+
+      <button class="nav-item nav-btn" id="openSettings" aria-label="Room settings">
+        <span class="nav-icon">&#9881;</span>
+        <span class="nav-label">Settings</span>
+        <span class="nav-tooltip">Settings</span>
+      </button>
+
+      <button class="nav-item nav-btn" id="saveRoom" aria-label="Save room">
+        <span class="nav-icon">&#9825;</span>
+        <span class="nav-label">Save Room</span>
+        <span class="nav-tooltip">Save Room</span>
+      </button>
+
+    </nav>
+
+    <div class="sidebar-bottom">
+
+      <!-- User card -->
+      <a href="#" class="user-card">
+        <div class="user-avatar">
+          {# TODO: {{ request.user.profile.avatar }} #}
+          <span>{{ request.user.username|first|upper }}</span>
+        </div>
+        <div class="user-info">
+          <div class="user-name">{{ request.user.username }}</div>
+          <div class="user-status">&#9679; Online</div>
+        </div>
+      </a>
+
+      <a href="{% url 'rooms' %}" class="logout-btn">
+        <span class="nav-icon">&#10132;</span>
+        <span class="nav-label">Exit Room</span>
+      </a>
+
+    </div>
+  </aside>
+
+  <div class="main-wrapper" id="mainWrapper">
+    <div class="room-layout">
+
+      <!--  left col  -->
+        <div class="room-left">
+
+        <!-- room header -->
+            <div class="room-header card">
+                <div class="room-header-info">
+                <h1 class="room-name">{{ room.name|default:"Study Hall" }}</h1>
+                <span class="room-count">
+                &#9679; <span id="participantCount">{{ room.participant_count|default:"1" }}</span> in room
+                </span>
+            </div>
+          <!-- Avatar state demo toggle (dummy, remove later) -->
+            <div class="state-demo">
+                <span class="state-demo-label">Preview state:</span>
+                <div class="state-btns">
+                <button class="state-btn active" data-state="idle">Idle</button>
+                <button class="state-btn" data-state="focused">Focus</button>
+                <button class="state-btn" data-state="break">Break</button>
+                <button class="state-btn" data-state="chatting">Chat</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Avatar Grid -->
+        <div class="avatar-grid-card avatar-card">
+            <div class="avatar-grid" id="avatarGrid">
+                {# TODO: Loop over room participants from context #}
+                {# {% for participant in participants %} #}
+                <div class="avatar-cell" data-username="You" data-state="idle">
+                    <div class="avatar-frame">
+                        <img src="{% static 'img/avatars/idle.png' %}" alt="idle" class="avatar-img state-img state-idle">
+                        <img src="{% static 'img/avatars/focused.png' %}" alt="focused" class="avatar-img state-img state-focused">
+                        <img src="{% static 'img/avatars/break.png' %}" alt="break" class="avatar-img state-img state-break">
+                        <img src="{% static 'img/avatars/chatting.png' %}" alt="chatting" class="avatar-img state-img state-chatting">
+                    </div>
+                    <span class="avatar-tooltip">Me</span>
+                </div>
+                <!-- demo users -->
+                <div class="avatar-cell" data-username="Luna" data-state="focused">
+                <div class="avatar-frame">
+                    <img src="{% static 'img/avatars/idle.png' %}" alt="idle" class="avatar-img state-img state-idle">
+                    <img src="{% static 'img/avatars/focused.png' %}" alt="focused" class="avatar-img state-img state-focused">
+                    <img src="{% static 'img/avatars/break.png' %}" alt="break" class="avatar-img state-img state-break">
+                    <img src="{% static 'img/avatars/chatting.png' %}" alt="chatting" class="avatar-img state-img state-chatting">
+                </div>
+                <span class="avatar-tooltip">Luna</span>
+                </div>
+                <div class="avatar-cell" data-username="Mira" data-state="break">
+                <div class="avatar-frame">
+                    <img src="{% static 'img/avatars/idle.png' %}" alt="idle" class="avatar-img state-img state-idle">
+                    <img src="{% static 'img/avatars/focused.png' %}" alt="focused" class="avatar-img state-img state-focused">
+                    <img src="{% static 'img/avatars/break.png' %}" alt="break" class="avatar-img state-img state-break">
+                    <img src="{% static 'img/avatars/chatting.png' %}" alt="chatting" class="avatar-img state-img state-chatting">
+                </div>
+                <span class="avatar-tooltip">Mira</span>
+                </div>
+                <div class="avatar-cell" data-username="Theo" data-state="chatting">
+                    <div class="avatar-frame">
+                        <img src="{% static 'img/avatars/idle.png' %}" alt="idle" class="avatar-img state-img state-idle">
+                        <img src="{% static 'img/avatars/focused.png' %}" alt="focused" class="avatar-img state-img state-focused">
+                        <img src="{% static 'img/avatars/break.png' %}" alt="break" class="avatar-img state-img state-break">
+                        <img src="{% static 'img/avatars/chatting.png' %}" alt="chatting" class="avatar-img state-img state-chatting">
+                    </div>
+                    <span class="avatar-tooltip">Theo</span>
+                </div>
+            {# {% endfor %} #}
+            </div>
+        </div>
+
+        <!-- Timer + Music -->
+        <div class="bottom-row">
+
+          <!-- Pomodoro Timer -->
+            <div class="timer-card card">
+                <div class="timer-label">Pomodoro</div>
+                <div class="timer-display" id="timerDisplay">25:00</div>
+                <div class="timer-mode-badge" id="timerModeBadge">Focus</div>
+                <div class="timer-btns">
+                    <button class="timer-btn timer-btn-start" id="timerStart">&#9654; Start</button>
+                    <button class="timer-btn timer-btn-reset" id="timerReset">&#9632; Reset</button>
+                </div>
+            </div>
+
+          <!-- Music Player -->
+        <div class="music-card card">
+            <div class="music-label">Now Playing</div>
+            <div class="cassette-wrap">
+                <img
+                    src="{% static 'img/cassette.gif' %}"
+                    alt="cassette"
+                    class="cassette-gif"
+                    id="cassetteGif"
+                    data-playing-src="{% static 'img/cassette.gif' %}"
+                    data-stopped-src="{% static 'img/cassette_still.png' %}"
+                />
+            </div>
+            <div class="music-track-name" id="trackName">lofi chill vol. 1</div>
+            <div class="music-controls">
+                <button class="music-btn" id="prevTrack" aria-label="Previous">&#9664;&#9664;</button>
+                <button class="music-btn music-btn-play" id="playPause" aria-label="Play/Pause">&#9654;</button>
+                <button class="music-btn" id="nextTrack" aria-label="Next">&#9654;&#9654;</button>
+            </div>
+            {# Audio element — src set by JS from track list #}
+            <audio id="audioPlayer" loop></audio>
+        </div>
+
+        </div>
+    </div>
+
+        <!--  chatbox  -->
+        <div class="room-right">
+            <div class="chat-outer-card">
+                <div class="chat-inner-card">
+
+                    <!-- Chat Header -->
+                    <div class="chat-header">
+                    <span class="chat-header-title">Room Chat</span>
+                    </div>
+
+                    <!-- Messages -->
+                    <div class="chat-messages" id="chatMessages">
+                    {# TODO: Render initial messages from context if any #}
+                    <div class="chat-msg chat-msg-system">
+                        <span>Welcome to <strong>{{ room.name|default:"Study Hall" }}</strong> &#128075;</span>
+                    </div>
+
+                    <!-- Demo messages -->
+                    <div class="chat-msg chat-msg-other">
+                        <div class="chat-msg-avatar">L</div>
+                        <div class="chat-msg-body">
+                        <span class="chat-msg-user">Luna</span>
+                        <span class="chat-msg-text">hey everyone! ready to grind 💪</span>
+                        </div>
+                    </div>
+                    <div class="chat-msg chat-msg-self">
+                        <div class="chat-msg-body chat-msg-body-self">
+                        <span class="chat-msg-text">let's gooo!</span>
+                        </div>
+                    </div>
+                    <div class="chat-msg chat-msg-other">
+                        <div class="chat-msg-avatar">M</div>
+                        <div class="chat-msg-body">
+                        <span class="chat-msg-user">Mira</span>
+                        <span class="chat-msg-text">starting pomodoro now</span>
+                        </div>
+                    </div>
+                    </div>
+
+                    <div class="chat-input-area">
+                        <input
+                            type="text"
+                            class="chat-input"
+                            id="chatInput"
+                            placeholder="say something..."
+                            autocomplete="off"
+                            maxlength="500"
+                        />
+                        <button class="chat-send-btn" id="chatSend" aria-label="Send">&#10148;</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+  <!-- modal stuff -->
+  <div class="modal-backdrop" id="modalBackdrop" aria-hidden="true">
+    <div class="settings-modal" role="dialog" aria-modal="true" aria-label="Room Settings">
+
+      <div class="modal-header">
+        <span class="modal-title">&#9881; Room Settings</span>
+        <button class="modal-close" id="closeSettings" aria-label="Close">&#10005;</button>
+      </div>
+
+      <!-- bg options -->
+        <div class="modal-section">
+            <div class="modal-section-title">Background</div>
+            <div class="bg-presets">
+                <button class="bg-preset bg-preset-1 active" data-bg="preset1" aria-label="Preset 1"></button>
+                <button class="bg-preset bg-preset-2" data-bg="preset2" aria-label="Preset 2"></button>
+                <button class="bg-preset bg-preset-3" data-bg="preset3" aria-label="Preset 3"></button>
+                <button class="bg-preset bg-preset-4" data-bg="preset4" aria-label="Preset 4"></button>
+                <button class="bg-preset bg-preset-5" data-bg="preset5" aria-label="Preset 5"></button>
+                <button class="bg-preset bg-preset-img" data-bg="img1" aria-label="Image 1">
+                    <span class="bg-preset-label">🌿</span>
+                </button>
+                <button class="bg-preset bg-preset-img" data-bg="img2" aria-label="Image 2">
+                    <span class="bg-preset-label">🌙</span>
+                </button>
+            </div>
+        </div>
+
+      <!-- timer settings -->
+      <div class="modal-section">
+        <div class="modal-section-title">Timer Limits</div>
+        <div class="timer-settings">
+          <div class="timer-setting-row">
+            <label class="timer-setting-label" for="focusDuration">Focus (min)</label>
+            <div class="timer-setting-control">
+              <button class="timer-nudge" data-target="focusDuration" data-dir="-1">&#8722;</button>
+              <input type="number" id="focusDuration" class="timer-setting-input" value="25" min="1" max="90">
+              <button class="timer-nudge" data-target="focusDuration" data-dir="1">&#43;</button>
+            </div>
+          </div>
+          <div class="timer-setting-row">
+            <label class="timer-setting-label" for="breakDuration">Break (min)</label>
+            <div class="timer-setting-control">
+              <button class="timer-nudge" data-target="breakDuration" data-dir="-1">&#8722;</button>
+              <input type="number" id="breakDuration" class="timer-setting-input" value="5" min="1" max="30">
+              <button class="timer-nudge" data-target="breakDuration" data-dir="1">&#43;</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="modal-btn modal-btn-save" id="applySettings">Apply Settings</button>
+        <button class="modal-btn modal-btn-cancel" id="closeSettingsFooter">Cancel</button>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="{% static 'js/chatroom.js' %}" defer></script>
+</body>
+</html>

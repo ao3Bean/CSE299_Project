@@ -1,4 +1,4 @@
-/* ── Rooms Page ──────────────────────────────── */
+/*  Rooms Page  */
 
 .rooms-search-wrap {
     margin-bottom: 20px;
@@ -140,9 +140,5 @@
   }
   .rooms-panel .dash-card {
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.rooms-panel .dash-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
-}
+  }
+  
