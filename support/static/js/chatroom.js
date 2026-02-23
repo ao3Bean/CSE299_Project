@@ -59,7 +59,7 @@ const bgMap = {
   img2: 'url("/static/img/bg/night.jpg") center/cover',
 };
 
-let activeBg = 'preset1';
+let activeBg = 'img1';
 
 document.querySelectorAll('.bg-preset').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -127,6 +127,7 @@ function setTimerMode(breakMode) {
 
 function startTimer() {
   if (timerRunning) return;
+  clearInterval(timerInterval);
   timerRunning = true;
   startBtn.textContent = '⏸ Pause';
   startBtn.classList.add('running');
@@ -217,19 +218,23 @@ function loadTrack(index) {
   if (isPlaying) audioPlayer.play().catch(() => {});
 }
 
+let playPending = false;
+
 function togglePlay() {
   if (isPlaying) {
     audioPlayer.pause();
     isPlaying = false;
     playPauseBtn.innerHTML = '&#9654;';
     cassetteGif.src = stillSrc;
-  } else {
+  } else if (!playPending) {
+    playPending = true;
     audioPlayer.play().then(() => {
       isPlaying = true;
+      playPending = false;
       playPauseBtn.innerHTML = '&#9646;&#9646;';
       cassetteGif.src = playingSrc;
     }).catch(err => {
-      // Autoplay blocked — silently ignore, user must interact first
+      playPending = false;
       console.warn('Playback failed:', err);
     });
   }
