@@ -17,24 +17,3 @@ class UserProfile(models.Model):
         return self.user.username
 
 
-#for the chat room model: 
-class Room(models.Model):
-
-    ROOM_TYPE_CHOICES = [
-        ('public', 'Public'),
-        ('private', 'Private'),
-    ]
-
-    name = models.CharField(max_length=100)
-
-    room_type = models.CharField(
-        max_length=10,
-        choices=ROOM_TYPE_CHOICES,
-        default='public'
-    )
-
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.name
-# Create your models here.
