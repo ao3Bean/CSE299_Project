@@ -11,3 +11,7 @@ def rooms(request):
 
 def chatroom(request): 
     return render(request, "chatroom.html")
+
+def room_detail(request, room_id):
+    room_obj = get_object_or_404(Room, room_id=room_id)
+    return render(request, "room/room_detail.html", {"room": room_obj})
