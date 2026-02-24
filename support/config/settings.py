@@ -38,12 +38,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'room',
-    
 
     #our apps
     'core.apps.CoreConfig',
     'accounts.apps.AccountsConfig',
+    'room.apps.RoomConfig',
 ]
 
 MIDDLEWARE = [

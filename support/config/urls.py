@@ -21,6 +21,7 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('core.urls')), #include the urls from the core app, so when the url is empty, it goes to the core app and looks for the urls there
-    path("accounts/", include("accounts.urls")),
+    path("accounts/", include("accounts.urls")),    
+    path('',include('room.urls')),
 
 ]
