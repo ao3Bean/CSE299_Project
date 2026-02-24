@@ -7,6 +7,9 @@ from django.contrib import messages
 def login(request):
     if request.method == "POST":
         form_type = request.POST.get("form_type")
+        #print("FORM TYPE:", form_type)  # ← add this
+        #print("POST DATA:", request.POST)  # ← add this
+        #these 2 lines are for debuggning
 
         if form_type == "login":
             username = request.POST.get("username")
@@ -18,7 +21,7 @@ def login(request):
                 return redirect("user_dashboard")
             else:
                 messages.error(request, "Invalid username or password.")
-                return redirect("login")
+                return render(request, "login.html")
 
         elif form_type == "signup":
             username = request.POST.get("username")
@@ -27,7 +30,7 @@ def login(request):
 
             if User.objects.filter(username=username).exists():
                 messages.error(request, "Username already taken.")
-                return redirect("login")
+                return render(request, "login.html")
 
             user = User.objects.create_user(username=username, email=email, password=password)
             auth_login(request, user)

@@ -60,3 +60,16 @@ button:active {
   box-shadow: none;
   transform: translate(4px, 4px);
 }
+
+/* Messages */
+.message {
+  padding: 10px 14px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+  font-size: 0.7em;
+  border: 2px solid var(--border);
+}
+
+.message.success { background: #d1fae5; color: #065f46; }
+.message.error   { background: #fee2e2; color: #991b1b; }
+.message.info    { background: #dbeafe; color: #1e40af; }
