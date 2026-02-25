@@ -122,6 +122,18 @@ copy .env.example .env
 __macOS/Linux__
 ```bash
 cp .env.example .env
+
+```
+
+### 5. Run migrations
+```bash
+python main.py makemigrations
+python main.py migrate
+```
+
+### 6. Run Django Development Server
+```bash
+python main.py runserver
 ```
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
