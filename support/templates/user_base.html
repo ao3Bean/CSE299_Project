@@ -93,10 +93,11 @@
 
       <a href="#" class="user-card">
         <div class="user-avatar">
-          {user.request.user.username|default:"CD User"|slice:":1"|upper}
         </div>
         <div class="user-info">
-          <div class="user-name">[...]</div>
+          <div class="user-name">
+            {{ request.user.first_name|default:request.user.username|default:"User" }}
+          </div>
           <div class="user-status">&#9679; Online</div>
         </div>
       </a>
