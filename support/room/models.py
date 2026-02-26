@@ -55,3 +55,14 @@ class Session(models.Model):
 
     def __str__(self):
         return f"Session in {self.room.name}"
+    
+class RoomMembership(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name="memberships")
+    joined_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("user", "room")
+
+    def __str__(self):
+        return f"{self.user.username} in {self.room.name}"
