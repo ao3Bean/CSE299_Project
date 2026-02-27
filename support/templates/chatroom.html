@@ -35,11 +35,13 @@
         <span class="nav-tooltip">Settings</span>
       </button>
 
-      <button class="nav-item nav-btn" id="saveRoom" aria-label="Save room">
-        <span class="nav-icon">&#9825;</span>
-        <span class="nav-label">Save Room</span>
-        <span class="nav-tooltip">Save Room</span>
-      </button>
+      {% if request.user == room.host %}
+        <button class="nav-item nav-btn" id="saveRoom" aria-label="Save room">
+          <span class="nav-icon">{% if room.is_saved %}&#9829;{% else %}&#9825;{% endif %}</span>
+          <span class="nav-label">{% if room.is_saved %}Saved{% else %}Save Room{% endif %}</span>
+          <span class="nav-tooltip">{% if room.is_saved %}Saved!{% else %}Save Room{% endif %}</span>
+        </button>
+      {% endif %}
 
     </nav>
 
@@ -74,7 +76,7 @@
         <!-- room header -->
             <div class="room-header card">
                 <div class="room-header-info">
-                <h1 class="room-name">{{ room.name|default:"Study Hall" }}</h1>
+                <h1 class="room-name">{{ room.name|default:"Study Hall" }} - {{ room.host|default:"Unknown" }}</h1>
                 <span class="room-count">
                 &#9679; <span id="participantCount">{{ room.participant_count|default:"1" }}</span> in room
                 </span>
@@ -292,7 +294,11 @@
 
     </div>
   </div>
-
+  <script>
+    const ROOM_ID = "{{ room.room_id }}";
+    const USERNAME = "{{ request.user.username }}";
+    const HOST = "{% if request.user == room.host %}true{% else %}false{% endif %}";
+  </script>
   <script src="{% static 'js/chatroom.js' %}" defer></script>
 </body>
 </html>

@@ -57,4 +57,4 @@ def create_room(request):
 @login_required
 def chatroom_view(request, room_id):
     room = get_object_or_404(Room, room_id=room_id)
-    return render(request, 'chatroom.html', {'rooms': room})
+    return render(request, 'chatroom.html', {'room': room})
