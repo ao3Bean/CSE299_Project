@@ -1,5 +1,6 @@
 {% extends "user_base.html" %}
 {% load static %}
+{% load rooms_extras %}
 {% block title %}Rooms - Cadence{% endblock %}
 {% block extra_css %}<link rel="stylesheet" href="{% static 'css/rooms.css' %}">{% endblock %}
 {% block nav_rooms %} active {% endblock %}
@@ -22,17 +23,31 @@
     <div class="rooms-grid"> 
 
         <!-- Create Room Button -->
-        <!-- will link later to different page -->
-       <a href="#" class="dash-card rooms-create-card"> 
-            <div class="rooms-create-icon">＋</div>
+        <!-- modal opens via to js when user clicks + matches id -->
+        <a href="#" class="dash-card rooms-create-card" id="openCreateModal"> 
+            <div class="rooms-create-icon">＋</div> 
         </a>
-
-        <!-- Room Cards — will replace with DTL loop laterrr endwhile similar to php-->
-    <!-- {% for room in rooms %}
-        
+        <!-- python for loop using dtl card template for room repeated, card colour switch (template tags) -->
+        {% for room in rooms %}
+          <a href="{% url 'chatroom' room.room_id %}" class="dash-card dash-card-{{ forloop.counter0|card_colour }}">
+              <div class="dash-card-icon">&#9654;</div>
+              <h3 class="dash-card-title">{{ room.name }}</h3>
+              <p class="dash-card-desc">{{ room.description|default:"No description." }}</p>
+              <p class="dash-card-desc">Privacy Status:
+                <!-- displays room status -->
+                {% if room.is_private %} 
+                    Private
+                {% else %}
+                    Public
+                {% endif %}
+              </p>
+              <div class="dash-card-arrow">&rarr;</div>
+          </a>
         {% empty %}
-   
-  {% endfor %} -->
+            <p class="rooms-empty-msg">
+            No saved spaces yet. Create one!
+            </p>
+        {% endfor %}
     </div>
 
     <!-- Pagination 
@@ -51,4 +66,43 @@
   </div>
 </div>
 
+<!-- Create Room Modal -->
+<div class="modal-backdrop" id="createModalBackdrop">
+  <div class="settings-modal">
+    <div class="modal-header">
+      <span class="modal-title">✦ Create a Room</span>
+      <button class="modal-close" id="closeCreateModal">&#10005;</button>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-title">Room Name</div>
+      <input type="text" id="roomName" class="modal-text-input" placeholder="e.g. Morning Brew">
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-title">Description (optional)</div>
+      <input type="text" id="roomDesc" class="modal-text-input" placeholder="What's the vibe?">
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-title">Privacy</div>
+      <div class="modal-privacy-btns">
+        <button class="modal-btn active" id="btnPublic" onclick="setPrivacy(false)">🌐 Public</button>
+        <button class="modal-btn state-btn" id="btnPrivate" onclick="setPrivacy(true)">🔒 Private</button>
+      </div>
+      <input type="text" id="roomPasscode" class="modal-text-input modal-passcode" placeholder="Passcode (optional)">
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn modal-btn-save" id="submitCreateRoom">Create Room</button>
+      <button class="modal-btn modal-btn-cancel" id="cancelCreateRoom">Cancel</button>
+    </div>
+  </div>
+</div>
+  
 {% endblock %}
+  
+{% block extra_js %}
+  <script>
+    const CREATE_ROOM_URL = "{% url 'create_room' %}"; //renders the correct url and stores it before passing to js to create form so no hardcoding for urls
+  </script>
+  <script src="{% static 'js/rooms.js' %}"></script>
+{% endblock %}
+
+  

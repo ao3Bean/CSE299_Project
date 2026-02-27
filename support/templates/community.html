@@ -1,5 +1,6 @@
 {% extends "user_base.html" %}
 {% load static %}
+{% load rooms_extras %}
 {% block title %}Rooms - Cadence{% endblock %}
 {% block extra_css %}<link rel="stylesheet" href="{% static 'css/rooms.css' %}">{% endblock %}
 {% block nav_community %} active {% endblock %}
@@ -18,29 +19,35 @@
 
     <div class="card rooms-panel">
         <h2 class="rooms-panel-title">Community Explore</h2>
-        <div class="rooms-grid">
+        <div class="rooms-grid"> 
 
-            <a href="#" class="dash-card dash-card-orange">
-                <div class="dash-card-icon">@</div>
-                <h3 class="dash-card-title">Popular Room</h3>
-                <p class="dash-card-desc">Solo focus session, no distractions.</p>
-                <div class="dash-card-arrow">&rarr;</div>
-            </a>
-        </div>
 
-        <!-- Pagination 
-        ?page={{ page_obj.previous_page_number }} and 
-        ?page={{ page_obj.next_page_number }} smth similar when we do backend-->
-        <div class="rooms-pagination">
-            <button class="rooms-page-btn" aria-label="Previous">&larr;</button>
-                <span class="rooms-page-indicator">
-                <span class="rooms-page-dot rooms-page-dot--active"></span>
-                <span class="rooms-page-dot"></span>
-                <span class="rooms-page-dot"></span>
-                </span>
-            <button class="rooms-page-btn" aria-label="Next">&rarr;</button>
+            {% for room in rooms %}
+                <a href="{% url 'chatroom' room.room_id %}" class="dash-card dash-card-{{ forloop.counter0|card_colour }}">
+                    <h3 class="dash-card-title">{{ room.name }}</h3>
+                    <p class="dash-card-desc">Hosts: {{ room.host }}</p>
+                    <p class="dash-card-desc">{{ room.description|default:"A public co-working space." }}</p>
+                    <div class="dash-card-arrow">&rarr;</div>
+                </a>
+            {% empty %}
+                <p style="opacity:0.5; font-size:13px; padding:12px;">No public rooms yet.</p>
+            {% endfor %}
         </div>
+            <!-- Pagination 
+            ?page={{ page_obj.previous_page_number }} and 
+            ?page={{ page_obj.next_page_number }} smth similar when we do backend-->
+            <div class="rooms-pagination">
+                <button class="rooms-page-btn" aria-label="Previous">&larr;</button>
+                    <span class="rooms-page-indicator">
+                    <span class="rooms-page-dot rooms-page-dot--active"></span>
+                    <span class="rooms-page-dot"></span>
+                    <span class="rooms-page-dot"></span>
+                    </span>
+                <button class="rooms-page-btn" aria-label="Next">&rarr;</button>
+            </div>
+        
     </div>
+
     <br>
     <div class="card rooms-panel">
         <h2 class="rooms-panel-title">User Activity</h2>

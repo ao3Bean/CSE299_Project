@@ -142,3 +142,146 @@
     transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
   
+/* Add these to your existing rooms.css */
+
+/* Empty state message */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(58, 21, 42, 0.35);
+  backdrop-filter: blur(3px);
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+.modal-backdrop.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.settings-modal {
+  background: var(--card);
+  border: 2.5px solid var(--border);
+  border-radius: 20px;
+  box-shadow: 8px 8px 0 var(--border);
+  width: 420px;
+  max-width: 92vw;
+  max-height: 85vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  transform: scale(0.95) translateY(12px);
+  transition: transform 0.2s;
+}
+.modal-backdrop.open .settings-modal {
+  transform: scale(1) translateY(0);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 22px 14px;
+  border-bottom: 2px solid var(--border);
+}
+
+.modal-title {
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.2px;
+}
+
+.modal-close {
+  width: 30px; height: 30px;
+  border-radius: 8px;
+  border: 2px solid var(--border);
+  background: var(--window);
+  cursor: pointer;
+  font-size: 13px;
+  box-shadow: var(--btn-shadow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, transform 0.12s;
+  font-family: inherit;
+}
+.modal-close:hover { background: var(--grid-item-bg); transform: translateY(-1px); }
+
+.modal-section {
+  padding: 16px 22px;
+  border-bottom: 1.5px solid rgba(58,21,42,0.1);
+}
+
+.modal-section-title {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.5;
+  margin-bottom: 12px;
+}
+
+.rooms-empty-msg {
+  opacity: 0.5;
+  font-size: 13px;
+  padding: 12px;
+}
+
+/* Modal text inputs (replaces inline styles on roomName, roomDesc, roomPasscode) */
+.modal-text-input {
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: 10px;
+  border: 2px solid var(--border);
+  font-family: inherit;
+  font-size: 14px;
+  background: var(--window);
+  color: var(--text-color);
+  box-sizing: border-box;
+}
+
+/* Privacy buttons row */
+.modal-privacy-btns {
+  display: flex;
+  gap: 10px;
+}
+
+/* Passcode field — hidden by default, shown when private is selected */
+.modal-passcode {
+  display: none;
+  margin-top: 10px;
+}
+
+.modal-passcode--visible {
+  display: block;
+}
+
+/* Modal Footer */
+.modal-footer {
+  display: flex;
+  gap: 10px;
+  padding: 14px 22px 18px;
+  justify-content: flex-end;
+}
+
+.modal-btn {
+  padding: 9px 20px;
+  border-radius: 10px;
+  border: 2px solid var(--border);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: var(--btn-shadow);
+  transition: transform 0.12s, box-shadow 0.12s, background 0.12s;
+}
+.modal-btn:hover  { transform: translateY(-2px); box-shadow: 3px 3px 0 var(--border); }
+.modal-btn:active { transform: translateY(1px);  box-shadow: 1px 1px 0 var(--border); }
+
+.modal-btn-save   { background: var(--accent); color: #fff; }
+.modal-btn-cancel { background: var(--window);  color: var(--text-color); }

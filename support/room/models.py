@@ -19,7 +19,7 @@ class Room(models.Model):
     background_preset = models.CharField(max_length=50, default="preset1")
     focus_duration = models.IntegerField(default=25)
     break_duration = models.IntegerField(default=5)
-    is_saved = models.BooleanField(default=False)
+    is_saved = models.BooleanField(default=True) #will change to false later, for testing only
     created_at = models.DateTimeField(auto_now_add=True)
     expires_at = models.DateTimeField(null=True, blank=True)
     max_participants = models.IntegerField(default=8)
