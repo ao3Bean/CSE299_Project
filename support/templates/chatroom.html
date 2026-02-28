@@ -8,11 +8,13 @@
   <link rel="stylesheet" href="{% static 'css/chatroom.css' %}">
   <script>
     try {
-      if (localStorage.getItem('cw_sidebar_expanded') === '1' &&
-          window.matchMedia('(min-width: 640px)').matches) {
+      if (
+        localStorage.getItem('cw_sidebar_expanded') === '1' &&
+        window.matchMedia('(min-width: 640px)').matches
+      ) {
         document.documentElement.classList.add('sidebar-expanded');
       }
-    } catch(e) {}
+    } catch (e) {}
   </script>
 </head>
 <body>
@@ -94,10 +96,10 @@
                  data-username="{{ participant.username }}"
                  data-state="idle">
               <div class="avatar-frame">
-                <img src="{% static 'img/avatars/idle.png' %}" class="avatar-img state-idle">
-                <img src="{% static 'img/avatars/focused.png' %}" class="avatar-img state-focused">
-                <img src="{% static 'img/avatars/break.png' %}" class="avatar-img state-break">
-                <img src="{% static 'img/avatars/chatting.png' %}" class="avatar-img state-chatting">
+                <img src="{% static 'img/avatars/idle.png' %}" alt="idle" class="avatar-img state-img state-idle">
+                <img src="{% static 'img/avatars/focused.png' %}" alt="focused" class="avatar-img state-img state-focused">
+                <img src="{% static 'img/avatars/break.png' %}" alt="break" class="avatar-img state-img state-break">
+                <img src="{% static 'img/avatars/chatting.png' %}" alt="chatting" class="avatar-img state-img state-chatting">
               </div>
               <span class="avatar-tooltip">
                 {% if participant == request.user %}
@@ -112,7 +114,46 @@
           {% endfor %}
         </div>
 
+        <!-- Timer + Music (MUST be inside room-left) -->
+        <div class="bottom-row">
+
+          <!-- Pomodoro Timer -->
+          <div class="timer-card card">
+            <div class="timer-label">Pomodoro</div>
+            <div class="timer-display" id="timerDisplay">25:00</div>
+            <div class="timer-mode-badge" id="timerModeBadge">Focus</div>
+            <div class="timer-btns">
+              <button class="timer-btn timer-btn-start" id="timerStart">&#9654; Start</button>
+              <button class="timer-btn timer-btn-reset" id="timerReset">&#9632; Reset</button>
+            </div>
+          </div>
+
+          <!-- Music Player -->
+          <div class="music-card card">
+            <div class="music-label">Now Playing</div>
+            <div class="cassette-wrap">
+              <img
+                src="{% static 'img/cassette.gif' %}"
+                alt="cassette"
+                class="cassette-gif"
+                id="cassetteGif"
+                data-playing-src="{% static 'img/cassette.gif' %}"
+                data-stopped-src="{% static 'img/cassette_still.png' %}"
+              />
+            </div>
+            <div class="music-track-name" id="trackName">lofi chill vol. 1</div>
+            <div class="music-controls">
+              <button class="music-btn" id="prevTrack" aria-label="Previous">&#9664;&#9664;</button>
+              <button class="music-btn music-btn-play" id="playPause" aria-label="Play/Pause">&#9654;</button>
+              <button class="music-btn" id="nextTrack" aria-label="Next">&#9654;&#9654;</button>
+            </div>
+            <audio id="audioPlayer" loop></audio>
+          </div>
+
+        </div>
+
       </div>
+      <!-- END LEFT COLUMN -->
 
       <!-- RIGHT COLUMN -->
       <div class="room-right">
@@ -154,11 +195,13 @@
             </div>
 
             <div class="chat-input-area">
-              <input type="text"
-                     class="chat-input"
-                     id="chatInput"
-                     placeholder="say something..."
-                     maxlength="500" />
+              <input
+                type="text"
+                class="chat-input"
+                id="chatInput"
+                placeholder="say something..."
+                maxlength="500"
+              />
               <button class="chat-send-btn" id="chatSend">
                 &#10148;
               </button>
@@ -166,6 +209,66 @@
 
           </div>
         </div>
+      </div>
+      <!-- END RIGHT COLUMN -->
+
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div class="modal-backdrop" id="modalBackdrop" aria-hidden="true">
+    <div class="settings-modal" role="dialog" aria-modal="true" aria-label="Room Settings">
+
+      <div class="modal-header">
+        <span class="modal-title">&#9881; Room Settings</span>
+        <button class="modal-close" id="closeSettings" aria-label="Close">&#10005;</button>
+      </div>
+
+      <!-- Background presets -->
+      <div class="modal-section">
+        <div class="modal-section-title">Background</div>
+        <div class="bg-presets">
+          <button class="bg-preset bg-preset-1 active" data-bg="preset1" aria-label="Preset 1"></button>
+          <button class="bg-preset bg-preset-2" data-bg="preset2" aria-label="Preset 2"></button>
+          <button class="bg-preset bg-preset-3" data-bg="preset3" aria-label="Preset 3"></button>
+          <button class="bg-preset bg-preset-4" data-bg="preset4" aria-label="Preset 4"></button>
+          <button class="bg-preset bg-preset-5" data-bg="preset5" aria-label="Preset 5"></button>
+          <button class="bg-preset bg-preset-img" data-bg="img1" aria-label="Image 1">
+            <span class="bg-preset-label">🌿</span>
+          </button>
+          <button class="bg-preset bg-preset-img" data-bg="img2" aria-label="Image 2">
+            <span class="bg-preset-label">🌙</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Timer settings -->
+      <div class="modal-section">
+        <div class="modal-section-title">Timer Limits</div>
+        <div class="timer-settings">
+          <div class="timer-setting-row">
+            <label class="timer-setting-label" for="focusDuration">Focus (min)</label>
+            <div class="timer-setting-control">
+              <button class="timer-nudge" data-target="focusDuration" data-dir="-1">&#8722;</button>
+              <input type="number" id="focusDuration" class="timer-setting-input" value="25" min="1" max="90">
+              <button class="timer-nudge" data-target="focusDuration" data-dir="1">&#43;</button>
+            </div>
+          </div>
+
+          <div class="timer-setting-row">
+            <label class="timer-setting-label" for="breakDuration">Break (min)</label>
+            <div class="timer-setting-control">
+              <button class="timer-nudge" data-target="breakDuration" data-dir="-1">&#8722;</button>
+              <input type="number" id="breakDuration" class="timer-setting-input" value="5" min="1" max="30">
+              <button class="timer-nudge" data-target="breakDuration" data-dir="1">&#43;</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="modal-btn modal-btn-save" id="applySettings">Apply Settings</button>
+        <button class="modal-btn modal-btn-cancel" id="closeSettingsFooter">Cancel</button>
       </div>
 
     </div>
@@ -178,6 +281,5 @@
   </script>
 
   <script src="{% static 'js/chatroom.js' %}" defer></script>
-
 </body>
 </html>
