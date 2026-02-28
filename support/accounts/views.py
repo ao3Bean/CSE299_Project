@@ -43,7 +43,7 @@ def logout(request):
     messages.info(request, "You've been logged out.")
     return redirect("login")
 
-
+#I'm trying to test the push command 
 def password_reset(request):
     if request.method == "POST":
         email = request.POST.get("email")
