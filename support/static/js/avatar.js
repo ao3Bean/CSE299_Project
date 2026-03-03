@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
         skin:      document.getElementById('layer-skin'),
         outfit:    document.getElementById('layer-outfit'),
         hair:      document.getElementById('layer-hair'),
-        eyes:      document.getElementById('layer-eyes'),
+        face:      document.getElementById('layer-face'),
         accessory: document.getElementById('layer-accessory'),
     };
 
@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
         skin:      'skin-1',
         hair:      'hair-1',
         hairColor: 'black',
-        eyes:      'eyes-1',
+        face:      'face-1',
         eyeColor:  'brown',
         outfit:    'outfit-1',
         accessory: 'acc-1',
@@ -57,23 +57,23 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    document.querySelectorAll('.hair-color').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.hair-color').forEach(b => b.classList.remove('selected'));
-            btn.classList.add('selected');
-            avatarState.hairColor = btn.dataset.color;
-            // TODO: Apply hair colour — CSS filter or load coloured image variant
-        });
-    });
+    // document.querySelectorAll('.hair-color').forEach(btn => {
+    //     btn.addEventListener('click', () => {
+    //         document.querySelectorAll('.hair-color').forEach(b => b.classList.remove('selected'));
+    //         btn.classList.add('selected');
+    //         avatarState.hairColor = btn.dataset.color;
+    //         // TODO: Apply hair colour — CSS filter or load coloured image variant
+    //     });
+    // });
 
-    document.querySelectorAll('.eye-color').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.eye-color').forEach(b => b.classList.remove('selected'));
-            btn.classList.add('selected');
-            avatarState.eyeColor = btn.dataset.color;
-            // TODO: Apply eye colour
-        });
-    });
+    // document.querySelectorAll('.eye-color').forEach(btn => {
+    //     btn.addEventListener('click', () => {
+    //         document.querySelectorAll('.eye-color').forEach(b => b.classList.remove('selected'));
+    //         btn.classList.add('selected');
+    //         avatarState.eyeColor = btn.dataset.color;
+    //         // TODO: Apply eye colour
+    //     });
+    // });
 
     //  Layer Update 
     function updateAvatarLayer(layerType, src) {

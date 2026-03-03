@@ -11,7 +11,7 @@
 <body>
 
     <!-- Back Button: top-left, routes based on auth status -->
-    <a href="{% if user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'index' %}{% endif %}"
+    <a href="{% if user.is_authenticated %}{% url 'user_dashboard' %}{% else %}{% url 'index' %}{% endif %}"
        class="back-btn" aria-label="Go back">&#171;</a>
 
     <!-- Page Title Pill -->
@@ -27,16 +27,15 @@
             <!-- LEFT: Avatar Preview -->
             <div class="avatar-preview-box">
                     <!-- TODO: Uncomment layers when image assets are ready -->
-                    <!--
-                    <img src="{% static 'images/avatar/base/default.png' %}"      class="avatar-layer" id="layer-base"      data-layer="base">
-                    <img src="{% static 'images/avatar/skin/default.png' %}"      class="avatar-layer" id="layer-skin"      data-layer="skin">
-                    <img src="{% static 'images/avatar/outfit/default.png' %}"    class="avatar-layer" id="layer-outfit"    data-layer="outfit">
-                    <img src="{% static 'images/avatar/hair/default.png' %}"      class="avatar-layer" id="layer-hair"      data-layer="hair">
-                    <img src="{% static 'images/avatar/eyes/default.png' %}"      class="avatar-layer" id="layer-eyes"      data-layer="eyes">
-                    <img src="{% static 'images/avatar/accessory/default.png' %}" class="avatar-layer" id="layer-accessory" data-layer="accessory">
-                    -->
-                    <div class="avatar-placeholder">
-                    </div>
+                <div class="avatar-canvas">    
+                    <img src="{% static 'img/avatars/skin/skin_1.png' %}"      class="avatar-layer" id="layer-skin"      data-layer="skin">
+                    <!-- <img src="{% static 'images/avatar/skin/default.png' %}"      class="avatar-layer" id="layer-skin"      data-layer="skin"> -->
+                    <img src="{% static 'img/avatars/outfit/outfit_1.png' %}"    class="avatar-layer" id="layer-outfit"    data-layer="outfit">
+                    <img src="{% static 'img/avatars/hair/hair_5.png' %}"      class="avatar-layer" id="layer-hair"      data-layer="hair">
+                    <img src="{% static 'img/avatars/face/face_3.png' %}"      class="avatar-layer" id="layer-face"      data-layer="face">
+                    <!-- <img src="{% static 'images/avatar/accessory/default.png' %}" class="avatar-layer" id="layer-accessory" data-layer="accessory"> -->
+                   
+                </div>
             </div>
 
             <!-- RIGHT: Customisation -->
@@ -52,9 +51,9 @@
                         <span class="tab-icon">💇</span>
                         <span class="tab-label">Hair</span>
                     </button>
-                    <button class="tab-btn" data-tab="eyes">
-                        <span class="tab-icon">👁️</span>
-                        <span class="tab-label">Eyes</span>
+                    <button class="tab-btn" data-tab="face">
+                        <span class="tab-icon"></span>
+                        <span class="tab-label">face</span>
                     </button>
                     <button class="tab-btn" data-tab="outfit">
                         <span class="tab-icon">👕</span>
@@ -94,33 +93,17 @@
                             <button class="item-btn image-btn"          data-item="hair-4"    data-src="#"><img src="#" alt="Hair 4"></button>
                             <button class="item-btn image-btn"          data-item="hair-none" data-src=""><span class="none-icon">🚫</span></button>
                         </div>
-                        <p class="sub-panel-title">Hair Color</p>
-                        <div class="item-grid color-grid">
-                            <!-- TODO: apply CSS filter or load coloured variant on click -->
-                            <button class="item-btn color-btn hair-color selected" data-color="black"  style="background:#1a1a1a;"></button>
-                            <button class="item-btn color-btn hair-color"          data-color="brown"  style="background:#5c4033;"></button>
-                            <button class="item-btn color-btn hair-color"          data-color="blonde" style="background:#d4a857;"></button>
-                            <button class="item-btn color-btn hair-color"          data-color="red"    style="background:#a52a2a;"></button>
-                            <button class="item-btn color-btn hair-color"          data-color="pink"   style="background:#ff6fae;"></button>
-                            <button class="item-btn color-btn hair-color"          data-color="blue"   style="background:#5b9cff;"></button>
-                        </div>
+                        
                     </div>
 
-                    <!-- Eyes -->
-                    <div class="tab-panel" id="panel-eyes" data-panel="eyes">
+                    <!-- face -->
+                    <div class="tab-panel" id="panel-face" data-panel="face">
                         <p class="panel-title">Eye Style</p>
                         <div class="item-grid">
                             <!-- TODO: Populate from backend -->
-                            <button class="item-btn image-btn selected" data-item="eyes-1" data-src="#"><img src="#" alt="Eyes 1"></button>
-                            <button class="item-btn image-btn"          data-item="eyes-2" data-src="#"><img src="#" alt="Eyes 2"></button>
-                            <button class="item-btn image-btn"          data-item="eyes-3" data-src="#"><img src="#" alt="Eyes 3"></button>
-                        </div>
-                        <p class="sub-panel-title">Eye Color</p>
-                        <div class="item-grid color-grid">
-                            <button class="item-btn color-btn eye-color selected" data-color="brown"  style="background:#5c4033;"></button>
-                            <button class="item-btn color-btn eye-color"          data-color="blue"   style="background:#4a90d9;"></button>
-                            <button class="item-btn color-btn eye-color"          data-color="green"  style="background:#4a7c59;"></button>
-                            <button class="item-btn color-btn eye-color"          data-color="hazel"  style="background:#8e7618;"></button>
+                            <button class="item-btn image-btn selected" data-item="face-1" data-src="#"><img src="#" alt="face 1"></button>
+                            <button class="item-btn image-btn"          data-item="face-2" data-src="#"><img src="#" alt="face 2"></button>
+                            <button class="item-btn image-btn"          data-item="face-3" data-src="#"><img src="#" alt="face 3"></button>
                         </div>
                     </div>
 

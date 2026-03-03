@@ -99,18 +99,14 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 320px;
+    min-height: 350px;
     padding: 20px;
 }
 
 .avatar-canvas {
     position: relative;
-    width: 180px;
-    height: 220px;
-    border-radius: 16px;
-    background: var(--window);
-    border: 2px solid var(--border);
-    box-shadow: var(--shadow);
+    width: 110%;
+    height: 110%;
     overflow: hidden;
     display: flex;
     align-items: center;
@@ -138,10 +134,7 @@ body {
     height: 100%;
 }
 
-.avatar-placeholder-emoji {
-    font-size: 90px;
-    opacity: 0.3;
-}
+
 
 /* Customise Box */
 .avatar-customise-box {
