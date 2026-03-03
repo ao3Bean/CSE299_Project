@@ -19,13 +19,14 @@ class Room(models.Model):
     background_preset = models.CharField(max_length=50, default="preset1")
     focus_duration = models.IntegerField(default=25)
     break_duration = models.IntegerField(default=5)
-    is_saved = models.BooleanField(default=True) #will change to false later, for testing only
+    is_saved = models.BooleanField(default=False) #will change to false later, for testing only
     created_at = models.DateTimeField(auto_now_add=True)
     expires_at = models.DateTimeField(null=True, blank=True)
     max_participants = models.IntegerField(default=8)
 
     def save(self, *args, **kwargs):
-        if not self.expires_at:
+        if self.pk is None and not self.expires_at:
+        # Only set expiry on first creation
             self.expires_at = timezone.now() + timedelta(hours=24)
         super().save(*args, **kwargs)
 

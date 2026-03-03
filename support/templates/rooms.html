@@ -63,7 +63,44 @@
         <button class="rooms-page-btn" aria-label="Next">&rarr;</button>
     </div>
 
+    
+
   </div>
+
+  <!-- Temporary Rooms Card -->
+  {% if temp_rooms %}
+  <div class="card rooms-panel rooms-panel-temp">
+    <h2 class="rooms-panel-title">
+      Temporary Spaces 
+      <span class="temp-badge">expires in 24hrs</span>
+    </h2>
+    <div class="rooms-grid">
+      {% for room in temp_rooms %}
+      <a href="{% url 'chatroom' room.room_id %}" 
+        class="dash-card dash-card-{{ forloop.counter0|card_colour }}">
+        <h3 class="dash-card-title">{{ room.name }}</h3>
+        <p class="dash-card-desc">{{ room.description|default:"Temporary room." }}</p>
+        <p class="temp-expires">
+          ⏳ expires {{ room.expires_at|timeuntil }} ago
+        </p>
+        <div class="dash-card-arrow">&rarr;</div>
+      </a>
+      {% endfor %}
+    </div>
+    <!-- Pagination 
+     ?page={{ page_obj.previous_page_number }} and 
+     ?page={{ page_obj.next_page_number }} smth similar when we do backend-->
+    <div class="rooms-pagination">
+      <button class="rooms-page-btn" aria-label="Previous">&larr;</button>
+          <span class="rooms-page-indicator">
+          <span class="rooms-page-dot rooms-page-dot--active"></span>
+          <span class="rooms-page-dot"></span>
+          <span class="rooms-page-dot"></span>
+          </span>
+      <button class="rooms-page-btn" aria-label="Next">&rarr;</button>
+    </div>
+  </div>
+  {% endif %}
 </div>
 
 <!-- Create Room Modal -->

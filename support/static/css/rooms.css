@@ -285,3 +285,29 @@
 
 .modal-btn-save   { background: var(--accent); color: #fff; }
 .modal-btn-cancel { background: var(--window);  color: var(--text-color); }
+
+.rooms-panel-temp {
+  border: 4px dashed var(--dash-orange);
+  border-color: var(--dash-orange);
+  box-shadow: 4px 4px 0 var(--dash-orange);
+  margin-top: 20px;
+}
+
+.temp-badge {
+  font-size: 12px;
+  font-weight: 100;
+  background: rgba(255, 179, 102, 0.2);
+  border: 2.5px dashed var(--dash-orange);
+  border-radius: 20px;
+  padding: 2px 8px;
+  color: var(--card);
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.temp-expires {
+  font-size: 11px;
+  font-weight: 600;
+  opacity: 0.6;
+  margin-top: 4px;
+}

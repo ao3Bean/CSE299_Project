@@ -36,7 +36,9 @@
       </button>
 
       {% if request.user == room.host %}
-        <button class="nav-item nav-btn" id="saveRoom" aria-label="Save room">
+        <button class="nav-item nav-btn" id="saveRoom" 
+                aria-label="Save room"
+                data-saved="{{ room.is_saved|yesno:'true,false' }}">
           <span class="nav-icon">{% if room.is_saved %}&#9829;{% else %}&#9825;{% endif %}</span>
           <span class="nav-label">{% if room.is_saved %}Saved{% else %}Save Room{% endif %}</span>
           <span class="nav-tooltip">{% if room.is_saved %}Saved!{% else %}Save Room{% endif %}</span>

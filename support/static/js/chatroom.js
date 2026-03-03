@@ -330,11 +330,38 @@ chatInput.addEventListener('keydown', e => {
 });
 
 // Save room button (heart)
-document.getElementById('saveRoom').addEventListener('click', () => {
-  // TODO: POST to Django view to save/favourite the room
-  // fetch(`/rooms/${ROOM_ID}/save/`, { method: 'POST', headers: { 'X-CSRFToken': getCookie('csrftoken') } });
-  const btn = document.getElementById('saveRoom');
-  const icon = btn.querySelector('.nav-icon');
-  icon.textContent = '♥';
-  icon.style.color = '#ff6fae';
-});
+const saveRoomBtn = document.getElementById('saveRoom');
+
+if (saveRoomBtn) {  //only exists if user is host
+  saveRoomBtn.addEventListener('click', async () => { //async makes callback function asynchronous, so we can use await inside it
+    const icon = saveRoomBtn.querySelector('.nav-icon'); //grabbing css classes 
+    const label = saveRoomBtn.querySelector('.nav-label');
+    const tooltip = saveRoomBtn.querySelector('.nav-tooltip');
+
+    //If already saved, do nothing
+    if (saveRoomBtn.dataset.saved === 'true') return;
+
+    try {
+      const res = await fetch(`/rooms/${ROOM_ID}/save/`, { //fetch makes http request
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '' // CSRF token from cookie cross-site request forgery protection
+        }
+      });
+
+      const data = await res.json(); //parse response as json
+
+      if (data.success) { //updating UI
+        icon.textContent = '♥';
+        icon.style.color = '#ff6fae';
+        label.textContent = 'Saved!';
+        tooltip.textContent = 'Saved!';
+        saveRoomBtn.dataset.saved = 'true';
+      } else {
+        alert('Could not save room.');
+      }
+    } catch(err) {
+      console.error('Save failed:', err);
+    }
+  });
+}

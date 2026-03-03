@@ -3,7 +3,11 @@ from .models import Room
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
+from django.views.decorators.http import require_POST
 import json
+from django.utils import timezone
+from datetime import timedelta
+
 
 #Create your views here.
 def community(request): 
@@ -21,10 +25,18 @@ def room_detail(request, room_id):
 
 
 @login_required
-def rooms_view(request):
+def rooms_view(request): #django ORM to sql
     #Only show rooms hosted by this user (their saved spaces)
-    saved_rooms = Room.objects.filter(host=request.user, is_saved=True) 
-    return render(request, 'rooms.html', {'rooms': saved_rooms})
+    saved_rooms = Room.objects.filter(host=request.user,is_saved=True)
+    temp_rooms = Room.objects.filter(
+        host=request.user,
+        is_saved=False,
+        expires_at__gt=timezone.now()  #calculate expiry for temp rooms, only show if not expired
+    )
+    return render(request, 'rooms.html', { #path both for the loops in rooms.html so django can load them
+        'rooms': saved_rooms,
+        'temp_rooms': temp_rooms
+    })
 
 
 @login_required
@@ -44,7 +56,7 @@ def create_room(request):
             is_private=data.get('is_private', False),
             passcode=data.get('passcode', None),
             host=request.user,
-            is_saved=True,  #for now all created rooms are saved
+            is_saved=False,  #changed all rooms are unsaved by default
         )
         return JsonResponse({ 
             'success': True, 
@@ -58,3 +70,18 @@ def create_room(request):
 def chatroom_view(request, room_id):
     room = get_object_or_404(Room, room_id=room_id)
     return render(request, 'chatroom.html', {'room': room})
+
+@login_required
+@require_POST #blocks any other request
+def save_room(request, room_id):
+    room = get_object_or_404(Room, room_id=room_id)
+
+    # Only host can save
+    if request.user != room.host:
+        return JsonResponse({'success': False, 'error': 'Not the host'}, status=403)
+    #changing rooms to saved
+    room.is_saved = True
+    room.expires_at = None  # no expiry once saved
+    room.save()
+
+    return JsonResponse({'success': True}) #response for res.js to handle, if success true, show saved message, else show error
