@@ -1,0 +1,167 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avatar Settings – Cadence</title>
+    <link href="{% static 'css/user_base.css' %}" rel="stylesheet">
+    <link href="{% static 'css/avatar.css' %}" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Back Button: top-left, routes based on auth status -->
+    <a href="{% if user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'index' %}{% endif %}"
+       class="back-btn" aria-label="Go back">&#171;</a>
+
+    <!-- Page Title Pill -->
+    <div class="avatar-title-wrap">
+        <h1 class="avatar-title-pill">Your Cadence Avatar</h1>
+    </div>
+
+    <!-- Main Card -->
+    <div class="avatar-main-card card">
+
+        <div class="avatar-inner-grid">
+
+            <!-- LEFT: Avatar Preview -->
+            <div class="avatar-preview-box">
+                    <!-- TODO: Uncomment layers when image assets are ready -->
+                    <!--
+                    <img src="{% static 'images/avatar/base/default.png' %}"      class="avatar-layer" id="layer-base"      data-layer="base">
+                    <img src="{% static 'images/avatar/skin/default.png' %}"      class="avatar-layer" id="layer-skin"      data-layer="skin">
+                    <img src="{% static 'images/avatar/outfit/default.png' %}"    class="avatar-layer" id="layer-outfit"    data-layer="outfit">
+                    <img src="{% static 'images/avatar/hair/default.png' %}"      class="avatar-layer" id="layer-hair"      data-layer="hair">
+                    <img src="{% static 'images/avatar/eyes/default.png' %}"      class="avatar-layer" id="layer-eyes"      data-layer="eyes">
+                    <img src="{% static 'images/avatar/accessory/default.png' %}" class="avatar-layer" id="layer-accessory" data-layer="accessory">
+                    -->
+                    <div class="avatar-placeholder">
+                    </div>
+            </div>
+
+            <!-- RIGHT: Customisation -->
+            <div class="avatar-customise-box">
+
+                <!-- Tab Buttons -->
+                <div class="tab-buttons">
+                    <button class="tab-btn active" data-tab="skin">
+                        <span class="tab-icon">👤</span>
+                        <span class="tab-label">Skin</span>
+                    </button>
+                    <button class="tab-btn" data-tab="hair">
+                        <span class="tab-icon">💇</span>
+                        <span class="tab-label">Hair</span>
+                    </button>
+                    <button class="tab-btn" data-tab="eyes">
+                        <span class="tab-icon">👁️</span>
+                        <span class="tab-label">Eyes</span>
+                    </button>
+                    <button class="tab-btn" data-tab="outfit">
+                        <span class="tab-icon">👕</span>
+                        <span class="tab-label">Outfit</span>
+                    </button>
+                    <button class="tab-btn" data-tab="accessory">
+                        <span class="tab-icon">✨</span>
+                        <span class="tab-label">Extras</span>
+                    </button>
+                </div>
+
+                <!-- Tab Panels -->
+                <div class="tab-panels">
+
+                    <!-- Skin -->
+                    <div class="tab-panel active" id="panel-skin" data-panel="skin">
+                        <p class="panel-title">Skin Tone</p>
+                        <div class="item-grid color-grid">
+                            <!-- TODO: Populate from backend -->
+                            <button class="item-btn color-btn selected" data-item="skin-1" data-src="#" style="background:#FFDFC4;"></button>
+                            <button class="item-btn color-btn"          data-item="skin-2" data-src="#" style="background:#F0C8A0;"></button>
+                            <button class="item-btn color-btn"          data-item="skin-3" data-src="#" style="background:#D4A574;"></button>
+                            <button class="item-btn color-btn"          data-item="skin-4" data-src="#" style="background:#A67C52;"></button>
+                            <button class="item-btn color-btn"          data-item="skin-5" data-src="#" style="background:#8B5A2B;"></button>
+                            <button class="item-btn color-btn"          data-item="skin-6" data-src="#" style="background:#5C4033;"></button>
+                        </div>
+                    </div>
+
+                    <!-- Hair -->
+                    <div class="tab-panel" id="panel-hair" data-panel="hair">
+                        <p class="panel-title">Hairstyle</p>
+                        <div class="item-grid">
+                            <!-- TODO: Populate from backend -->
+                            <button class="item-btn image-btn selected" data-item="hair-1"    data-src="#"><img src="#" alt="Hair 1"></button>
+                            <button class="item-btn image-btn"          data-item="hair-2"    data-src="#"><img src="#" alt="Hair 2"></button>
+                            <button class="item-btn image-btn"          data-item="hair-3"    data-src="#"><img src="#" alt="Hair 3"></button>
+                            <button class="item-btn image-btn"          data-item="hair-4"    data-src="#"><img src="#" alt="Hair 4"></button>
+                            <button class="item-btn image-btn"          data-item="hair-none" data-src=""><span class="none-icon">🚫</span></button>
+                        </div>
+                        <p class="sub-panel-title">Hair Color</p>
+                        <div class="item-grid color-grid">
+                            <!-- TODO: apply CSS filter or load coloured variant on click -->
+                            <button class="item-btn color-btn hair-color selected" data-color="black"  style="background:#1a1a1a;"></button>
+                            <button class="item-btn color-btn hair-color"          data-color="brown"  style="background:#5c4033;"></button>
+                            <button class="item-btn color-btn hair-color"          data-color="blonde" style="background:#d4a857;"></button>
+                            <button class="item-btn color-btn hair-color"          data-color="red"    style="background:#a52a2a;"></button>
+                            <button class="item-btn color-btn hair-color"          data-color="pink"   style="background:#ff6fae;"></button>
+                            <button class="item-btn color-btn hair-color"          data-color="blue"   style="background:#5b9cff;"></button>
+                        </div>
+                    </div>
+
+                    <!-- Eyes -->
+                    <div class="tab-panel" id="panel-eyes" data-panel="eyes">
+                        <p class="panel-title">Eye Style</p>
+                        <div class="item-grid">
+                            <!-- TODO: Populate from backend -->
+                            <button class="item-btn image-btn selected" data-item="eyes-1" data-src="#"><img src="#" alt="Eyes 1"></button>
+                            <button class="item-btn image-btn"          data-item="eyes-2" data-src="#"><img src="#" alt="Eyes 2"></button>
+                            <button class="item-btn image-btn"          data-item="eyes-3" data-src="#"><img src="#" alt="Eyes 3"></button>
+                        </div>
+                        <p class="sub-panel-title">Eye Color</p>
+                        <div class="item-grid color-grid">
+                            <button class="item-btn color-btn eye-color selected" data-color="brown"  style="background:#5c4033;"></button>
+                            <button class="item-btn color-btn eye-color"          data-color="blue"   style="background:#4a90d9;"></button>
+                            <button class="item-btn color-btn eye-color"          data-color="green"  style="background:#4a7c59;"></button>
+                            <button class="item-btn color-btn eye-color"          data-color="hazel"  style="background:#8e7618;"></button>
+                        </div>
+                    </div>
+
+                    <!-- Outfit -->
+                    <div class="tab-panel" id="panel-outfit" data-panel="outfit">
+                        <p class="panel-title">Outfit</p>
+                        <div class="item-grid">
+                            <!-- TODO: Populate from backend -->
+                            <button class="item-btn image-btn selected" data-item="outfit-1" data-src="#"><img src="#" alt="Outfit 1"></button>
+                            <button class="item-btn image-btn"          data-item="outfit-2" data-src="#"><img src="#" alt="Outfit 2"></button>
+                            <button class="item-btn image-btn"          data-item="outfit-3" data-src="#"><img src="#" alt="Outfit 3"></button>
+                            <button class="item-btn image-btn"          data-item="outfit-4" data-src="#"><img src="#" alt="Outfit 4"></button>
+                        </div>
+                    </div>
+
+                    <!-- Accessories -->
+                    <div class="tab-panel" id="panel-accessory" data-panel="accessory">
+                        <p class="panel-title">Accessories</p>
+                        <div class="item-grid">
+                            <!-- TODO: Populate from backend -->
+                            <button class="item-btn image-btn"          data-item="acc-none" data-src=""><span class="none-icon">🚫</span></button>
+                            <button class="item-btn image-btn selected" data-item="acc-1"    data-src="#"><img src="#" alt="Glasses"></button>
+                            <button class="item-btn image-btn"          data-item="acc-2"    data-src="#"><img src="#" alt="Headphones"></button>
+                            <button class="item-btn image-btn"          data-item="acc-3"    data-src="#"><img src="#" alt="Hat"></button>
+                        </div>
+                    </div>
+
+                </div><!-- /tab-panels -->
+
+            </div><!-- /avatar-customise-box -->
+
+        </div><!-- /avatar-inner-grid -->
+
+        <!-- Bottom Actions -->
+        <div class="avatar-actions">
+            <button class="btn btn-primary"   id="btn-save">Confirm</button>
+            <button class="btn btn-secondary" id="btn-randomize">Reset</button>
+        </div>
+
+    </div><!-- /avatar-main-card -->
+
+    <script src="{% static 'js/avatar.js' %}"></script>
+</body>
+</html>

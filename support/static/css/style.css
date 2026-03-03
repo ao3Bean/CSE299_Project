@@ -3,6 +3,9 @@
   --window: #fff4e6;
   --border: #ff8fb1;
   --title: #ff6fae;
+  --accent:#ff6fae;
+  --border-btn:#3a152a;
+
 }
 
 body {
@@ -73,3 +76,34 @@ button:active {
 .message.success { background: #d1fae5; color: #065f46; }
 .message.error   { background: #fee2e2; color: #991b1b; }
 .message.info    { background: #dbeafe; color: #1e40af; }
+
+.back-btn {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 200;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent);
+  color: #fff;
+  font-size: 18px;
+  font-weight: 900;
+  border: 2.5px solid var(--border-btn);
+  border-radius: 10px;
+  box-shadow: 3px 3px 0 var(--border-btn);
+  text-decoration: none;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.back-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 4px 4px 0 var(--border-btn);
+}
+
+.back-btn:active {
+  transform: translateY(1px);
+  box-shadow: 2px 2px 0 var(--border-btn);
+}

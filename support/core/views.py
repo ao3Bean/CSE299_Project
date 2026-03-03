@@ -34,3 +34,6 @@ def friends(request):
 @login_required(login_url="login")
 def user_profile(request):
     return render(request, "user_profile.html")
+
+def avatar(request):
+    return render(request, "avatar.html")
