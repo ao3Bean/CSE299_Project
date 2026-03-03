@@ -134,12 +134,98 @@
 </div>
   
 {% endblock %}
-  
+
+
+
 {% block extra_js %}
   <script>
     const CREATE_ROOM_URL = "{% url 'create_room' %}"; //renders the correct url and stores it before passing to js to create form so no hardcoding for urls
   </script>
   <script src="{% static 'js/rooms.js' %}"></script>
+
+
+  <!--JavaScript for Pagination + Live Search (Saved Spaces)-->
+  <script>
+    const ROOMS_PER_PAGE_FIRST = 5; // page 0 has + button taking 1 spot
+    const ROOMS_PER_PAGE_REST  = 6; // all other pages show 6
+    
+    // allCards excludes the + create button
+    const allCards = Array.from(document.querySelectorAll('.rooms-grid .dash-card:not(.rooms-create-card)'));
+    const prevBtn  = document.querySelector('.rooms-page-btn[aria-label="Previous"]');
+    const nextBtn  = document.querySelector('.rooms-page-btn[aria-label="Next"]');
+    const searchInput = document.querySelector('.rooms-search');
+    let currentPage  = 0;
+    let visibleCards = allCards; // tracks search-filtered cards
+
+    function totalPages() {
+      // page 0 holds ROOMS_PER_PAGE_FIRST, rest hold ROOMS_PER_PAGE_REST
+      if (visibleCards.length === 0) return 1;
+      const afterFirst = Math.max(0, visibleCards.length - ROOMS_PER_PAGE_FIRST);
+      return 1 + Math.ceil(afterFirst / ROOMS_PER_PAGE_REST);
+    }
+
+    function getPageCards(page) {
+      // returns the slice of visibleCards for this page
+      if (page === 0) {
+        return visibleCards.slice(0, ROOMS_PER_PAGE_FIRST);
+      }
+      const start = ROOMS_PER_PAGE_FIRST + (page - 1) * ROOMS_PER_PAGE_REST;
+      return visibleCards.slice(start, start + ROOMS_PER_PAGE_REST);
+    }
+
+    function showPage(page) {
+      // hide all cards first
+      allCards.forEach(card => card.style.display = 'none');
+
+      // show + button only on page 0
+      const createCard = document.getElementById('openCreateModal');
+      createCard.style.display = page === 0 ? '' : 'none';
+
+      // show cards for this page
+      getPageCards(page).forEach(card => card.style.display = '');
+
+      updateDots(page);
+      prevBtn.disabled = page === 0;
+      nextBtn.disabled = page >= totalPages() - 1;
+      currentPage = page;
+    }
+
+    function updateDots(page) {
+      const indicator = document.querySelector('.rooms-page-indicator');
+      indicator.innerHTML = '';
+      for (let i = 0; i < totalPages(); i++) {
+        const dot = document.createElement('span');
+        dot.className = 'rooms-page-dot' + (i === page ? ' rooms-page-dot--active' : '');
+        indicator.appendChild(dot);
+      }
+    }
+
+    // Live search — filters cards then resets to page 0
+    searchInput.addEventListener('input', function() {
+      const query = this.value.toLowerCase().trim();
+      if (query === '') {
+        visibleCards = allCards;
+      } else {
+        visibleCards = allCards.filter(card => {
+          const title = card.querySelector('.dash-card-title')?.textContent.toLowerCase() || '';
+          const desc  = card.querySelector('.dash-card-desc')?.textContent.toLowerCase() || '';
+          return title.includes(query) || desc.includes(query);
+        });
+      }
+      showPage(0);
+    });
+
+    prevBtn.addEventListener('click', () => { if (currentPage > 0) showPage(currentPage - 1); });
+    nextBtn.addEventListener('click', () => { if (currentPage < totalPages() - 1) showPage(currentPage + 1); });
+
+    showPage(0);
+  </script>
+
+
 {% endblock %}
+
+
+
+
 
   
