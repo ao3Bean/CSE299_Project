@@ -1144,3 +1144,51 @@
     .bottom-row { flex-direction: column; }
     .music-card { width: 100%; flex-direction: row; flex-wrap: wrap; justify-content: center; }
   }
+
+
+  /* Share modal */
+.share-link-wrap {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.share-link-input {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 2px solid var(--border);
+  background: var(--window);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-color);
+  box-shadow: var(--btn-shadow);
+  outline: none;
+}
+
+.share-copy-btn {
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: 2px solid var(--border);
+  background: var(--accent2);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: var(--btn-shadow);
+  transition: transform 0.12s, box-shadow 0.12s;
+  white-space: nowrap;
+}
+.share-copy-btn:hover  { transform: translateY(-1px); box-shadow: 3px 3px 0 var(--border); }
+.share-copy-btn:active { transform: translateY(1px);  box-shadow: 1px 1px 0 var(--border); }
+
+.share-copy-confirm {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--dash-green);
+  margin-top: 6px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.share-copy-confirm.visible { opacity: 1; }

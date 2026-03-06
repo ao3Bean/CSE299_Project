@@ -365,3 +365,39 @@ if (saveRoomBtn) {  //only exists if user is host
     }
   });
 }
+
+const shareBackdrop    = document.getElementById('shareModalBackdrop');
+const shareChatroomBtn = document.getElementById('shareChatroomBtn');
+const closeShareBtn    = document.getElementById('closeShareModal');
+const closeShareFooter = document.getElementById('closeShareFooter');
+const shareLinkInput   = document.getElementById('shareLinkInput');
+const copyLinkBtn      = document.getElementById('copyLinkBtn');
+const copyConfirm      = document.getElementById('copyConfirm');
+
+// Set link on page load
+shareLinkInput.value = `${window.location.origin}/room/${ROOM_ID}/`;
+
+shareChatroomBtn.addEventListener('click', () => {
+  shareBackdrop.classList.add('open');
+});
+closeShareBtn.addEventListener('click', () => shareBackdrop.classList.remove('open'));
+closeShareFooter.addEventListener('click', () => shareBackdrop.classList.remove('open'));
+shareBackdrop.addEventListener('click', e => {
+  if (e.target === shareBackdrop) shareBackdrop.classList.remove('open');
+});
+
+copyLinkBtn.addEventListener('click', () => {
+  navigator.clipboard.writeText(shareLinkInput.value).then(() => {
+    copyConfirm.classList.add('visible');
+    setTimeout(() => copyConfirm.classList.remove('visible'), 2000);
+  });
+});
+
+// Copy passcode if it exists
+const copyPasscodeBtn = document.getElementById('copyPasscodeBtn');
+if (copyPasscodeBtn) {
+  copyPasscodeBtn.addEventListener('click', () => {
+    const input = copyPasscodeBtn.closest('.share-link-wrap').querySelector('input');
+    navigator.clipboard.writeText(input.value);
+  });
+}

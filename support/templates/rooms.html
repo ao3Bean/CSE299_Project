@@ -17,6 +17,15 @@
         />
     </div>
 
+
+  <!-- Join rooms form -->
+  <div class="rooms-join-wrap">
+    <input type="text" class="rooms-join-input" id="joinRoomInput"
+      placeholder="🔗  Paste a room link to join..."/>
+    <button class="rooms-join-btn" id="joinRoomBtn">Join</button>
+  </div>
+
+
   <!-- Main Card Container -->
     <div class="card rooms-panel" id="savedRooms">
         <h2 class="rooms-panel-title">Saved Spaces</h2>
@@ -29,6 +38,7 @@
         </a>
         <!-- python for loop using dtl card template for room repeated, card colour switch (template tags) -->
         {% for room in rooms %}
+        <div class="dash-card-wrap">
           <a href="{% url 'chatroom' room.room_id %}" class="dash-card dash-card-{{ forloop.counter0|card_colour }}">
               <div class="dash-card-icon">&#9654;</div>
               <h3 class="dash-card-title">{{ room.name }}</h3>
@@ -43,6 +53,16 @@
               </p>
               <div class="dash-card-arrow">&rarr;</div>
           </a>
+          <!-- info btn -->
+          <button class="card-info-btn"
+                data-room-id="{{ room.room_id }}"
+                data-room-name="{{ room.name }}"
+                data-is-private="{{ room.is_private|yesno:'true,false' }}"
+                data-passcode="{{ room.passcode|default:'' }}"
+                aria-label="Room info">
+                &#9432;
+          </button>
+        </div>
         {% empty %}
             <p class="rooms-empty-msg">
             No saved spaces yet. Create one!
@@ -69,22 +89,32 @@
 
   <!-- Temporary Rooms Card -->
   {% if temp_rooms %}
-  <div class="card rooms-panel rooms-panel-temp">
+  <div class="card rooms-panel rooms-panel-temp" id="tempRooms">
     <h2 class="rooms-panel-title">
       Temporary Spaces 
       <span class="temp-badge">expires in 24hrs</span>
     </h2>
     <div class="rooms-grid">
       {% for room in temp_rooms %}
-      <a href="{% url 'chatroom' room.room_id %}" 
-        class="dash-card dash-card-{{ forloop.counter0|card_colour }}">
-        <h3 class="dash-card-title">{{ room.name }}</h3>
-        <p class="dash-card-desc">{{ room.description|default:"Temporary room." }}</p>
-        <p class="temp-expires">
-          ⏳ expires {{ room.expires_at|timeuntil }} ago
-        </p>
-        <div class="dash-card-arrow">&rarr;</div>
-      </a>
+      <div class="dash-card-wrap">
+        <a href="{% url 'chatroom' room.room_id %}" 
+          class="dash-card dash-card-{{ forloop.counter0|card_colour }}">
+          <h3 class="dash-card-title">{{ room.name }}</h3>
+          <p class="dash-card-desc">{{ room.description|default:"Temporary room." }}</p>
+          <p class="temp-expires">
+            ⏳ expires {{ room.expires_at|timeuntil }} ago
+          </p>
+          <div class="dash-card-arrow">&rarr;</div>
+        </a>
+        <button class="card-info-btn"
+                data-room-id="{{ room.room_id }}"
+                data-room-name="{{ room.name }}"
+                data-is-private="{{ room.is_private|yesno:'true,false' }}"
+                data-passcode="{{ room.passcode|default:'' }}"
+                aria-label="Room info">
+          &#9432;
+        </button>
+      </div>
       {% endfor %}
     </div>
     <!-- Pagination 
@@ -132,7 +162,36 @@
     </div>
   </div>
 </div>
-  
+
+<!-- Info Modal -->
+<div class="modal-backdrop" id="shareModalBackdrop">
+  <div class="settings-modal">
+    <div class="modal-header">
+      <span class="modal-title">&#9432; Room Info</span>
+      <button class="modal-close" id="closeShareModal">&#10005;</button>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-title">Room Link</div>
+      <div class="share-link-wrap">
+        <input type="text" class="share-link-input" id="shareLinkInput" readonly>
+        <button class="share-copy-btn" id="copyLinkBtn">Copy</button>
+      </div>
+      <p class="share-copy-confirm" id="copyConfirm">✓ Copied!</p>
+    </div>
+    <div class="modal-section" id="passcodeSection" style="display:none;">
+      <div class="modal-section-title">Passcode</div>
+      <div class="share-link-wrap">
+        <input type="text" class="share-link-input" id="passcodeDisplay" readonly>
+        <button class="share-copy-btn" id="copyPasscodeBtn">Copy</button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn modal-btn-cancel" id="closeShareFooter">Close</button>
+    </div>
+  </div>
+</div>
+
+
 {% endblock %}
 
 
@@ -140,9 +199,10 @@
 {% block extra_js %}
   <script>
     const CREATE_ROOM_URL = "{% url 'create_room' %}"; //renders the correct url and stores it before passing to js to create form so no hardcoding for urls
+    const ROOMS_URL = "{% url 'rooms' %}";
   </script>
   <script src="{% static 'js/rooms.js' %}"></script>
-
+  <script src="{% static 'js/room_card.js' %}"></script>
 
   <!--JavaScript for Pagination + Live Search (Saved Spaces)-->
   <script>
@@ -151,7 +211,7 @@
     
     // allCards excludes the + create button
     const savedPanel = document.getElementById('savedRooms');
-    const allCards = Array.from(savedPanel.querySelectorAll('.rooms-grid .dash-card:not(.rooms-create-card)'));
+    const allCards = Array.from(savedPanel.querySelectorAll('.rooms-grid .dash-card-wrap')); //grab card with info btn
     const prevBtn  = savedPanel.querySelector('.rooms-page-btn[aria-label="Previous"]');
     const nextBtn  = savedPanel.querySelector('.rooms-page-btn[aria-label="Next"]');
     const searchInput = document.querySelector('.rooms-search');
@@ -222,6 +282,76 @@
     showPage(0);
   </script>
 
+
+<script>
+  //temp pagination and search
+  const TEMP_PER_PAGE_FIRST = 6;
+  const TEMP_PER_PAGE_REST  = 6;
+
+  const tempPanel = document.getElementById('tempRooms');
+
+  if (tempPanel) { // only runs if temp rooms exist
+    const allTempCards = Array.from(tempPanel.querySelectorAll('.rooms-grid .dash-card-wrap'));
+    const tempPrevBtn  = tempPanel.querySelector('.rooms-page-btn[aria-label="Previous"]');
+    const tempNextBtn  = tempPanel.querySelector('.rooms-page-btn[aria-label="Next"]');
+    let tempCurrentPage  = 0;
+    let visibleTempCards = allTempCards;
+
+    function totalTempPages() {
+      if (visibleTempCards.length === 0) return 1;
+      const afterFirst = Math.max(0, visibleTempCards.length - TEMP_PER_PAGE_FIRST);
+      return 1 + Math.ceil(afterFirst / TEMP_PER_PAGE_REST);
+    }
+
+    function getTempPageCards(page) {
+      if (page === 0) {
+        return visibleTempCards.slice(0, TEMP_PER_PAGE_FIRST);
+      }
+      const start = TEMP_PER_PAGE_FIRST + (page - 1) * TEMP_PER_PAGE_REST;
+      return visibleTempCards.slice(start, start + TEMP_PER_PAGE_REST);
+    }
+
+    function showTempPage(page) {
+      allTempCards.forEach(card => card.style.display = 'none');
+      getTempPageCards(page).forEach(card => card.style.display = '');
+      updateTempDots(page);
+      tempPrevBtn.disabled = page === 0;
+      tempNextBtn.disabled = page >= totalTempPages() - 1;
+      tempCurrentPage = page;
+    }
+
+    function updateTempDots(page) {
+      const indicator = tempPanel.querySelector('.rooms-page-indicator');
+      indicator.innerHTML = '';
+      for (let i = 0; i < totalTempPages(); i++) {
+        const dot = document.createElement('span');
+        dot.className = 'rooms-page-dot' + (i === page ? ' rooms-page-dot--active' : '');
+        indicator.appendChild(dot);
+      }
+    }
+
+    searchInput.addEventListener('input', function() {
+      const query = this.value.toLowerCase().trim();
+
+      if (tempPanel) {
+        if (query === '') {
+          visibleTempCards = allTempCards;
+        } else {
+          visibleTempCards = allTempCards.filter(card => {
+            const title = card.querySelector('.dash-card-title')?.textContent.toLowerCase() || '';
+            const desc  = card.querySelector('.dash-card-desc')?.textContent.toLowerCase() || '';
+            return title.includes(query) || desc.includes(query);
+          });
+        }
+        showTempPage(0);
+    }
+  });
+    tempPrevBtn.addEventListener('click', () => { if (tempCurrentPage > 0) showTempPage(tempCurrentPage - 1); });
+    tempNextBtn.addEventListener('click', () => { if (tempCurrentPage < totalTempPages() - 1) showTempPage(tempCurrentPage + 1); });
+
+    showTempPage(0);
+  }
+</script>
 
 {% endblock %}
 

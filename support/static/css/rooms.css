@@ -311,3 +311,123 @@
   opacity: 0.6;
   margin-top: 4px;
 }
+
+/* Join form */
+.rooms-join-wrap {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.rooms-join-input {
+  flex: 1;
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: 2px solid var(--border);
+  background: var(--window);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-color);
+  box-shadow: var(--btn-shadow);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.rooms-join-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(255, 111, 174, 0.15);
+}
+
+.rooms-join-btn {
+  padding: 10px 20px;
+  border-radius: 12px;
+  border: 2px solid var(--border);
+  background: var(--accent);
+  color: #fff;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: var(--btn-shadow);
+  transition: transform 0.12s, box-shadow 0.12s;
+}
+.rooms-join-btn:hover  { transform: translateY(-2px); box-shadow: 3px 3px 0 var(--border); }
+.rooms-join-btn:active { transform: translateY(1px);  box-shadow: 1px 1px 0 var(--border); }
+
+/* Card wrap (positions info button) */
+.dash-card-wrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-info-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: var(--window);
+  box-shadow: inset 3px -3px 0px var(--btn-shadow);
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.12s, transform 0.12s;
+  z-index: 2;
+  font-family: inherit;
+}
+.card-info-btn:hover {
+  background: var(--accent2);
+  transform: translateY(-1px);
+}
+
+/* Share modal */
+.share-link-wrap {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.share-link-input {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 2px solid var(--border);
+  background: var(--window);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-color);
+  box-shadow: var(--btn-shadow);
+  outline: none;
+}
+
+.share-copy-btn {
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: 2px solid var(--border);
+  background: var(--accent2);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: var(--btn-shadow);
+  transition: transform 0.12s, box-shadow 0.12s;
+  white-space: nowrap;
+}
+.share-copy-btn:hover  { transform: translateY(-1px); box-shadow: 3px 3px 0 var(--border); }
+.share-copy-btn:active { transform: translateY(1px);  box-shadow: 1px 1px 0 var(--border); }
+
+.share-copy-confirm {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--dash-green);
+  margin-top: 6px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.share-copy-confirm.visible { opacity: 1; }

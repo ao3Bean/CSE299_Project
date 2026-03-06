@@ -44,7 +44,12 @@
           <span class="nav-tooltip">{% if room.is_saved %}Saved!{% else %}Save Room{% endif %}</span>
         </button>
       {% endif %}
-
+      
+      <button class="nav-item nav-btn" id="shareChatroomBtn" aria-label="Share room">
+        <span class="nav-icon">&#9432;</span>
+        <span class="nav-label">Share Room</span>
+        <span class="nav-tooltip">Share Room</span>
+      </button>
     </nav>
 
     <div class="sidebar-bottom">
@@ -239,6 +244,36 @@
     </div>
 </div>
 
+<!-- Share Modal -->
+<div class="modal-backdrop" id="shareModalBackdrop">
+  <div class="settings-modal">
+    <div class="modal-header">
+      <span class="modal-title">&#9432; Share Room</span>
+      <button class="modal-close" id="closeShareModal">&#10005;</button>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-title">Room Link</div>
+      <div class="share-link-wrap">
+        <input type="text" class="share-link-input" id="shareLinkInput" readonly>
+        <button class="share-copy-btn" id="copyLinkBtn">Copy</button>
+      </div>
+      <p class="share-copy-confirm" id="copyConfirm">✓ Copied!</p>
+    </div>
+    {% if room.is_private and room.passcode %}
+    <div class="modal-section">
+      <div class="modal-section-title">Passcode</div>
+      <div class="share-link-wrap">
+        <input type="text" class="share-link-input"
+               value="{{ room.passcode }}" readonly>
+        <button class="share-copy-btn" id="copyPasscodeBtn">Copy</button>
+      </div>
+    </div>
+    {% endif %}
+    <div class="modal-footer">
+      <button class="modal-btn modal-btn-cancel" id="closeShareFooter">Close</button>
+    </div>
+  </div>
+</div>
   <!-- modal stuff -->
   <div class="modal-backdrop" id="modalBackdrop" aria-hidden="true">
     <div class="settings-modal" role="dialog" aria-modal="true" aria-label="Room Settings">

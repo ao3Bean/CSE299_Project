@@ -23,12 +23,22 @@
 
 
             {% for room in rooms %}
+            <div class="dash-card-wrap">
                 <a href="{% url 'chatroom' room.room_id %}" class="dash-card dash-card-{{ forloop.counter0|card_colour }}">
                     <h3 class="dash-card-title">{{ room.name }}</h3>
                     <p class="dash-card-desc">Hosts: {{ room.host }}</p>
                     <p class="dash-card-desc">{{ room.description|default:"A public co-working space." }}</p>
                     <div class="dash-card-arrow">&rarr;</div>
                 </a>
+                <button class="card-info-btn"
+                  data-room-id="{{ room.room_id }}"
+                  data-room-name="{{ room.name }}"
+                  data-is-private="{{ room.is_private|yesno:'true,false' }}"
+                  data-passcode="{{ room.passcode|default:'' }}"
+                  aria-label="Room info">
+                  &#9432;
+                </button>
+            </div>
             {% empty %}
                 <p style="opacity:0.5; font-size:13px; padding:12px;">No public rooms yet.</p>
             {% endfor %}
@@ -76,11 +86,39 @@
 </div>
 -->
 
+<!-- Info Modal -->
+<div class="modal-backdrop" id="shareModalBackdrop">
+  <div class="settings-modal">
+    <div class="modal-header">
+      <span class="modal-title">&#9432; Room Info</span>
+      <button class="modal-close" id="closeShareModal">&#10005;</button>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-title">Room Link</div>
+      <div class="share-link-wrap">
+        <input type="text" class="share-link-input" id="shareLinkInput" readonly>
+        <button class="share-copy-btn" id="copyLinkBtn">Copy</button>
+      </div>
+      <p class="share-copy-confirm" id="copyConfirm">✓ Copied!</p>
+    </div>
+    <div class="modal-section" id="passcodeSection" style="display:none;">
+      <div class="modal-section-title">Passcode</div>
+      <div class="share-link-wrap">
+        <input type="text" class="share-link-input" id="passcodeDisplay" readonly>
+        <button class="share-copy-btn" id="copyPasscodeBtn">Copy</button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn modal-btn-cancel" id="closeShareFooter">Close</button>
+    </div>
+  </div>
+</div>
+<script src="{% static 'js/room_card.js' %}"></script>
 <!--JavaScript for Pagination + Live Search-->
 <script>
 const ROOMS_PER_PAGE = 6;
 // allCards stores ALL cards so search can always access them even when hidden by pagination
-const allCards = Array.from(document.querySelectorAll('.rooms-grid .dash-card'));
+const allCards = Array.from(document.querySelectorAll('.rooms-grid .dash-card-wrap'));
 const prevBtn = document.querySelector('.rooms-page-btn[aria-label="Previous"]');
 const nextBtn = document.querySelector('.rooms-page-btn[aria-label="Next"]');
 const searchInput = document.querySelector('.rooms-search');
