@@ -168,6 +168,13 @@ resetBtn.addEventListener('click', () => {
   // TODO: Broadcast reset to other users
 });
 
+window.addEventListener('beforeunload', () => {
+  clearInterval(timerInterval);
+  if (chatSocket.readyState === WebSocket.OPEN) {
+    chatSocket.close();
+  }
+});
+
 updateTimerDisplay();
 
 
@@ -191,8 +198,8 @@ stateBtns.forEach(btn => {
 
 
 /*  Music Player  */
+//TODO : fix music player lag problems 
 const tracks = [
-  // TODO: Replace src paths with your actual static audio files
   { name: 'lofi chill vol. 1', src: '/static/audio/lofi1.mp3' },
   { name: 'rainy café',        src: '/static/audio/lofi2.mp3' },
   { name: 'study beats',       src: '/static/audio/lofi3.mp3' },
@@ -213,7 +220,8 @@ const playingSrc = cassetteGif.dataset.playingSrc;
 
 function loadTrack(index) {
   currentTrack = (index + tracks.length) % tracks.length;
-  audioPlayer.src  = tracks[currentTrack].src;
+  if (!tracks[currentTrack].src) return;
+  audioPlayer.src = tracks[currentTrack].src;
   trackName.textContent = tracks[currentTrack].name;
   if (isPlaying) audioPlayer.play().catch(() => {});
 }
@@ -246,41 +254,65 @@ nextBtn.addEventListener('click', () => loadTrack(currentTrack + 1));
 
 audioPlayer.addEventListener('ended', () => loadTrack(currentTrack + 1)); // loop to next track
 
-loadTrack(0); // init first track
+// loadTrack(0);
 
 
-/*  Chat  */
-// TODO: Replace 'your-room-id' with the actual room ID from Django context
-// const ROOM_ID = "{{ room.id }}";
-// const WS_URL  = `ws://${window.location.host}/ws/room/${ROOM_ID}/`;
-// const chatSocket = new WebSocket(WS_URL);
-
+/*  Chat + Presence — WebSocket  */
 const chatMessages = document.getElementById('chatMessages');
 const chatInput    = document.getElementById('chatInput');
 const chatSend     = document.getElementById('chatSend');
 
-/* TODO: When Django Channels is set up, uncomment and wire up:
+const WS_URL = `ws://${window.location.host}/ws/room/${ROOM_ID}/`; //getting room url from template
+const chatSocket = new WebSocket(WS_URL);
+
+chatSocket.onopen = function() {
+  console.log('Connected to room:', ROOM_ID);
+};
 
 chatSocket.onmessage = function(e) {
   const data = JSON.parse(e.data);
 
-  if (data.type === 'chat_message') {
-    appendMessage(data.username, data.message, data.is_self);
-  }
-  if (data.type === 'timer_sync') {
-    // sync timer state from server
-  }
-  if (data.type === 'user_state') {
-    // update avatar state for a specific user
-    const cell = avatarGrid.querySelector(`[data-username="${data.username}"]`);
-    if (cell) cell.dataset.state = data.state;
+  if (data.type === 'presence_update') {
+    updateAvatarGrid(data.users);
+    document.getElementById('participantCount').textContent = data.users.length;
   }
 };
 
 chatSocket.onclose = function() {
-  console.warn('Chat socket closed. Reconnecting...');
+  console.warn('WebSocket closed.');
 };
-*/
+
+chatSocket.onerror = function(err) {
+  console.error('WebSocket error:', err);
+};
+
+function updateAvatarGrid(users) {
+  const grid = document.getElementById('avatarGrid');
+  grid.innerHTML = '';
+
+  users.forEach(username => {
+    const isMe = username === USERNAME;
+    const cell = document.createElement('div');
+    cell.className = 'avatar-cell';
+    cell.dataset.username = username;
+    cell.dataset.state = 'idle';
+
+    cell.innerHTML = `
+      <div class="avatar-frame">
+        <img src="/static/img/avatars/idle.png" alt="idle"
+             class="avatar-img state-img state-idle">
+        <img src="/static/img/avatars/focused.png" alt="focused"
+             class="avatar-img state-img state-focused">
+        <img src="/static/img/avatars/break.png" alt="break"
+             class="avatar-img state-img state-break">
+        <img src="/static/img/avatars/chatting.png" alt="chatting"
+             class="avatar-img state-img state-chatting">
+      </div>
+      <span class="avatar-tooltip">${escapeHtml(isMe ? 'Me' : username)}</span>
+    `;
+    grid.appendChild(cell);
+  });
+}
 
 function appendMessage(username, text, isSelf = false) {
   const wrap = document.createElement('div');
@@ -312,13 +344,13 @@ function escapeHtml(str) {
 function sendMessage() {
   const text = chatInput.value.trim();
   if (!text) return;
-
-  // Optimistically add to UI
-  appendMessage('You', text, true);
+  if (chatSocket.readyState === WebSocket.OPEN) {
+    chatSocket.send(JSON.stringify({
+      type: 'chat_message',
+      message: text
+    }));
+  }
   chatInput.value = '';
-
-  // TODO: Send via WebSocket instead
-  // chatSocket.send(JSON.stringify({ type: 'chat_message', message: text }));
 }
 
 chatSend.addEventListener('click', sendMessage);
