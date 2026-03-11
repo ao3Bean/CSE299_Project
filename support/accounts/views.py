@@ -33,7 +33,8 @@ def login(request):
             user = User.objects.create_user(username=username, email=email, password=password)
             auth_login(request, user)
             messages.success(request, f"Account created! Welcome, {username}!")
-            return redirect("user_dashboard")
+            #return redirect("user_dashboard")
+            return redirect("avatar_customization")  # ← change this one only
 
     return render(request, "login.html")
 

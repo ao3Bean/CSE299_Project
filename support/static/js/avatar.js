@@ -22,6 +22,10 @@ document.addEventListener('DOMContentLoaded', function () {
     //  State 
     // TODO: Initialise from backend — pass saved avatar as JSON in template context:
     // const avatarState = {{ avatar_json|safe }};
+
+    // ── State — loaded from Django via savedAvatar in template ──
+    // savedAvatar is defined in avatar_customization.html as:
+    // const savedAvatar = { skin: "skin_1", hair: "hair_1", ... }
     let avatarState = {
         skin:      'skin-1',
         hair:      'hair-1',
@@ -30,6 +34,8 @@ document.addEventListener('DOMContentLoaded', function () {
         eyeColor:  'brown',
         outfit:    'outfit-1',
         accessory: 'acc-1',
+
+     
     };
 
     // Snapshot of state at page load — used by Reset

@@ -1,0 +1,145 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customize Avatar – Cadence</title>
+    <link href="{% static 'css/user_base.css' %}" rel="stylesheet">
+    <link href="{% static 'css/avatar.css' %}" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Back Button: goes to profile page -->
+    <a href="{% url 'user_profile' %}" class="back-btn" aria-label="Go back">&#171;</a>
+
+    <!-- Page Title Pill -->
+    <div class="avatar-title-wrap">
+        <h1 class="avatar-title-pill">Customize Your Avatar</h1>
+    </div>
+
+    <!-- Pass saved avatar data to JS -->
+    <script>
+        const savedAvatar = {
+            skin:  "{{ profile.skin_color }}",
+            hair:  "{{ profile.hair }}",
+            face:  "{{ profile.face_expression }}",
+            outfit: "{{ profile.clothes }}",
+        };
+        const STATIC_URL = "{% static 'img/avatars/' %}";
+    </script>
+
+    <!-- Main Card -->
+    <div class="avatar-main-card card">
+        <div class="avatar-inner-grid">
+
+            <!-- LEFT: Live Avatar Preview -->
+            <div class="avatar-preview-box">
+                <div class="avatar-canvas">
+                    <img src="{% static 'img/avatars/skin/skin_1.png' %}"     class="avatar-layer" id="layer-skin"   data-layer="skin">
+                    <img src="{% static 'img/avatars/outfit/outfit_1.png' %}" class="avatar-layer" id="layer-outfit" data-layer="outfit">
+                    <img src="{% static 'img/avatars/hair/hair_1.png' %}"     class="avatar-layer" id="layer-hair"   data-layer="hair">
+                    <img src="{% static 'img/avatars/face/face_1.png' %}"     class="avatar-layer" id="layer-face"   data-layer="face">
+                </div>
+            </div>
+
+            <!-- RIGHT: Customisation Tabs -->
+            <div class="avatar-customise-box">
+
+                <!-- Tab Buttons — only skin, hair, face (outfit is fixed), accessory -->
+                <div class="tab-buttons">
+                    <button class="tab-btn active" data-tab="skin">
+                        <span class="tab-icon">👤</span>
+                        <span class="tab-label">Skin</span>
+                    </button>
+                    <button class="tab-btn" data-tab="hair">
+                        <span class="tab-icon">💇</span>
+                        <span class="tab-label">Hair</span>
+                    </button>
+                    <button class="tab-btn" data-tab="face">
+                        <span class="tab-icon">😊</span>
+                        <span class="tab-label">Face</span>
+                    </button>
+                    <button class="tab-btn" data-tab="accessory">
+                    <span class="tab-icon">✨</span>
+                    <span class="tab-label">Extras</span>
+                    </button>
+                </div>
+
+                <!-- Tab Panels -->
+                <div class="tab-panels">
+
+                    <!-- Skin — 3 options mapped to skin_1, skin_2, skin_3 -->
+                    <div class="tab-panel active" id="panel-skin" data-panel="skin">
+                        <p class="panel-title">Skin Tone</p>
+                        <div class="item-grid color-grid">
+                            <button class="item-btn color-btn" 
+                                data-layer="skin" data-value="skin_1"
+                                style="background:#FFDFC4;"></button>
+                            <button class="item-btn color-btn" 
+                                data-layer="skin" data-value="skin_2"
+                                style="background:#D4A574;"></button>
+                            <button class="item-btn color-btn" 
+                                data-layer="skin" data-value="skin_3"
+                                style="background:#8B5A2B;"></button>
+                           
+                        </div>
+                    </div>
+
+                    <!-- Hair — 9 options -->
+                    <div class="tab-panel" id="panel-hair" data-panel="hair">
+                        <p class="panel-title">Hairstyle</p>
+                        <div class="item-grid">
+                            <button class="item-btn image-btn" data-layer="hair" data-value="hair_1"><img src="{% static 'img/avatars/hair/hair_1.png' %}" alt="Hair 1"></button>
+                            <button class="item-btn image-btn" data-layer="hair" data-value="hair_2"><img src="{% static 'img/avatars/hair/hair_2.png' %}" alt="Hair 2"></button>
+                            <button class="item-btn image-btn" data-layer="hair" data-value="hair_3"><img src="{% static 'img/avatars/hair/hair_3.png' %}" alt="Hair 3"></button>
+                            <button class="item-btn image-btn" data-layer="hair" data-value="hair_4"><img src="{% static 'img/avatars/hair/hair_4.png' %}" alt="Hair 4"></button>
+                            <button class="item-btn image-btn" data-layer="hair" data-value="hair_5"><img src="{% static 'img/avatars/hair/hair_5.png' %}" alt="Hair 5"></button>
+                            <button class="item-btn image-btn" data-layer="hair" data-value="hair_6"><img src="{% static 'img/avatars/hair/hair_6.png' %}" alt="Hair 6"></button>
+                            <button class="item-btn image-btn" data-layer="hair" data-value="hair_7"><img src="{% static 'img/avatars/hair/hair_7.png' %}" alt="Hair 7"></button>
+                            <button class="item-btn image-btn" data-layer="hair" data-value="hair_8"><img src="{% static 'img/avatars/hair/hair_8.png' %}" alt="Hair 8"></button>
+                            <button class="item-btn image-btn" data-layer="hair" data-value="hair_9"><img src="{% static 'img/avatars/hair/hair_9.png' %}" alt="Hair 9"></button>
+                        </div>
+                    </div>
+
+                    <!-- Face — 4 options -->
+                    <div class="tab-panel" id="panel-face" data-panel="face">
+                        <p class="panel-title">Face Expression</p>
+                        <div class="item-grid">
+                            <button class="item-btn image-btn" data-layer="face" data-value="face_1"><img src="{% static 'img/avatars/face/face_1.png' %}" alt="Face 1"></button>
+                            <button class="item-btn image-btn" data-layer="face" data-value="face_2"><img src="{% static 'img/avatars/face/face_2.png' %}" alt="Face 2"></button>
+                            <button class="item-btn image-btn" data-layer="face" data-value="face_3"><img src="{% static 'img/avatars/face/face_3.png' %}" alt="Face 3"></button>
+                            <button class="item-btn image-btn" data-layer="face" data-value="face_4"><img src="{% static 'img/avatars/face/face_4.png' %}" alt="Face 4"></button>
+                        </div>
+                    </div>
+                 
+                     <!-- Accessories — empty for now, coming soon -->
+                            <div class="tab-panel" id="panel-accessory" data-panel="accessory">
+                             <p class="panel-title">Accessories</p>
+                            <p style="opacity:0.4; font-size:13px; padding:12px;">
+                                 Coming soon! ✨
+                                </p>
+                           </div>
+                </div><!-- /tab-panels -->
+            </div><!-- /avatar-customise-box -->
+        </div><!-- /avatar-inner-grid -->
+
+        <!-- Hidden form to POST to backend -->
+        <form id="avatar-form" method="POST" action="{% url 'avatar_customization' %}">
+            {% csrf_token %}
+            <input type="hidden" name="skin_color"      id="input-skin"  value="skin_1">
+            <input type="hidden" name="hair"            id="input-hair"  value="hair_1">
+            <input type="hidden" name="face_expression" id="input-face"  value="face_1">
+        </form>
+
+        <!-- Bottom Actions -->
+        <div class="avatar-actions">
+            <button class="btn btn-primary"   id="btn-save">Confirm</button>
+            <button class="btn btn-secondary" id="btn-randomize">Reset</button>
+        </div>
+
+    </div><!-- /avatar-main-card -->
+
+    <script src="{% static 'js/avatar_customization.js' %}"></script>
+</body>
+</html>
