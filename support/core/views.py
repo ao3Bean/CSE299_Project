@@ -6,6 +6,16 @@ from django.contrib import messages
 
 
 # Create your views here.
+
+# DEFAULT_AVATAR must be defined BEFORE any view that uses it, otherwise it will cause an 
+# error when trying to create a new UserProfile without providing all fields
+DEFAULT_AVATAR = {
+    'skin_color': 'skin_1',
+    'hair': 'hair_1',
+    'face_expression': 'face_1',
+    'clothes': 'outfit_1',
+}
+
 #@login_required(login_url="login")
 def index(request):
     return render (request, "index.html")
@@ -33,21 +43,26 @@ def tasks(request):
 def friends(request): 
     return render(request, "friends.html")
 
+#@login_required(login_url="login")
+#def user_profile(request):
+    #return render(request, "user_profile.html")
+
+
+
 @login_required(login_url="login")
 def user_profile(request):
-    return render(request, "user_profile.html")
+    profile, _ = UserProfile.objects.get_or_create(
+        user=request.user,
+        defaults=DEFAULT_AVATAR
+    )
+    return render(request, "user_profile.html", {'profile': profile})
 
 #def avatar(request):
     #return render(request, "avatar.html")
 
 #for avatar customization, we will have a default avatar created for each 
 # user when they first access the avatar page, which they can then customize and save
-DEFAULT_AVATAR = {
-    'skin_color': 'skin_1',
-    'hair': 'hair_1',
-    'face_expression': 'face_1',
-    'clothes': 'outfit_1',
-}
+
 
 @login_required(login_url="login")
 def avatar(request):

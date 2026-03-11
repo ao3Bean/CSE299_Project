@@ -48,7 +48,7 @@
             🎯 Focus Goal: 3 hours daily
          </div>
 
-            <!-- NEW DATABASE FIELDS (added, not replacing anything) -->
+            <!-- NEW DATABASE FIELDS (added, not replacing anything) 
 
         <div class="about-item">
             💇 Hair: {{ request.user.userprofile.hair|default:"Not set" }}
@@ -64,7 +64,19 @@
 
         <div class="about-item">
             🎨 Skin Color: {{ request.user.userprofile.skin_color|default:"Not set" }}
-        </div>
+        </div> -->
+
+        <!-- Avatar Preview -->
+         <div class="avatar-canvas-small">
+         <img src="{% static 'img/avatars/skin/' %}{{ request.user.userprofile.skin_color }}.png" class="avatar-layer-small">
+         <img src="{% static 'img/avatars/outfit/' %}{{ request.user.userprofile.clothes }}.png" class="avatar-layer-small">
+         <img src="{% static 'img/avatars/hair/' %}{{ request.user.userprofile.hair }}.png" class="avatar-layer-small">
+         <img src="{% static 'img/avatars/face/' %}{{ request.user.userprofile.face_expression }}.png" class="avatar-layer-small">
+         </div>
+
+        <!-- Customize Button -->
+        <a href="{% url 'avatar_customization' %}" class="about-link">✨ Customize Avatar</a>
+
         </div>
     </div>
 

@@ -50,7 +50,8 @@
     width: 80px;
     left: 450px;
     top: 120px;
-
+    /*mix-blend-mode: multiply;  /* ← removes white background */
+    mix-blend-mode: darken;
     animation: floatBulb 2s ease-in-out infinite;
 }
 
@@ -124,10 +125,32 @@
 .clock-gif {
     width: 200px;
     height: 200px;
+    /*mix-blend-mode: multiply;  /* ← removes white background */
+    mix-blend-mode: darken;
 }
 
 .clock-container {
     position: absolute;
     left: 400px;
-    bottom: 10px;
+    bottom: 100px;
+}
+
+/*For Avatar */
+
+.avatar-canvas-small {
+    position: relative;
+    width: 200px;
+    height: 200px;  /* square, matches image ratio */
+    margin: 8px auto;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.avatar-layer-small {
+    position: absolute;
+    top: 0; left: 0;
+    width: 200px;   /* exact px, not % */
+    height: 200px;  /* exact px, not % */
+    object-fit: contain;
+    pointer-events: none;
 }
