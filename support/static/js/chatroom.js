@@ -1,7 +1,3 @@
-/* 
-   room.js  —  Cadence Room Page
- */
-
 /*  Sidebar (same logic as sidebar.js)  */
 const sidebar     = document.getElementById('sidebar');
 const toggle      = document.getElementById('sidebarToggle');
@@ -271,6 +267,19 @@ chatSocket.onopen = function() {
 
 chatSocket.onmessage = function(e) {
   const data = JSON.parse(e.data);
+
+  if (data.type === 'chat_message') {
+    const isSelf = data.username === USERNAME;
+    appendMessage(data.username, data.message, isSelf);
+  }
+
+  if (data.type === 'system_message') {
+    const wrap = document.createElement('div');
+    wrap.className = 'chat-msg chat-msg-system';
+    wrap.innerHTML = `<span>${escapeHtml(data.message)}</span>`;
+    chatMessages.appendChild(wrap);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
 
   if (data.type === 'presence_update') {
     updateAvatarGrid(data.users);

@@ -198,31 +198,10 @@
 
                     <!-- Messages -->
                     <div class="chat-messages" id="chatMessages">
-                    {# TODO: Render initial messages from context if any #}
-                    <div class="chat-msg chat-msg-system">
-                        <span>Welcome to <strong>{{ room.name|default:"Study Hall" }}</strong> &#128075;</span>
-                    </div>
-
-                    <!-- Demo messages -->
-                    <div class="chat-msg chat-msg-other">
-                        <div class="chat-msg-avatar">L</div>
-                        <div class="chat-msg-body">
-                        <span class="chat-msg-user">Luna</span>
-                        <span class="chat-msg-text">hey everyone! ready to grind 💪</span>
-                        </div>
-                    </div>
-                    <div class="chat-msg chat-msg-self">
-                        <div class="chat-msg-body chat-msg-body-self">
-                        <span class="chat-msg-text">let's gooo!</span>
-                        </div>
-                    </div>
-                    <div class="chat-msg chat-msg-other">
-                        <div class="chat-msg-avatar">M</div>
-                        <div class="chat-msg-body">
-                        <span class="chat-msg-user">Mira</span>
-                        <span class="chat-msg-text">starting pomodoro now</span>
-                        </div>
-                    </div>
+                      {# TODO: Render initial messages from context if any #}
+                      <div class="chat-msg chat-msg-system">
+                          <span>Welcome to <strong>{{ room.name|default:"Study Hall" }}</strong> &#128075;</span>
+                      </div>                    
                     </div>
 
                     <div class="chat-input-area">
