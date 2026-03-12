@@ -299,23 +299,41 @@ function updateAvatarGrid(users) {
   const grid = document.getElementById('avatarGrid');
   grid.innerHTML = '';
 
-  users.forEach(username => {
+  users.forEach(({ username, avatar }) => {
     const isMe = username === USERNAME;
     const cell = document.createElement('div');
     cell.className = 'avatar-cell';
     cell.dataset.username = username;
     cell.dataset.state = 'idle';
 
+    // Build layer paths
+    const base = '/static/img/chatroom/';
+    const skin   = `${base}skin/${avatar.skin}.png`;
+    const outfit = `${base}outfit/${avatar.outfit}.png`;
+    const hair   = `${base}hair/${avatar.hair}.png`;
+    const desk   = `${base}desk.png`;
+
+    // Pose images for each state
+    const poses = {
+      idle:     `${base}poses/idle.png`,
+      focused:  `${base}poses/focus.png`,
+      break:    `${base}poses/break.png`,
+      chatting: `${base}poses/chatting.png`,
+    };
+
     cell.innerHTML = `
       <div class="avatar-frame">
-        <img src="/static/img/avatars/idle.png" alt="idle"
-             class="avatar-img state-img state-idle">
-        <img src="/static/img/avatars/focused.png" alt="focused"
-             class="avatar-img state-img state-focused">
-        <img src="/static/img/avatars/break.png" alt="break"
-             class="avatar-img state-img state-break">
-        <img src="/static/img/avatars/chatting.png" alt="chatting"
-             class="avatar-img state-img state-chatting">
+        <!-- Layer order: skin, outfit, hair, pose, desk -->
+        <img src="${skin}"   alt="skin"   class="avatar-layer avatar-skin">
+        <img src="${outfit}" alt="outfit" class="avatar-layer avatar-outfit">
+        <img src="${hair}"   alt="hair"   class="avatar-layer avatar-hair">
+        <!-- Pose images — only active state visible -->
+        <img src="${poses.idle}"     alt="idle"     class="avatar-layer avatar-pose state-img state-idle">
+        <img src="${poses.focused}"  alt="focused"  class="avatar-layer avatar-pose state-img state-focused">
+        <img src="${poses.break}"    alt="break"    class="avatar-layer avatar-pose state-img state-break">
+        <img src="${poses.chatting}" alt="chatting" class="avatar-layer avatar-pose state-img state-chatting">
+        <!-- Desk always on top -->
+        <img src="${desk}" alt="desk" class="avatar-layer avatar-desk">
       </div>
       <span class="avatar-tooltip">${escapeHtml(isMe ? 'Me' : username)}</span>
     `;
