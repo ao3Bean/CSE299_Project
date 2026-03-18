@@ -8,4 +8,5 @@ urlpatterns = [
     # path('chatroom/', views.chatroom, name='chatroom'),
     path('room/create/', views.create_room, name='create_room'),
     path('rooms/<uuid:room_id>/save/', views.save_room, name='save_room'),
+    path('room/<uuid:room_id>/verify/', views.verify_passcode, name='verify_passcode'),
 ]

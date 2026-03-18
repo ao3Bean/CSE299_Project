@@ -431,3 +431,56 @@
   transition: opacity 0.2s;
 }
 .share-copy-confirm.visible { opacity: 1; }
+
+.room-name-badge {
+  display: inline-block;
+  background: var(--accent2);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 4px 12px;
+  font-size: 13px;
+  font-weight: 800;
+  box-shadow: var(--btn-shadow);
+}
+
+.passcode-input {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 2px solid var(--border);
+  background: var(--window);
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-color);
+  letter-spacing: 0.1em;
+  box-shadow: var(--btn-shadow);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.passcode-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(255, 111, 174, 0.15);
+}
+.passcode-input::placeholder { opacity: 0.4; letter-spacing: 0.05em; }
+
+.error-msg {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--dash-coral);
+  background: rgba(255, 139, 139, 0.12);
+  border: 1.5px solid var(--dash-coral);
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+
+.back-link {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-color);
+  opacity: 0.5;
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+.back-link:hover { opacity: 1; }

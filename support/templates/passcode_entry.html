@@ -1,0 +1,51 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Cadence – Enter Passcode</title>
+    <link rel="stylesheet" href="{% static 'css/user_base.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/rooms.css' %}"/>
+</head>
+<body>
+    <a href="{% if user.is_authenticated %}{% url 'user_dashboard' %}{% else %}{% url 'index' %}{% endif %}"
+       class="back-btn" aria-label="Go back">&#171;</a>
+
+    <!-- centre the card on the page -->
+    <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; width: 100%;">
+
+        <div class="dash-card" style="width: 380px; min-height: unset; gap: 16px;">
+
+            <span style="font-size: 13px; font-weight: 800; color: var(--accent); letter-spacing: 0.05em; text-transform: uppercase;">Cadence</span>
+            <h1 class="dash-card-title">🔒 Private Room</h1>
+            <p class="dash-card-desc">This room is private. Enter the passcode to join.</p>
+
+            <span class="room-name-badge">{{ room.name }}</span>
+
+            {% if error %}
+                <div class="error-msg">{{ error }}</div>
+            {% endif %}
+
+            <form method="POST" style="display: flex; flex-direction: column; gap: 12px;">
+                {% csrf_token %}
+                <input
+                    type="password"
+                    name="passcode"
+                    class="modal-text-input"
+                    placeholder="Enter passcode..."
+                    autofocus
+                    autocomplete="off"
+                    style="font-size: 15px; font-weight: 700; letter-spacing: 0.1em;"
+                />
+                <button type="submit" class="modal-btn modal-btn-save" style="width: 100%; padding: 12px;">
+                    Enter Room →
+                </button>
+            </form>
+
+            <a href="{% url 'rooms' %}" class="back-link">← Back to rooms</a>
+
+        </div>
+    </div>
+</body>
+</html>

@@ -7,6 +7,7 @@ from django.views.decorators.http import require_POST
 import json
 from django.utils import timezone
 from datetime import timedelta
+from core.models import UserProfile
 
 
 #Create your views here.
@@ -69,6 +70,13 @@ def create_room(request):
 @login_required
 def chatroom_view(request, room_id):
     room = get_object_or_404(Room, room_id=room_id)
+
+    if request.user == room.host:
+        return render(request, 'chatroom.html', {'room': room})
+    
+    if room.is_private and room.passcode:
+        return redirect('verify_passcode', room_id=room_id)
+    
     return render(request, 'chatroom.html', {'room': room})
 
 @login_required
@@ -85,3 +93,24 @@ def save_room(request, room_id):
     room.save()
 
     return JsonResponse({'success': True}) #response for res.js to handle, if success true, show saved message, else show error
+
+@login_required
+def verify_passcode(request, room_id):
+    room = get_object_or_404(Room, room_id=room_id)
+
+    if not room.is_private or not room.passcode:
+        return redirect('chatroom', room_id=room_id)
+    
+    if request.user == room.host:
+        return redirect('chatroom', room_id=room_id)
+    
+    error = None
+
+    if request.method == 'POST':
+        entered_passcode = request.POST.get('passcode', '').strip()
+        if entered_passcode == room.passcode:
+            return render(request, 'chatroom.html', {'room': room})
+        else:
+            error = "Incorrect passcode. Please try again."
+
+    return render(request, 'passcode_entry.html', {'room': room, 'error': error})
