@@ -5,7 +5,7 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
-    // ── DOM ──────────────────────────────────────────────────
+    //  DOM 
     const tabButtons = document.querySelectorAll('.tab-btn');
     const tabPanels  = document.querySelectorAll('.tab-panel');
     const saveBtn    = document.getElementById('btn-save');
@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function () {
         accessory: document.getElementById('layer-accessory'), // empty for now
     };
 
-    // ── State — loaded from Django via savedAvatar in template ──
+    //  State — loaded from Django via savedAvatar in template 
     // savedAvatar is defined in avatar_customization.html as:
     // const savedAvatar = { skin: "skin_1", hair: "hair_1", ... }
     let avatarState = {
@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Snapshot for reset — goes back to this on Reset click
     const defaultState = { ...avatarState };
 
-    // ── Init: apply saved state to preview and highlight buttons ──
+    //  Init: apply saved state to preview and highlight buttons 
     function init() {
         updateAvatarLayer('skin',   avatarState.skin);
         updateAvatarLayer('hair',   avatarState.hair);
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function () {
         highlightSelected('face',  avatarState.face);
     }
 
-    // ── Tab Switching ─────────────────────────────────────────
+    //  Tab Switching ─
     tabButtons.forEach(btn => {
         btn.addEventListener('click', () => {
             tabButtons.forEach(b => b.classList.remove('active'));
@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // ── Item Selection + Live Preview ─────────────────────────
+    //  Item Selection + Live Preview ─
     document.querySelectorAll('.item-btn[data-layer]').forEach(btn => {
         btn.addEventListener('click', () => {
             const layer = btn.dataset.layer;
@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // ── Layer Update ──────────────────────────────────────────
+    //  Layer Update 
     function updateAvatarLayer(layerType, value) {
         const layer = avatarLayers[layerType];
         if (!layer) return;
@@ -104,28 +104,28 @@ document.addEventListener('DOMContentLoaded', function () {
         };
     }
 
-    // ── Hidden Form Input Helper ──────────────────────────────
+    //  Hidden Form Input Helper 
     function setInput(layer, value) {
         const map = { skin: 'input-skin', hair: 'input-hair', face: 'input-face' };
         const el = document.getElementById(map[layer]);
         if (el) el.value = value;
     }
 
-    // ── Highlight Saved Button ────────────────────────────────
+    //  Highlight Saved Button 
     function highlightSelected(layer, value) {
         document.querySelectorAll(`[data-layer="${layer}"]`).forEach(btn => {
             btn.classList.toggle('selected', btn.dataset.value === value);
         });
     }
 
-    // ── Confirm Button → Submit Form to Django ────────────────
+    //  Confirm Button → Submit Form to Django 
     saveBtn.addEventListener('click', () => {
         saveBtn.classList.add('saving');
         saveBtn.textContent = '⏳ Saving...';
         document.getElementById('avatar-form').submit();
     });
 
-    // ── Reset Button → Back to Page Load State ────────────────
+    //  Reset Button → Back to Page Load State 
     resetBtn.addEventListener('click', () => {
         avatarState = { ...defaultState };
         updateAvatarLayer('skin',  avatarState.skin);

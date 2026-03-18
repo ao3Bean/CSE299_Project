@@ -1,4 +1,255 @@
 {% extends "user_base.html" %}
-{% block content %}
-<h1>Friends Page</h1>
+{% load static %}
+{% block title %}Friends – Cadence{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/rooms.css' %}">
+  <link rel="stylesheet" href="{% static 'css/friends.css' %}">
 {% endblock %}
+
+{% block nav_friends %}active{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+
+
+  <!-- Search Bar — mirrors rooms search -->
+  <div class="rooms-search-wrap">
+    <input
+      type="text"
+      class="rooms-search"
+      id="friendSearch"
+      placeholder="🔍  Search your friends..."
+    />
+  </div>
+  <!-- Add Friend Bar — mirrors rooms join bar -->
+  <div class="rooms-join-wrap">
+    <input type="text" class="rooms-join-input" id="addFriendInput"
+      placeholder="🔗  Enter a username to add a friend..."/>
+    <button class="rooms-join-btn" id="addFriendBtn">Add Friend ＋</button>
+  </div>
+
+  <!--  FRIENDS PANEL  -->
+  <div class="card rooms-panel" id="friendsPanel">
+    <h2 class="rooms-panel-title">Friends</h2>
+
+    <div class="rooms-grid" id="friendsGrid">
+
+      <div class="dash-card friend-card">
+        <div class="avatar-canvas-small">
+          <img src="{% static 'img/avatars/skin/skin_1.png' %}"    class="avatar-layer-small" alt="">
+          <img src="{% static 'img/avatars/outfit/outfit_1.png' %}" class="avatar-layer-small" alt="">
+          <img src="{% static 'img/avatars/hair/hair_1.png' %}"    class="avatar-layer-small" alt="">
+          <img src="{% static 'img/avatars/face/face_1.png' %}"    class="avatar-layer-small" alt="">
+        </div>
+        <span class="friend-username">placeholder_user</span>
+        <div class="friend-actions">
+          <button class="modal-btn friend-btn-remove" onclick="return false;">✕ Remove</button>
+          <button class="modal-btn friend-btn-share"
+                  onclick="openFriendShareModal('placeholder_user')">⤴ Share Link</button>
+        </div>
+      </div>
+
+      <div class="dash-card friend-card">
+        <div class="avatar-canvas-small">
+          <img src="{% static 'img/avatars/skin/skin_1.png' %}"    class="avatar-layer-small" alt="">
+          <img src="{% static 'img/avatars/outfit/outfit_1.png' %}" class="avatar-layer-small" alt="">
+          <img src="{% static 'img/avatars/hair/hair_1.png' %}"    class="avatar-layer-small" alt="">
+          <img src="{% static 'img/avatars/face/face_1.png' %}"    class="avatar-layer-small" alt="">
+        </div>
+        <span class="friend-username">study_buddy</span>
+        <div class="friend-actions">
+          <button class="modal-btn friend-btn-remove" onclick="return false;">✕ Remove</button>
+          <button class="modal-btn friend-btn-share"
+                  onclick="openFriendShareModal('study_buddy')">⤴ Share Link</button>
+        </div>
+      </div>
+
+      <div class="dash-card friend-card">
+        <div class="avatar-canvas-small">
+          <img src="{% static 'img/avatars/skin/skin_1.png' %}"    class="avatar-layer-small" alt="">
+          <img src="{% static 'img/avatars/outfit/outfit_1.png' %}" class="avatar-layer-small" alt="">
+          <img src="{% static 'img/avatars/hair/hair_1.png' %}"    class="avatar-layer-small" alt="">
+          <img src="{% static 'img/avatars/face/face_1.png' %}"    class="avatar-layer-small" alt="">
+        </div>
+        <span class="friend-username">cozy_coder</span>
+        <div class="friend-actions">
+          <button class="modal-btn friend-btn-remove" onclick="return false;">✕ Remove</button>
+          <button class="modal-btn friend-btn-share"
+                  onclick="openFriendShareModal('cozy_coder')">⤴ Share Link</button>
+        </div>
+      </div>
+
+      <div class="dash-card friend-card">
+        <div class="avatar-canvas-small">
+          <img src="{% static 'img/avatars/skin/skin_1.png' %}"    class="avatar-layer-small" alt="">
+          <img src="{% static 'img/avatars/outfit/outfit_1.png' %}" class="avatar-layer-small" alt="">
+          <img src="{% static 'img/avatars/hair/hair_1.png' %}"    class="avatar-layer-small" alt="">
+          <img src="{% static 'img/avatars/face/face_1.png' %}"    class="avatar-layer-small" alt="">
+        </div>
+        <span class="friend-username">another_user</span>
+        <div class="friend-actions">
+          <button class="modal-btn friend-btn-remove" onclick="return false;">✕ Remove</button>
+          <button class="modal-btn friend-btn-share"
+                  onclick="openFriendShareModal('another_user')">⤴ Share Link</button>
+        </div>
+      </div>
+
+      <div class="dash-card friend-card">
+        <div class="avatar-canvas-small">
+          <img src="{% static 'img/avatars/skin/skin_1.png' %}"    class="avatar-layer-small" alt="">
+          <img src="{% static 'img/avatars/outfit/outfit_1.png' %}" class="avatar-layer-small" alt="">
+          <img src="{% static 'img/avatars/hair/hair_1.png' %}"    class="avatar-layer-small" alt="">
+          <img src="{% static 'img/avatars/face/face_1.png' %}"    class="avatar-layer-small" alt="">
+        </div>
+        <span class="friend-username">night_owl</span>
+        <div class="friend-actions">
+          <button class="modal-btn friend-btn-remove" onclick="return false;">✕ Remove</button>
+          <button class="modal-btn friend-btn-share"
+                  onclick="openFriendShareModal('night_owl')">⤴ Share Link</button>
+        </div>
+      </div>
+
+      <div class="dash-card friend-card">
+        <div class="avatar-canvas-small">
+          <img src="{% static 'img/avatars/skin/skin_1.png' %}"    class="avatar-layer-small" alt="">
+          <img src="{% static 'img/avatars/outfit/outfit_1.png' %}" class="avatar-layer-small" alt="">
+          <img src="{% static 'img/avatars/hair/hair_1.png' %}"    class="avatar-layer-small" alt="">
+          <img src="{% static 'img/avatars/face/face_1.png' %}"    class="avatar-layer-small" alt="">
+        </div>
+        <span class="friend-username">pixel_pal</span>
+        <div class="friend-actions">
+          <button class="modal-btn friend-btn-remove" onclick="return false;">✕ Remove</button>
+          <button class="modal-btn friend-btn-share"
+                  onclick="openFriendShareModal('pixel_pal')">⤴ Share Link</button>
+        </div>
+      </div>
+
+      <div class="dash-card friend-card">
+        <div class="avatar-canvas-small">
+          <img src="{% static 'img/avatars/skin/skin_1.png' %}"    class="avatar-layer-small" alt="">
+          <img src="{% static 'img/avatars/outfit/outfit_1.png' %}" class="avatar-layer-small" alt="">
+          <img src="{% static 'img/avatars/hair/hair_1.png' %}"    class="avatar-layer-small" alt="">
+          <img src="{% static 'img/avatars/face/face_1.png' %}"    class="avatar-layer-small" alt="">
+        </div>
+        <span class="friend-username">extra_card</span>
+        <div class="friend-actions">
+          <button class="modal-btn friend-btn-remove" onclick="return false;">✕ Remove</button>
+          <button class="modal-btn friend-btn-share"
+                  onclick="openFriendShareModal('extra_card')">⤴ Share Link</button>
+        </div>
+      </div>
+
+    </div>
+
+    <p class="rooms-empty-msg" id="friendsEmpty" style="display:none;">
+      No friends yet — add one above! 👋
+    </p>
+
+    <!-- Pagination — exact same structure as rooms.html -->
+    <div class="rooms-pagination">
+      <button class="rooms-page-btn" aria-label="Previous">&larr;</button>
+          <span class="rooms-page-indicator">
+          <span class="rooms-page-dot rooms-page-dot--active"></span>
+          <span class="rooms-page-dot"></span>
+          <span class="rooms-page-dot"></span>
+          </span>
+      <button class="rooms-page-btn" aria-label="Next">&rarr;</button>
+    </div>
+
+  </div><!-- /friendsPanel -->
+
+
+  <!--  REQUESTS PANEL — mirrors temp rooms panel  -->
+  <div class="card rooms-panel friends-panel-requests" id="requestsPanel">
+    <h2 class="rooms-panel-title">
+      Requests
+      <span class="temp-badge">pending</span>
+    </h2>
+
+    <div class="rooms-grid" id="requestsGrid">
+
+      <div class="dash-card friend-card">
+        <div class="avatar-canvas-small">
+          <img src="{% static 'img/avatars/skin/skin_1.png' %}"    class="avatar-layer-small" alt="">
+          <img src="{% static 'img/avatars/outfit/outfit_1.png' %}" class="avatar-layer-small" alt="">
+          <img src="{% static 'img/avatars/hair/hair_1.png' %}"    class="avatar-layer-small" alt="">
+          <img src="{% static 'img/avatars/face/face_1.png' %}"    class="avatar-layer-small" alt="">
+        </div>
+        <span class="friend-username">new_requester</span>
+        <div class="friend-actions">
+          <button class="modal-btn friend-btn-accept" onclick="return false;">✔ Accept</button>
+          <button class="modal-btn friend-btn-remove" onclick="return false;">✕ Decline</button>
+        </div>
+      </div>
+
+      <div class="dash-card friend-card">
+        <div class="avatar-canvas-small">
+          <img src="{% static 'img/avatars/skin/skin_1.png' %}"    class="avatar-layer-small" alt="">
+          <img src="{% static 'img/avatars/outfit/outfit_1.png' %}" class="avatar-layer-small" alt="">
+          <img src="{% static 'img/avatars/hair/hair_1.png' %}"    class="avatar-layer-small" alt="">
+          <img src="{% static 'img/avatars/face/face_1.png' %}"    class="avatar-layer-small" alt="">
+        </div>
+        <span class="friend-username">morning_brew</span>
+        <div class="friend-actions">
+          <button class="modal-btn friend-btn-accept" onclick="return false;">✔ Accept</button>
+          <button class="modal-btn friend-btn-remove" onclick="return false;">✕ Decline</button>
+        </div>
+      </div>
+
+    </div>
+
+    <p class="rooms-empty-msg" id="requestsEmpty" style="display:none;">
+      No pending requests. 🕊️
+    </p>
+
+    <div class="rooms-pagination">
+      <button class="rooms-page-btn" aria-label="Previous">&larr;</button>
+          <span class="rooms-page-indicator">
+          <span class="rooms-page-dot rooms-page-dot--active"></span>
+          <span class="rooms-page-dot"></span>
+          <span class="rooms-page-dot"></span>
+          </span>
+      <button class="rooms-page-btn" aria-label="Next">&rarr;</button>
+    </div>
+
+  </div><!-- /requestsPanel -->
+
+</div><!-- /dashboard-container -->
+
+
+<!--  SHARE LINK MODAL — mirrors rooms info modal  -->
+<div class="modal-backdrop" id="friendShareBackdrop">
+  <div class="settings-modal">
+
+    <div class="modal-header">
+      <span class="modal-title">⤴ Share Room Link</span>
+      <button class="modal-close" id="closeFriendShare">&#10005;</button>
+    </div>
+
+    <div class="modal-section">
+      <div class="modal-section-title">Sending to</div>
+      <span class="room-name-badge" id="shareTargetName"></span>
+    </div>
+
+    <div class="modal-section">
+      <div class="modal-section-title">Room Link</div>
+      <div class="share-link-wrap">
+        <input type="text" class="share-link-input" id="friendShareInput"
+               placeholder="Paste a room link..."/>
+        <!-- TODO: wire send btn to send_room_link view via fetch() POST when backend ready -->
+        <button class="share-copy-btn" onclick="return false;">Send</button>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="modal-btn modal-btn-cancel" id="closeFriendShareFooter">Close</button>
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}
+
+
+{% block extra_js %}<script src="{% static 'js/friends.js' %}"></script>{% endblock %}

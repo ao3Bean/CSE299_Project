@@ -1,0 +1,99 @@
+/*  Avatar canvas — exact sizes from your spec  */
+.avatar-canvas-small {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    margin: 8px auto;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  
+  .avatar-layer-small {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200px;
+    height: 200px;
+    object-fit: contain;
+    pointer-events: none;
+  }
+  
+  /*  Friend card — extends .dash-card  */
+  .friend-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 14px 14px;
+    cursor: default;
+    min-height: unset;  /* override dash-card min-height */
+  }
+  
+  .friend-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 6px 6px 0 var(--border);
+  }
+  
+  /*  Username label  */
+  .friend-username {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--text-color);
+    text-align: center;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+  
+  /*  Action buttons row  */
+  .friend-actions {
+    display: flex;
+    gap: 6px;
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  /* extends .modal-btn from rooms.css */
+  .friend-actions .modal-btn {
+    flex: 1;
+    padding: 7px 10px;
+    font-size: 11px;
+    text-align: center;
+  }
+  
+  .friend-btn-accept {
+    background: var(--dash-green);
+    color: var(--text-color);
+  }
+  
+  .friend-btn-remove {
+    background: var(--window);
+    color: var(--dash-coral);
+    border-color: var(--dash-coral) !important;
+    box-shadow: 2px 2px 0 var(--dash-coral) !important;
+  }
+  
+  .friend-btn-remove:hover {
+    background: rgba(255, 139, 139, 0.12);
+    box-shadow: 3px 3px 0 var(--dash-coral) !important;
+  }
+  
+  .friend-btn-share {
+    background: var(--accent2);
+    color: var(--text-color);
+  }
+  
+  /*  Requests panel — mirrors .rooms-panel-temp  */
+  .friends-panel-requests {
+    border: 4px dashed var(--accent);
+    box-shadow: 4px 4px 0 var(--accent);
+    margin-top: 20px;
+  }
+  
+  .friends-panel-requests .rooms-panel-title {
+    color: var(--accent);
+    box-shadow: 0px 3.5px 0px #f5b8d0;
+  }
