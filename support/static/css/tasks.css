@@ -1,0 +1,388 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+
+.tasks-container {
+    padding: 16px 30px;  /* reduced top padding */
+    max-width: 900px;
+    margin: 0 auto;
+    font-family: 'Nunito', sans-serif;
+}
+
+.tasks-title {
+    font-size: 24px;     /* slightly smaller */
+    font-weight: 900;
+    color: #5a3e7a;
+    margin-bottom: 12px; /* reduced margin */
+    text-align: center;
+    letter-spacing: -0.5px;
+}
+
+/* ── Calendar Card ── */
+.calendar-card {
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(8px);
+    border: 2.5px solid #e8b4d0;
+    border-radius: 20px;
+    padding: 12px;       /* reduced from 16px */
+    box-shadow: 4px 4px 0 #e8b4d0;
+}
+
+/* ── Month Navigation ── */
+.calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px; /* reduced */
+}
+
+.month-title {
+    font-size: 20px;
+    font-weight: 900;
+    color: #5a3e7a;
+}
+
+.month-nav-btn {
+    background: #f3d6e8;
+    border: 2px solid #e8b4d0;
+    border-radius: 10px;
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+    cursor: pointer;
+    font-weight: 900;
+    color: #5a3e7a;
+    transition: all 0.15s;
+    box-shadow: 2px 2px 0 #e8b4d0;
+}
+
+.month-nav-btn:hover {
+    background: #e8b4d0;
+    transform: translateY(-2px);
+}
+
+/* ── Day Labels ── */
+.calendar-day-labels {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;            /* reduced from 6px */
+    margin-bottom: 4px;
+}
+
+.day-label {
+    text-align: center;
+    font-size: 12px;          /* ← bigger */
+    font-weight: 900;         /* ← bolder */
+    color: #5a3e7a;
+    text-transform: uppercase;
+    letter-spacing: 1px;      /* ← more spacing */
+    background: #f3d6e8;
+    border: 2px solid #e8b4d0; /* ← thicker border */
+    border-radius: 8px;
+    padding: 6px 0;           /* ← more padding */
+    text-shadow: 0px 1px 0px #e8b4d0; /* ← subtle shadow */
+
+}
+
+/* ── Day Grid ── */
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;            /* reduced from 6px */
+}
+
+.calendar-day {
+    aspect-ratio: 1;
+    border-radius: 12px;
+    border: 2px solid transparent;
+    background: #fdf4fb;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;   /* ← left align */
+    justify-content: flex-end; /* ← bottom align */
+    padding: 6px 8px;          /* ← padding from edges */
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 700;
+    color: #5a3e7a;
+    position: relative;
+    transition: all 0.15s;
+    min-height: 60px;    /* ← increased */
+    max-height: 60px;    /* ← increased */
+}
+
+.calendar-day:hover {
+    background: #f3d6e8;
+    border-color: #e8b4d0;
+    transform: translateY(-2px);
+    box-shadow: 2px 2px 0 #e8b4d0;
+}
+
+.calendar-day.empty {
+    background: transparent;
+    cursor: default;
+    border: none;
+}
+
+.calendar-day.today {
+    border-color: #c084d4;
+    background: #f0d6f5;
+    box-shadow: 2px 2px 0 #c084d4;
+}
+
+/* ── Days with tasks → pink highlight ── */
+.calendar-day.has-tasks {
+    /*background: #ffb7d5;
+    border-color: #ff8fb1;
+    box-shadow: 2px 2px 0 #ff8fb1; */
+
+    /*for pastel blue*/
+     background: #b3d9f7;
+    border-color: #7ec8e3;
+    box-shadow: 2px 2px 0 #7ec8e3;
+}
+
+.calendar-day.has-tasks:hover {
+    /*background: #ff99c4;
+    transform: translateY(-2px);*/
+    /*For pastel blue*/
+    background: #99cef5;
+    transform: translateY(-2px);
+}
+
+.calendar-day.selected {
+    background: #c084d4;
+    border-color: #9b59b6;
+    color: white;
+    box-shadow: 3px 3px 0 #9b59b6;
+    transform: translateY(-2px);
+}
+
+/* ── Task badge ── */
+.task-badge {
+   position: absolute;
+    top: 4px;
+    right: 4px;
+    background: #0d9488;   /* teal — stands out on both lavender and blue */
+    color: white;
+    font-size: 11px;        /* was 9px */
+    font-weight: 900;
+    border-radius: 50%;
+    width: 18px;         /* ← smaller so cell color is visible */
+    height: 18px;           /* was 16px */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+   box-shadow: 1px 1px 0 #0a7c72;  /* ← teal shadow */
+}
+
+.calendar-day.selected .task-badge {
+    background: white;
+    color: #0d9488;
+}
+
+/* ── Modal Backdrop ── */
+.task-modal-backdrop {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(90, 62, 122, 0.2);
+    backdrop-filter: blur(2px);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+}
+
+.task-modal-backdrop.open {
+    display: flex;
+}
+
+/* ── Modal ── */
+.task-modal {
+    background: white;
+    border: 2.5px solid #e8b4d0;
+    border-radius: 20px;
+    padding: 28px;
+    width: 380px;
+    max-width: 90vw;
+    box-shadow: 6px 6px 0 #e8b4d0;
+    position: relative;
+    font-family: 'Nunito', sans-serif;
+}
+
+.task-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.task-modal-title {
+    font-size: 16px;
+    font-weight: 900;
+    color: #5a3e7a;
+}
+
+.task-modal-close {
+    background: #f3d6e8;
+    border: 2px solid #e8b4d0;
+    border-radius: 8px;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #5a3e7a;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ── Task List ── */
+.task-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 16px 0;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.task-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    margin-bottom: 6px;
+    background: #fdf4fb;
+    border: 1.5px solid #e8b4d0;
+    font-size: 13px;
+    font-weight: 600;
+    color: #5a3e7a;
+}
+
+.task-item.completed {
+    opacity: 0.5;
+    text-decoration: line-through;
+}
+
+.task-checkbox {
+    width: 18px;
+    height: 18px;
+    accent-color: #c084d4;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.task-empty {
+    text-align: center;
+    font-size: 13px;
+    color: #a78abf;
+    padding: 12px 0;
+}
+
+/* ── Add Task Form ── */
+.add-task-form {
+    display: flex;
+    gap: 8px;
+}
+
+.add-task-input {
+    flex: 1;
+    padding: 10px 14px;
+    border: 2px solid #e8b4d0;
+    border-radius: 12px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: #5a3e7a;
+    background: #fdf4fb;
+    outline: none;
+}
+
+.add-task-input:focus {
+    border-color: #c084d4;
+}
+
+.add-task-btn {
+    padding: 10px 16px;
+    background: #c084d4;
+    border: 2px solid #9b59b6;
+    border-radius: 12px;
+    color: white;
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 2px 2px 0 #9b59b6;
+    transition: all 0.15s;
+}
+
+.add-task-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 3px 3px 0 #9b59b6;
+}
+
+
+/* ── Today WITH tasks → keep lavender + teal badge ── */
+.calendar-day.today.has-tasks {
+    background: #f0d6f5;      /* keep lavender */
+    border-color: #c084d4;    /* keep lavender border */
+    box-shadow: 2px 2px 0 #c084d4;
+}
+
+.calendar-day.today.has-tasks:hover {
+    background: #e8c5f0;
+    transform: translateY(-2px);
+}
+
+/* ── All tasks complete → pastel green ── */
+.calendar-day.all-done {
+    background: #b8f0c8;
+    border-color: #6ddb8f;
+    box-shadow: 2px 2px 0 #6ddb8f;
+}
+
+.calendar-day.all-done:hover {
+    background: #a0eab6;
+    transform: translateY(-2px);
+}
+
+/* ── Today + all done → pastel yellow ── */
+.calendar-day.today.all-done {
+    background: #fff3b0;
+    border-color: #ffd966;
+    box-shadow: 2px 2px 0 #ffd966;
+}
+
+.calendar-day.today.all-done:hover {
+    background: #ffe97a;
+    transform: translateY(-2px);
+}
+
+
+/* ── Color Legend ── */
+.calendar-legend {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    margin-top: 12px;
+    flex-wrap: wrap;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: #5a3e7a;
+}
+
+.legend-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    border: 2px solid;
+    display: inline-block;
+}

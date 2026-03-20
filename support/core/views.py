@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
-from .models import UserProfile
+from .models import UserProfile, Task
 from django.contrib import messages
+from django.utils import timezone
+import json
 
 
 # Create your views here.
@@ -35,9 +37,9 @@ def settings_view(request):
 def focus(request):
     return render(request, "focus.html")
 
-@login_required(login_url="login")
-def tasks(request): 
-    return render(request, "tasks.html")
+#@login_required(login_url="login")#we're having it in the calendar part 
+#def tasks(request): 
+    #return render(request, "tasks.html")
 
 @login_required(login_url="login")
 def friends(request): 
@@ -88,3 +90,46 @@ def avatar_customization(request):
         messages.success(request, "Avatar saved!")
         return redirect('user_profile')
     return render(request, "avatar_customization.html", {'profile': profile})
+
+
+
+#for calendar (task-> to-do list)
+@login_required(login_url="login")
+def tasks(request):
+    # get all tasks for this user
+    user_tasks = Task.objects.filter(user=request.user)
+    
+    # group tasks by date for the calendar
+    tasks_by_date = {}
+    for task in user_tasks:
+        date_str = str(task.date)
+        if date_str not in tasks_by_date:
+            tasks_by_date[date_str] = []
+        tasks_by_date[date_str].append({
+            'id': task.id,
+            'title': task.title,
+            'is_complete': task.is_complete,
+        })
+    
+    return render(request, "tasks.html", {
+        'tasks_by_date': json.dumps(tasks_by_date),  # pass to JS
+    })
+
+@login_required(login_url="login")
+def add_task(request):
+    if request.method == "POST":
+        title = request.POST.get('title')
+        date  = request.POST.get('date')
+        Task.objects.create(user=request.user, title=title, date=date)
+        return redirect('tasks')
+    return redirect('tasks')
+
+@login_required(login_url="login")
+def toggle_task(request, task_id):
+    try:
+        task = Task.objects.get(id=task_id, user=request.user)
+        task.is_complete = not task.is_complete
+        task.save()
+    except Task.DoesNotExist:
+        pass
+    return redirect('tasks')

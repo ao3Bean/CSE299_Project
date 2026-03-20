@@ -1,8 +1,93 @@
 {% extends "user_base.html" %}
 {% load static %}
 {% block title %}Tasks - Cadence{% endblock %}
-{% block nav_tasks %}active {% endblock %}
+{% block nav_tasks %}active{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/tasks.css' %}">
+{% endblock %}
+
 {% block content %}
-<h1>
-     Tasks Page</h1>
+
+<!-- Pass tasks data from Django to JS -->
+<script>
+    const tasksByDate = {{ tasks_by_date|safe }}; 
+</script>
+
+<div class="tasks-container">
+    <h1 class="tasks-title">✦ My Tasks ✦</h1>
+
+    <div class="calendar-card">
+
+        <!-- Month Navigation -->
+        <div class="calendar-header">
+            <button class="month-nav-btn" id="prev-month">&#8592;</button>
+            <span class="month-title" id="month-title"></span>
+            <button class="month-nav-btn" id="next-month">&#8594;</button>
+        </div>
+
+        <!-- Day Labels -->
+        <div class="calendar-day-labels">
+            <div class="day-label">Sun</div>
+            <div class="day-label">Mon</div>
+            <div class="day-label">Tue</div>
+            <div class="day-label">Wed</div>
+            <div class="day-label">Thu</div>
+            <div class="day-label">Fri</div>
+            <div class="day-label">Sat</div>
+        </div>
+
+        <!-- Day Grid — built by JS -->
+        <div class="calendar-grid" id="calendar-grid"></div>
+
+        <!-- Color Legend -->
+      <div class="calendar-legend">
+      <div class="legend-item">
+        <span class="legend-dot" style="background:#f0d6f5; border-color:#c084d4;"></span>
+        <span class="legend-label">Today</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-dot" style="background:#b3d9f7; border-color:#7ec8e3;"></span>
+        <span class="legend-label">Has Tasks</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-dot" style="background:#b8f0c8; border-color:#6ddb8f;"></span>
+        <span class="legend-label">All Done</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-dot" style="background:#fff3b0; border-color:#ffd966;"></span>
+        <span class="legend-label">Today + All Done</span>
+      </div>
+      </div>
+
+    </div>
+</div>
+
+<!-- Task Modal -->
+<div class="task-modal-backdrop" id="task-modal-backdrop">
+    <div class="task-modal">
+        <div class="task-modal-header">
+            <span class="task-modal-title" id="modal-date-title">Tasks</span>
+            <button class="task-modal-close" id="close-modal">✕</button>
+        </div>
+
+        <!-- Task List -->
+        <ul class="task-list" id="task-list"></ul>
+
+        <!-- Add Task Form -->
+        <form class="add-task-form" id="add-task-form" 
+              method="POST" action="{% url 'add_task' %}">
+            {% csrf_token %}
+            <input type="hidden" name="date" id="selected-date-input">
+            <input type="text" name="title" class="add-task-input"
+                   placeholder="Add a task..." autocomplete="off" required>
+            <button type="submit" class="add-task-btn">+ Add</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/tasks.js' %}"></script>
 {% endblock %}
