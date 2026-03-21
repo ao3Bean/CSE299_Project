@@ -20,4 +20,5 @@ urlpatterns = [
     path('avatar/customize/', views.avatar_customization, name='avatar_customization'),
     path('tasks/add/', views.add_task, name='add_task'),
     path('tasks/toggle/<int:task_id>/', views.toggle_task, name='toggle_task'),
+    path('profile/edit/', views.edit_profile, name='edit_profile'),
 ]

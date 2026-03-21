@@ -154,6 +154,27 @@ def avatar_customization(request):
     return render(request, "avatar_customization.html", {'profile': profile})
 
 
+# ── NEW: edit profile view ────────────────────────────
+# handles editing hobbies and focus goal
+# GET  → loads current values into the edit form
+# POST → saves new values to db → redirects to profile
+@login_required(login_url="login")
+def edit_profile(request):
+    profile, _ = UserProfile.objects.get_or_create(
+        user=request.user,
+        defaults=DEFAULT_AVATAR
+    )
+    if request.method == "POST":
+        # save hobbies and focus goal from form
+        profile.hobbies    = request.POST.get('hobbies', '')
+        profile.focus_goal = request.POST.get('focus_goal', '')
+        profile.save()
+        messages.success(request, "Profile updated!")
+        return redirect('user_profile')  # go back to profile after saving
+    # GET → render edit form with current values
+    return render(request, "edit_profile.html", {'profile': profile})
+# ── END NEW ──────────────────────────────────────────
+
 
 #for calendar (task-> to-do list)
 @login_required(login_url="login")

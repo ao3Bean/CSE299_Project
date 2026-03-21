@@ -1,0 +1,59 @@
+{% extends "user_base.html" %}
+{% load static %}
+
+{% block title %}Edit Profile - Cadence{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/profile_styling.css' %}">
+{% endblock %}
+
+{% block nav_profile %}active{% endblock %}
+
+{% block content %}
+<div class="edit-profile-container">
+
+    <h1 class="edit-profile-title">✏️ Edit Profile</h1>
+
+    <!-- messages -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="message {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="edit-profile-card">
+        <form method="POST" action="{% url 'edit_profile' %}">
+            {% csrf_token %}
+
+            <!-- Hobbies -->
+            <div class="edit-field">
+                <label class="edit-label">🎨 Hobbies</label>
+                <input 
+                    type="text" 
+                    name="hobbies" 
+                    class="edit-input"
+                    value="{{ profile.hobbies }}"
+                    placeholder="e.g. Drawing, Music, Coding, Gaming, Reading">
+            </div>
+
+            <!-- Focus Goal -->
+            <div class="edit-field">
+                <label class="edit-label">🎯 Focus Goal</label>
+                <input 
+                    type="text" 
+                    name="focus_goal" 
+                    class="edit-input"
+                    value="{{ profile.focus_goal }}"
+                    placeholder="e.g. 3 hours daily, Complete 5 tasks a day">
+            </div>
+
+            <!-- Buttons -->
+            <div class="edit-actions">
+                <button type="submit" class="edit-btn-save">Save Changes</button>
+                <a href="{% url 'user_profile' %}" class="edit-btn-cancel">Cancel</a>
+            </div>
+
+        </form>
+    </div>
+</div>
+{% endblock %}

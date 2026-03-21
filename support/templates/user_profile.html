@@ -40,14 +40,27 @@
            
           <!--<a href="#" class="about-link">📊 View Analytics</a> -->
           <a href="#" class="about-link" id="openAnalytics">📊 View Analytics</a>
-
+        <!--
          <div class="about-item">
             🎨 Hobbies: Drawing, Music, Coding
          </div>
 
          <div class="about-item">
             🎯 Focus Goal: 3 hours daily
+         </div> -->
+
+         <!-- CHANGED: now reads from database instead of hardcoded -->
+         <div class="about-item">
+             🎨 Hobbies: {{ profile.hobbies|default:"No hobbies added yet." }}
          </div>
+
+         <!-- CHANGED: now reads from database instead of hardcoded -->
+         <div class="about-item">
+             🎯 Focus Goal: {{ profile.focus_goal|default:"No focus goal set yet." }}
+         </div>
+
+         <!-- NEW: edit profile button -->
+         <a href="{% url 'edit_profile' %}" class="about-link">✏️ Edit Profile</a>
 
             <!-- NEW DATABASE FIELDS (added, not replacing anything) 
 

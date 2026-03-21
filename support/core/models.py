@@ -12,6 +12,11 @@ class UserProfile(models.Model):
     clothes = models.CharField(max_length=50, default="Default Clothes")
 
     skin_color = models.CharField(max_length=50, default="Medium")
+    
+     
+    # ── NEW: profile info fields ──
+    hobbies         = models.CharField(max_length=500, default="")
+    focus_goal      = models.CharField(max_length=200, default="")
 
     def __str__(self):
         return self.user.username
