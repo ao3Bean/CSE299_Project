@@ -4,6 +4,8 @@ from django.contrib.auth.decorators import login_required
 from .models import UserProfile, Task
 from django.contrib import messages
 from django.utils import timezone
+from datetime import date          # ← NEW: for today's date
+from collections import Counter    # ← NEW: for counting most productive day
 import json
 
 
@@ -57,7 +59,64 @@ def user_profile(request):
         user=request.user,
         defaults=DEFAULT_AVATAR
     )
-    return render(request, "user_profile.html", {'profile': profile})
+
+
+    # ── Task Analytics ────────────────────────────────
+    today = date.today()
+
+    # get all tasks for this user this month
+    monthly_tasks = Task.objects.filter(
+        user=request.user,
+        date__year=today.year,
+        date__month=today.month
+    )
+
+    # count total, completed and incomplete tasks this month
+    total_tasks      = monthly_tasks.count()
+    completed_tasks  = monthly_tasks.filter(is_complete=True).count()
+    incomplete_tasks = total_tasks - completed_tasks
+
+    # completion rate as a percentage (avoid division by zero)
+    completion_rate = round((completed_tasks / total_tasks * 100)) if total_tasks > 0 else 0
+
+    # most productive day — day with most completed tasks this month
+    completed_dates = monthly_tasks.filter(
+        is_complete=True
+    ).values_list('date', flat=True)
+
+    most_productive_day = None
+    if completed_dates:
+        day_counts   = Counter(completed_dates)
+        busiest_date = max(day_counts, key=day_counts.get)
+        most_productive_day = busiest_date.strftime("%B %d")  # e.g. "March 20"
+
+    # ── Yearly Analytics (for pie chart) ─────────────
+    # get all tasks for this user this year
+    yearly_tasks = Task.objects.filter(
+        user=request.user,
+        date__year=today.year
+    )
+
+    yearly_total      = yearly_tasks.count()
+    yearly_completed  = yearly_tasks.filter(is_complete=True).count()
+    yearly_incomplete = yearly_total - yearly_completed
+    # ── End Analytics ─────────────────────────────────
+
+    return render(request, "user_profile.html", {
+        'profile':             profile,
+        # monthly stats
+        'total_tasks':         total_tasks,
+        'completed_tasks':     completed_tasks,
+        'incomplete_tasks':    incomplete_tasks,
+        'completion_rate':     completion_rate,
+        'most_productive_day': most_productive_day or "No data yet",
+        # yearly stats for pie chart
+        'yearly_completed':    yearly_completed,
+        'yearly_incomplete':   yearly_incomplete,
+        'yearly_total':        yearly_total,
+    })
+
+    #return render(request, "user_profile.html", {'profile': profile})
 
 #def avatar(request):
     #return render(request, "avatar.html")
@@ -73,6 +132,9 @@ def avatar(request):
         user=request.user,
         defaults=DEFAULT_AVATAR
     )
+
+    
+
     return render(request, "avatar.html", {'profile': profile})
 
 @login_required(login_url="login")

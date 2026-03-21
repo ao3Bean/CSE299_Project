@@ -37,8 +37,9 @@
         <div class="about-title">About Info</div>
 
         <div class="about-content">
-            
-          <a href="#" class="about-link">📊 View Analytics</a>
+           
+          <!--<a href="#" class="about-link">📊 View Analytics</a> -->
+          <a href="#" class="about-link" id="openAnalytics">📊 View Analytics</a>
 
          <div class="about-item">
             🎨 Hobbies: Drawing, Music, Coding
@@ -82,4 +83,81 @@
 
 </div>
 
+<!-- Analytics Modal -->
+<div class="analytics-backdrop" id="analyticsBackdrop">
+    <div class="analytics-modal">
+        
+        <div class="analytics-header">
+            <span class="analytics-title">📊 Your Analytics</span>
+            <button class="analytics-close" id="closeAnalytics">✕</button>
+        </div>
+
+        <!-- Monthly Stats -->
+        <div class="analytics-section-title">This Month</div>
+        <div class="analytics-stats-grid">
+            <div class="analytics-stat-card">
+                <div class="analytics-stat-number">{{ total_tasks }}</div>
+                <div class="analytics-stat-label">Total Tasks</div>
+            </div>
+            <div class="analytics-stat-card">
+                <div class="analytics-stat-number" style="color:#6ddb8f;">{{ completed_tasks }}</div>
+                <div class="analytics-stat-label">Completed</div>
+            </div>
+            <div class="analytics-stat-card">
+                <div class="analytics-stat-number" style="color:#ff8fb1;">{{ incomplete_tasks }}</div>
+                <div class="analytics-stat-label">Incomplete</div>
+            </div>
+            <div class="analytics-stat-card">
+                <div class="analytics-stat-number" style="color:#c084d4;">{{ completion_rate }}%</div>
+                <div class="analytics-stat-label">Completion Rate</div>
+            </div>
+        </div>
+
+        <!-- Most Productive Day -->
+        <div class="analytics-productive-day">
+            🏆 Most Productive Day: <strong>{{ most_productive_day }}</strong>
+        </div>
+
+     <!-- Yearly Pie Chart -->
+     <!-- Yearly Pie Chart -->
+     <div class="analytics-section-title">This Year</div>
+     <div class="analytics-chart-wrap">
+      <canvas id="yearlyPieChart" width="200" height="200"></canvas>
+    
+     <!-- shown only when no tasks exist -->
+     <div id="no-tasks-msg" style="display:none; text-align:center; padding: 20px;">
+        <div style="font-size:40px;">🌱</div>
+        <div style="font-size:13px; font-weight:700; color:#a78abf; margin-top:8px;">
+            No tasks yet!<br>Start adding tasks to see your progress.
+        </div>
+    </div>
+
+    <div class="analytics-chart-legend" id="chart-legend">
+        <div class="chart-legend-item">
+            <span class="chart-legend-dot" style="background:#b8f0c8;"></span>
+            Completed ({{ yearly_completed }})
+        </div>
+        <div class="chart-legend-item">
+            <span class="chart-legend-dot" style="background:#ffb7d5;"></span>
+            Incomplete ({{ yearly_incomplete }})
+        </div>
+    </div>
+</div>
+
+    </div>
+</div>
+
+
+
+<!-- Pass yearly data to JS -->
+<script>
+    const yearlyCompleted  = {{ yearly_completed }};
+    const yearlyIncomplete = {{ yearly_incomplete }};
+</script>
+
+<!-- Chart.js CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+
+<!-- Profile Chart JS -->
+<script src="{% static 'js/profile_chart.js' %}"></script>
 {% endblock %}
