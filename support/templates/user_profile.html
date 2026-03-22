@@ -13,7 +13,23 @@
    
     <div class="profile-section">
 
-        <img src="{% static 'profile_pic.png' %}" class="profile-avatar">
+        <!-- <img src="{% static 'img/avatars/profile_pic.png' %}" class="profile-avatar"> -->
+        <!-- <img src="{% static 'img/avatars/' %}{{ profile.profile_pic }}" class="profile-avatar"> -->
+        {% if profile.profile_pic == "avatar" %}
+            <!-- show stacked avatar layers -->
+      <div class="profile-avatar avatar-canvas-profile">
+        
+        <img src="{% static 'img/avatars/skin/' %}{{ profile.skin_color }}.png" class="avatar-layer-profile">
+        
+        <img src="{% static 'img/avatars/outfit/' %}{{ profile.clothes }}.png" class="avatar-layer-profile">
+        
+        <img src="{% static 'img/avatars/hair/' %}{{ profile.hair }}.png" class="avatar-layer-profile">
+        <img src="{% static 'img/avatars/face/' %}{{ profile.face_expression }}.png" class="avatar-layer-profile">
+      </div>
+    {% else %}
+    <!-- show preset image -->
+    <img src="{% static 'img/avatars/' %}{{ profile.profile_pic }}" class="profile-avatar">
+    {% endif %}
 
         <img src="{% static 'bulb.gif' %}" class="bulb-icon">
 
@@ -79,9 +95,14 @@
         <div class="about-item">
             🎨 Skin Color: {{ request.user.userprofile.skin_color|default:"Not set" }}
         </div> -->
+        
+        <a href="{% url 'edit_profile_pic' %}" class="about-link">
+                   🖼️ Change Profile Picture
+        </a>
 
         <!-- Avatar Preview -->
          <div class="avatar-canvas-small">
+         
          <img src="{% static 'img/avatars/skin/' %}{{ request.user.userprofile.skin_color }}.png" class="avatar-layer-small">
          <img src="{% static 'img/avatars/outfit/' %}{{ request.user.userprofile.clothes }}.png" class="avatar-layer-small">
          <img src="{% static 'img/avatars/hair/' %}{{ request.user.userprofile.hair }}.png" class="avatar-layer-small">

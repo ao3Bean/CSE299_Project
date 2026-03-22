@@ -21,4 +21,5 @@ urlpatterns = [
     path('tasks/add/', views.add_task, name='add_task'),
     path('tasks/toggle/<int:task_id>/', views.toggle_task, name='toggle_task'),
     path('profile/edit/', views.edit_profile, name='edit_profile'),
+    path('profile/pic/', views.edit_profile_pic, name='edit_profile_pic'),
 ]

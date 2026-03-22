@@ -1,0 +1,112 @@
+{% extends "user_base.html" %}
+{% load static %}
+
+{% block title %}Profile Picture - Cadence{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/profile_styling.css' %}">
+{% endblock %}
+
+{% block nav_profile %}active{% endblock %}
+
+{% block content %}
+<div class="edit-profile-container">
+
+    <h1 class="edit-profile-title">🖼️ Choose Profile Picture</h1>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="message {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="edit-profile-card">
+        <form method="POST" action="{% url 'edit_profile_pic' %}">
+            {% csrf_token %}
+
+            <div class="pic-grid">
+
+                <!-- Default -->
+                <label class="pic-option {% if profile.profile_pic == 'profile_pic.png' %}selected{% endif %}">
+                    <input type="radio" name="profile_pic" value="profile_pic.png"
+                           {% if profile.profile_pic == 'profile_pic.png' %}checked{% endif %}>
+                    <img src="{% static 'img/avatars/profile_pic.png' %}" alt="Default">
+                    <span class="pic-label">Default</span>
+                </label>
+                
+                <!-- Avatar option — shows user's customized avatar -->
+                <label class="pic-option {% if profile.profile_pic == 'avatar' %}selected{% endif %}">
+                  <input type="radio" name="profile_pic" value="avatar"
+                  {% if profile.profile_pic == 'avatar' %}checked{% endif %}>
+                 <!-- stacked avatar layers -->
+                 <div class="avatar-canvas-tiny">
+                   <img src="{% static 'img/avatars/skin/' %}{{ profile.skin_color }}.png" class="avatar-layer-tiny">
+                   <img src="{% static 'img/avatars/outfit/' %}{{ profile.clothes }}.png" class="avatar-layer-tiny">
+                   <img src="{% static 'img/avatars/hair/' %}{{ profile.hair }}.png" class="avatar-layer-tiny">
+                   <img src="{% static 'img/avatars/face/' %}{{ profile.face_expression }}.png" class="avatar-layer-tiny">
+                 </div>
+                 <span class="pic-label">My Avatar</span>
+                </label>
+
+
+
+
+
+
+                <!-- Break -->
+                <label class="pic-option {% if profile.profile_pic == 'break.png' %}selected{% endif %}">
+                    <input type="radio" name="profile_pic" value="break.png"
+                           {% if profile.profile_pic == 'break.png' %}checked{% endif %}>
+                    <img src="{% static 'img/avatars/break.png' %}" alt="Break">
+                    <span class="pic-label">Break</span>
+                </label>
+
+                <!-- Chatting -->
+                <label class="pic-option {% if profile.profile_pic == 'chatting.png' %}selected{% endif %}">
+                    <input type="radio" name="profile_pic" value="chatting.png"
+                           {% if profile.profile_pic == 'chatting.png' %}checked{% endif %}>
+                    <img src="{% static 'img/avatars/chatting.png' %}" alt="Chatting">
+                    <span class="pic-label">Chatting</span>
+                </label>
+
+                <!-- Focused -->
+                <label class="pic-option {% if profile.profile_pic == 'focused.png' %}selected{% endif %}">
+                    <input type="radio" name="profile_pic" value="focused.png"
+                           {% if profile.profile_pic == 'focused.png' %}checked{% endif %}>
+                    <img src="{% static 'img/avatars/focused.png' %}" alt="Focused">
+                    <span class="pic-label">Focused</span>
+                </label>
+
+                <!-- Idle -->
+                <label class="pic-option {% if profile.profile_pic == 'idle.png' %}selected{% endif %}">
+                    <input type="radio" name="profile_pic" value="idle.png"
+                           {% if profile.profile_pic == 'idle.png' %}checked{% endif %}>
+                    <img src="{% static 'img/avatars/idle.png' %}" alt="Idle">
+                    <span class="pic-label">Idle</span>
+                </label>
+
+            </div>
+
+            <!-- Buttons -->
+            <div class="edit-actions">
+                <button type="submit" class="edit-btn-save">Save</button>
+                <a href="{% url 'user_profile' %}" class="edit-btn-cancel">Cancel</a>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+
+
+
+<script>
+    // highlight selected pic on click
+    document.querySelectorAll('.pic-option').forEach(option => {
+        option.addEventListener('click', () => {
+            document.querySelectorAll('.pic-option').forEach(o => o.classList.remove('selected'));
+            option.classList.add('selected');
+        });
+    });
+</script>
+{% endblock %}

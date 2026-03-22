@@ -176,6 +176,24 @@ def edit_profile(request):
 # ── END NEW ──────────────────────────────────────────
 
 
+# ── NEW: profile picture selection view ──
+# GET  → shows preset profile pic options
+# POST → saves selected pic to db → redirects to profile
+@login_required(login_url="login")
+def edit_profile_pic(request):
+    profile, _ = UserProfile.objects.get_or_create(
+        user=request.user,
+        defaults=DEFAULT_AVATAR
+    )
+    if request.method == "POST":
+        # save selected profile pic filename
+        profile.profile_pic = request.POST.get('profile_pic', 'profile_pic.png')
+        profile.save()
+        messages.success(request, "Profile picture updated!")
+        return redirect('user_profile')
+    return render(request, "profile_pic.html", {'profile': profile})
+# ── END NEW ──
+
 #for calendar (task-> to-do list)
 @login_required(login_url="login")
 def tasks(request):

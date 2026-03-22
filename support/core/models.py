@@ -18,6 +18,10 @@ class UserProfile(models.Model):
     hobbies         = models.CharField(max_length=500, default="")
     focus_goal      = models.CharField(max_length=200, default="")
 
+
+    # ── NEW: profile picture selection ──
+    profile_pic     = models.CharField(max_length=100, default="profile_pic.png")
+
     def __str__(self):
         return self.user.username
 
