@@ -14,6 +14,9 @@ class RoomConsumer(AsyncWebsocketConsumer):
         if not hasattr(self.channel_layer, 'presence'): #initialise here for max participants check
             self.channel_layer.presence = {}
 
+        if not hasattr(self.channel_layer, 'room_settings'):
+            self.channel_layer.room_settings = {}
+
         #reject unauthenticated users
         if not self.user.is_authenticated:
             await self.close()
@@ -34,6 +37,15 @@ class RoomConsumer(AsyncWebsocketConsumer):
         #join room group
         await self.channel_layer.group_add(self.room_group_name,self.channel_name)
         await self.accept()
+
+        if self.room_group_name in self.channel_layer.room_settings:
+            live = self.channel_layer.room_settings[self.room_group_name]
+            await self.send(text_data=json.dumps({
+                'type':              'settings_update',
+                'background_preset': live.get('background_preset'),
+                'focus_duration':    live.get('focus_duration'),
+                'break_duration':    live.get('break_duration'),
+            }))
 
         #Add user to presence set in channel layer
         if self.room_group_name not in self.channel_layer.presence:
@@ -61,6 +73,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
             #Clean up empty rooms
             if not self.channel_layer.presence[self.room_group_name]:
                 del self.channel_layer.presence[self.room_group_name]
+                self.channel_layer.room_settings.pop(self.room_group_name, None)
             else:
                 await self.broadcast_presence()
 
@@ -121,6 +134,26 @@ class RoomConsumer(AsyncWebsocketConsumer):
                     'username': self.user.username,
                 }
             )
+        elif msg_type == 'settings_update':
+            bg        = data.get('background_preset')
+            focus     = data.get('focus_duration')
+            break_dur = data.get('break_duration')
+
+            self.channel_layer.room_settings[self.room_group_name] = {
+                'background_preset': bg,
+                'focus_duration':    focus,
+                'break_duration':    break_dur,
+            }
+
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type':              'settings_update',
+                    'background_preset': bg,
+                    'focus_duration':    focus,
+                    'break_duration':    break_dur,
+                }
+            )
 
     #handlers for messages sent to the group
     async def chat_message(self, event):
@@ -158,3 +191,11 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 'hair': 'hair_1',
                 'outfit': 'outfit_1',
             }
+        
+    async def settings_update(self, event):
+        await self.send(text_data=json.dumps({
+            'type':              'settings_update',
+            'background_preset': event.get('background_preset'),
+            'focus_duration':    event.get('focus_duration'),
+            'break_duration':    event.get('break_duration'),
+        }))

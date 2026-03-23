@@ -271,7 +271,7 @@
                 <button class="bg-preset bg-preset-3" data-bg="preset3" aria-label="Preset 3"></button>
                 <button class="bg-preset bg-preset-4" data-bg="preset4" aria-label="Preset 4"></button>
                 <button class="bg-preset bg-preset-5" data-bg="preset5" aria-label="Preset 5"></button>
-                <button class="bg-preset bg-preset-img active" data-bg="img1" aria-label="Image 1">
+                <button class="bg-preset bg-preset-img" data-bg="img1" aria-label="Image 1">
                     <span class="bg-preset-label">🌿</span>
                 </button>
                 <button class="bg-preset bg-preset-img" data-bg="img2" aria-label="Image 2">
@@ -281,6 +281,7 @@
         </div>
 
       <!-- timer settings -->
+      {% if request.user == room.host or room.is_private %}
       <div class="modal-section">
         <div class="modal-section-title">Timer Limits</div>
         <div class="timer-settings">
@@ -288,7 +289,8 @@
             <label class="timer-setting-label" for="focusDuration">Focus (min)</label>
             <div class="timer-setting-control">
               <button class="timer-nudge" data-target="focusDuration" data-dir="-1">&#8722;</button>
-              <input type="number" id="focusDuration" class="timer-setting-input" value="25" min="1" max="90">
+              <input type="number" id="focusDuration" class="timer-setting-input"
+                    value="{{ room.focus_duration }}" min="1" max="90">
               <button class="timer-nudge" data-target="focusDuration" data-dir="1">&#43;</button>
             </div>
           </div>
@@ -296,24 +298,35 @@
             <label class="timer-setting-label" for="breakDuration">Break (min)</label>
             <div class="timer-setting-control">
               <button class="timer-nudge" data-target="breakDuration" data-dir="-1">&#8722;</button>
-              <input type="number" id="breakDuration" class="timer-setting-input" value="5" min="1" max="30">
+              <input type="number" id="breakDuration" class="timer-setting-input"
+                    value="{{ room.break_duration }}" min="1" max="30">
               <button class="timer-nudge" data-target="breakDuration" data-dir="1">&#43;</button>
             </div>
           </div>
         </div>
       </div>
+      {% endif %}
 
       <div class="modal-footer">
-        <button class="modal-btn modal-btn-save" id="applySettings">Apply Settings</button>
+        {% if request.user == room.host %}
+        <button class="modal-btn modal-btn-save" id="applySettings">Apply</button>
+        <button class="modal-btn modal-btn-save" id="saveSettings">Save Settings</button>
+        {% elif request.user != room.host and room.is_private %}
+        <button class="modal-btn modal-btn-save" id="applySettings">Apply</button>
+        {% endif %}
         <button class="modal-btn modal-btn-cancel" id="closeSettingsFooter">Cancel</button>
       </div>
 
     </div>
   </div>
   <script>
-    const ROOM_ID = "{{ room.room_id }}";
-    const USERNAME = "{{ request.user.username }}";
-    const HOST = "{% if request.user == room.host %}true{% else %}false{% endif %}";
+    const ROOM_ID    = "{{ room.room_id }}";
+    const USERNAME   = "{{ request.user.username }}";
+    const IS_HOST    = "{% if request.user == room.host %}true{% else %}false{% endif %}" === "true";
+    const IS_PRIVATE = "{{ room.is_private }}" === "True";
+    const INIT_BG    = "{{ room.background_preset }}";
+    const INIT_FOCUS = parseInt("{{ room.focus_duration }}");
+    const INIT_BREAK = parseInt("{{ room.break_duration }}");
   </script>
   <script src="{% static 'js/chatroom.js' %}" defer></script>
 </body>

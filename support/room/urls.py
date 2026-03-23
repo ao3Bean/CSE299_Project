@@ -9,4 +9,5 @@ urlpatterns = [
     path('room/create/', views.create_room, name='create_room'),
     path('rooms/<uuid:room_id>/save/', views.save_room, name='save_room'),
     path('room/<uuid:room_id>/verify/', views.verify_passcode, name='verify_passcode'),
+        path('room/<uuid:room_id>/settings/', views.save_room_settings, name='save_room_settings'),
 ]

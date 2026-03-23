@@ -16,7 +16,7 @@ class Room(models.Model):
     passcode = models.CharField(max_length=20, blank=True, null=True)
 
     #user customizable settings, will stay default for all rooms, but can be changed by host when saving rooms
-    background_preset = models.CharField(max_length=50, default="preset1")
+    background_preset = models.CharField(max_length=50, default="img1")
     focus_duration = models.IntegerField(default=25)
     break_duration = models.IntegerField(default=5)
     is_saved = models.BooleanField(default=False) #will change to false later, for testing only

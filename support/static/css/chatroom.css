@@ -50,7 +50,7 @@
   
   body {
     font-family: 'Segoe UI', system-ui, sans-serif;
-    background: var(--room-bg2);
+    background: var(--room-bg);
     background-attachment: fixed;
     color: var(--text-color);
     min-height: 100vh;

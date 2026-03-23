@@ -114,3 +114,33 @@ def verify_passcode(request, room_id):
             error = "Incorrect passcode. Please try again."
 
     return render(request, 'passcode_entry.html', {'room': room, 'error': error})
+
+@login_required
+@require_POST
+def save_room_settings(request, room_id):
+    room = get_object_or_404(Room, room_id=room_id)
+
+    if request.user != room.host:
+        return JsonResponse({'success': False, 'error': 'Not the host'}, status=403)
+
+    data = json.loads(request.body)
+
+    bg = data.get('background_preset')
+    focus = data.get('focus_duration')
+    break_dur = data.get('break_duration')
+
+    if bg:
+        room.background_preset = bg
+    if focus is not None:
+        try:
+            room.focus_duration = int(focus)
+        except (ValueError, TypeError):
+            pass
+    if break_dur is not None:
+        try:
+            room.break_duration = int(break_dur)
+        except (ValueError, TypeError):
+            pass
+
+    room.save()
+    return JsonResponse({'success': True})

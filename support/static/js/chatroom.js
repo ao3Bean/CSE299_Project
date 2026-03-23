@@ -50,38 +50,113 @@ const bgMap = {
   preset3: 'linear-gradient(135deg, #d8f5d4 0%, #80c778 60%, #5b9cff 100%)',
   preset4: 'linear-gradient(135deg, #ffe5cc 0%, #ffb366 100%)',
   preset5: 'linear-gradient(135deg, #2d2d3a 0%, #3a2a4a 100%)',
-  // TODO: img1 / img2 — set to CSS url() pointing to your static images
   img1: 'url("/static/img/bg/nature.jpg") center/cover',
   img2: 'url("/static/img/bg/night.jpg") center/cover',
 };
 
-let activeBg = 'img1';
+let activeBg = INIT_BG;
+applyBg(activeBg);
+
+// Mark correct preset button as active on load
+document.querySelectorAll('.bg-preset').forEach(btn => {
+  btn.classList.toggle('active', btn.dataset.bg === activeBg);
+});
 
 document.querySelectorAll('.bg-preset').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.bg-preset').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     activeBg = btn.dataset.bg;
-    // Live preview
-    document.body.style.background = bgMap[activeBg] || '';
+    //console.log('BG clicked:', activeBg, 'value:', bgMap[activeBg]); 
+    applyBg(activeBg);
   });
 });
 
-applyBtn.addEventListener('click', () => {
-  // Apply timer settings
-  const focusMin = parseInt(document.getElementById('focusDuration').value) || 25;
-  const breakMin = parseInt(document.getElementById('breakDuration').value) || 5;
+function applyBg(key) {
+  //console.log('applyBg called with:', key);
+  //console.log('setting to:', bgMap[key]);
+  document.documentElement.style.setProperty('--room-bg', bgMap[key] || bgMap['img1']);
+  document.body.style.backgroundAttachment = 'fixed';
+}
+
+/*  Timer durations — init from DB values  */
+let FOCUS_DURATION = INIT_FOCUS * 60;
+let BREAK_DURATION = INIT_BREAK * 60;
+
+if (applyBtn) applyBtn.addEventListener('click', () => {
+  const focusInput = document.getElementById('focusDuration');
+  const breakInput = document.getElementById('breakDuration');
+
+  const focusMin = focusInput ? (parseInt(focusInput.value) || INIT_FOCUS) : INIT_FOCUS;
+  const breakMin = breakInput ? (parseInt(breakInput.value) || INIT_BREAK) : INIT_BREAK;
+
   FOCUS_DURATION = focusMin * 60;
   BREAK_DURATION = breakMin * 60;
 
-  // If timer is not running, reset display to new focus duration
   if (!timerRunning) {
     currentSeconds = FOCUS_DURATION;
     updateTimerDisplay();
   }
 
-  closeModal();
+  if (IS_HOST || IS_PRIVATE) {
+    if (chatSocket.readyState === WebSocket.OPEN) {
+      chatSocket.send(JSON.stringify({
+        type: 'settings_update',
+        background_preset: activeBg,
+        focus_duration: focusMin,
+        break_duration: breakMin,
+      }));
+    }
+    applyBtn.textContent = '✓ Applied!';
+        setTimeout(() => applyBtn.textContent = 'Apply', 1000);
+  }
+
+  //closeModal();
 });
+
+/*  Save Settings (host only)  */
+const saveSettingsBtn = document.getElementById('saveSettings');
+if (saveSettingsBtn) {
+  saveSettingsBtn.addEventListener('click', async () => {
+    const focusInput = document.getElementById('focusDuration');
+    const breakInput = document.getElementById('breakDuration');
+    const focusMin = parseInt(focusInput.value) || INIT_FOCUS;
+    const breakMin = parseInt(breakInput.value) || INIT_BREAK;
+
+    try {
+      const res = await fetch(`/room/${ROOM_ID}/settings/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '',
+        },
+        body: JSON.stringify({
+          background_preset: activeBg,
+          focus_duration: focusMin,
+          break_duration: breakMin,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        if (chatSocket.readyState === WebSocket.OPEN) {
+          chatSocket.send(JSON.stringify({
+            type: 'settings_update',
+            background_preset: activeBg,
+            focus_duration: focusMin,
+            break_duration: breakMin,
+          }));
+        }
+        saveSettingsBtn.textContent = '✓ Saved!';
+        setTimeout(() => saveSettingsBtn.textContent = 'Save Settings', 2000);
+      } else {
+        alert('Could not save settings.');
+      }
+    } catch(err) {
+      console.error('Save settings failed:', err);
+    }
+    //closeModal();
+  });
+}
 
 // Nudge buttons (+ / - on timer inputs)
 document.querySelectorAll('.timer-nudge').forEach(btn => {
@@ -95,8 +170,6 @@ document.querySelectorAll('.timer-nudge').forEach(btn => {
 
 
 /*  Pomodoro Timer  */
-let FOCUS_DURATION  = 25 * 60;   // seconds
-let BREAK_DURATION  = 5  * 60;
 let currentSeconds  = FOCUS_DURATION;
 let timerRunning    = false;
 let timerInterval   = null;
@@ -284,6 +357,34 @@ chatSocket.onmessage = function(e) {
   if (data.type === 'presence_update') {
     updateAvatarGrid(data.users);
     document.getElementById('participantCount').textContent = data.users.length;
+  }
+
+  if (data.type === 'settings_update') {
+    if (data.background_preset) {
+      activeBg = data.background_preset;
+      applyBg(activeBg);
+      document.querySelectorAll('.bg-preset').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.bg === activeBg);
+      });
+    }
+    if (data.focus_duration) {
+      FOCUS_DURATION = data.focus_duration * 60;
+      const focusInput = document.getElementById('focusDuration');
+      if (focusInput) focusInput.value = data.focus_duration;
+      if (!timerRunning && !isBreakMode) {
+        currentSeconds = FOCUS_DURATION;
+        updateTimerDisplay();
+      }
+    }
+    if (data.break_duration) {
+      BREAK_DURATION = data.break_duration * 60;
+      const breakInput = document.getElementById('breakDuration');
+      if (breakInput) breakInput.value = data.break_duration;
+      if (!timerRunning && isBreakMode) {
+        currentSeconds = BREAK_DURATION;
+        updateTimerDisplay();
+      }
+    }
   }
 };
 
