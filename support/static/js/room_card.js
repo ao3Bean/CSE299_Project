@@ -59,8 +59,8 @@ copyPasscodeBtn.addEventListener('click', () => {
 });
 
 //Join Room
-document.getElementById('joinRoomBtn').addEventListener('click', () => {
-  const input = document.getElementById('joinRoomInput').value.trim();
+const joinRoomBtn = document.getElementById('joinRoomBtn');
+if (joinRoomBtn) joinRoomBtn.addEventListener('click', () => {  const input = document.getElementById('joinRoomInput').value.trim();
   if (!input) return;
 
   //Handle both full URL and bare UUID
@@ -76,6 +76,7 @@ document.getElementById('joinRoomBtn').addEventListener('click', () => {
 });
 
 //allow pressing Enter to join
-document.getElementById('joinRoomInput').addEventListener('keydown', e => {
-  if (e.key === 'Enter') document.getElementById('joinRoomBtn').click();
+const joinRoomInput = document.getElementById('joinRoomInput');
+if (joinRoomInput) joinRoomInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter') joinRoomBtn.click();
 });
