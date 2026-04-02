@@ -1,4 +1,5 @@
 import json
+import asyncio
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from .models import Room, Message
@@ -17,22 +18,37 @@ class RoomConsumer(AsyncWebsocketConsumer):
         if not hasattr(self.channel_layer, 'room_settings'):
             self.channel_layer.room_settings = {}
 
+        # lock to avoid race conditions when multiple clients connect simultaneously
+        if not hasattr(self.channel_layer, 'presence_lock'):
+            self.channel_layer.presence_lock = asyncio.Lock()
+
         #reject unauthenticated users
         if not self.user.is_authenticated:
             await self.close()
             return
 
-
-        # Check max participants before accepting
-        # TODO - fix max participant check
-        # room = await self.get_room()
-        # current_count = len(self.channel_layer.presence.get(self.room_group_name, set()))
-        # if current_count >= room.max_participants:
-        #     await self.close(code=4003)  # custom close code for "room full"
-        #     return
-
-        #fetcb profile data
+        # fetch DB data before accepting connection to avoid doing DB operations in the main loop
+        room = await self.get_room()
+        room_host = await self.get_room_host()
         self.avatar_data = await self.get_avatar_data()
+
+         # atomically check & reserve a slot
+        async with self.channel_layer.presence_lock:
+            presence = self.channel_layer.presence.setdefault(self.room_group_name, {})
+            current_count = len(presence)
+            if current_count >= room.max_participants and self.user != room_host:
+                # accept briefly so client receives a message then close cleanly with code 4003
+                await self.accept()
+                await self.send(text_data=json.dumps({
+                    'type': 'room_full',
+                    'message': 'Room is full'
+                }))
+                await self.close(code=4003)
+                return
+
+            # reserve the user's slot immediately to avoid race windows
+            presence[self.user.username] = self.avatar_data
+
 
         #join room group
         await self.channel_layer.group_add(self.room_group_name,self.channel_name)
@@ -47,10 +63,10 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 'break_duration':    live.get('break_duration'),
             }))
 
-        #Add user to presence set in channel layer
-        if self.room_group_name not in self.channel_layer.presence:
-            self.channel_layer.presence[self.room_group_name] = {}
-        self.channel_layer.presence[self.room_group_name][self.user.username] = self.avatar_data #create dict of username for avatar data
+        # #Add user to presence set in channel layer
+        # if self.room_group_name not in self.channel_layer.presence:
+        #     self.channel_layer.presence[self.room_group_name] = {}
+        # self.channel_layer.presence[self.room_group_name][self.user.username] = self.avatar_data #create dict of username for avatar data
 
         #Broadcast updated presence list to everyone in room
         await self.broadcast_presence()
@@ -68,7 +84,8 @@ class RoomConsumer(AsyncWebsocketConsumer):
         #Remove from presence
         if (hasattr(self.channel_layer, 'presence') and
                 self.room_group_name in self.channel_layer.presence):
-            self.channel_layer.presence[self.room_group_name].pop(self.user.username, None) #remove user from presence dict discard for sets so pop
+            async with getattr(self.channel_layer, 'presence_lock', asyncio.Lock()):
+                self.channel_layer.presence[self.room_group_name].pop(self.user.username, None) #remove user from presence dict discard for sets so pop
 
             #Clean up empty rooms
             if not self.channel_layer.presence[self.room_group_name]:
@@ -107,7 +124,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
         users = [
             {'username': username, 'avatar': avatar_data}
             for username, avatar_data in presence.items()
-]
+        ]
         await self.channel_layer.group_send(
             self.room_group_name,
             {
@@ -175,6 +192,11 @@ class RoomConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def get_room(self):
         return Room.objects.get(room_id=self.room_id)
+    
+    @database_sync_to_async
+    def get_room_host(self):
+        room = Room.objects.get(room_id=self.room_id)
+        return room.host
     
     @database_sync_to_async
     def get_avatar_data(self):

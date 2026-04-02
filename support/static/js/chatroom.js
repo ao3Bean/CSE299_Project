@@ -341,6 +341,13 @@ chatSocket.onopen = function() {
 chatSocket.onmessage = function(e) {
   const data = JSON.parse(e.data);
 
+  if (data.type === 'room_full') {
+    document.body.innerHTML = '';
+    alert(data.message || 'Room is full!');
+    window.location.href = '/rooms/';
+    return;
+  }
+
   if (data.type === 'chat_message') {
     const isSelf = data.username === USERNAME;
     appendMessage(data.username, data.message, isSelf);
@@ -388,8 +395,12 @@ chatSocket.onmessage = function(e) {
   }
 };
 
-chatSocket.onclose = function() {
-  console.warn('WebSocket closed.');
+chatSocket.onclose = function(e) {
+  if (e.code === 4003) {
+    window.location.href = `/rooms/`;
+  } else {
+    console.warn('WebSocket closed sad:', e.code);
+  }
 };
 
 chatSocket.onerror = function(err) {
