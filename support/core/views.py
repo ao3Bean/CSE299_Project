@@ -1,12 +1,16 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse,JsonResponse
 from django.contrib.auth.decorators import login_required
-from .models import UserProfile, Task
+from .models import UserProfile, Task, Friendship, RoomLinkMessage
 from django.contrib import messages
 from django.utils import timezone
 from datetime import date          # ← NEW: for today's date
 from collections import Counter    # ← NEW: for counting most productive day
 import json
+from django.views.decorators.http import require_POST
+from django.db.models import Q
+from django.contrib.auth.models import User
+
 
 
 # Create your views here.
@@ -43,9 +47,9 @@ def focus(request):
 #def tasks(request): 
     #return render(request, "tasks.html")
 
-@login_required(login_url="login")
-def friends(request): 
-    return render(request, "friends.html")
+#@login_required(login_url="login")
+#def friends(request): 
+    #return render(request, "friends.html")
 
 #@login_required(login_url="login")
 #def user_profile(request):
@@ -234,3 +238,149 @@ def toggle_task(request, task_id):
     except Task.DoesNotExist:
         pass
     return redirect('tasks')
+
+#Friends page views
+@login_required(login_url="login")
+def friends(request):
+    me = request.user
+
+    # accepted friends (either direction)
+    accepted = Friendship.objects.filter(
+        status='accepted'
+    ).filter(
+        Q(from_user=me) | Q(to_user=me)
+    )
+    friends_list = []
+    for f in accepted:
+        friend = f.to_user if f.from_user == me else f.from_user
+        profile, _ = UserProfile.objects.get_or_create(user=friend, defaults=DEFAULT_AVATAR)
+        friends_list.append({'user': friend, 'profile': profile})
+
+    # pending requests sent TO me
+    incoming = Friendship.objects.filter(to_user=me, status='pending')
+    requests_list = []
+    for f in incoming:
+        profile, _ = UserProfile.objects.get_or_create(user=f.from_user, defaults=DEFAULT_AVATAR)
+        requests_list.append({'friendship': f, 'user': f.from_user, 'profile': profile})
+
+    # received room links(old)
+
+    #received_links = RoomLinkMessage.objects.filter(receiver=me).order_by('-sent_at')
+
+    #return render(request, "friends.html", {
+        #'friends_list':   friends_list,
+        #'requests_list':  requests_list,
+        #'received_links': received_links,
+    #})
+
+
+    # NEW: split link and passcode before passing to template
+    received_links_raw = RoomLinkMessage.objects.filter(receiver=me).order_by('-sent_at')
+    received_links = []
+    for msg in received_links_raw:
+        if ' [passcode:' in msg.room_link:
+            parts    = msg.room_link.split(' [passcode:')
+            link     = parts[0]
+            passcode = parts[1][:-1]  # ← remove trailing ]
+        else:
+            link     = msg.room_link
+            passcode = ''
+        received_links.append({
+            'sender':   msg.sender,
+            'link':     link,
+            'passcode': passcode,
+        })
+
+    return render(request, "friends.html", {
+        'friends_list':   friends_list,
+        'requests_list':  requests_list,
+        'received_links': received_links,
+    })
+
+
+@login_required(login_url="login")
+@require_POST
+def send_friend_request(request):
+    username = request.POST.get('username', '').strip()
+    try:
+        target = User.objects.get(username=username)
+    except User.DoesNotExist:
+        return JsonResponse({'ok': False, 'error': f'No user found with username "{username}"'})
+
+    if target == request.user:
+        return JsonResponse({'ok': False, 'error': "You can't add yourself!"})
+
+    # check if already friends or request exists
+    exists = Friendship.objects.filter(
+        Q(from_user=request.user, to_user=target) |
+        Q(from_user=target, to_user=request.user)
+    ).first()
+
+    if exists:
+        if exists.status == 'accepted':
+            return JsonResponse({'ok': False, 'error': f'You are already friends with {username}!'})
+        else:
+            return JsonResponse({'ok': False, 'error': f'Friend request already sent to {username}!'})
+
+    Friendship.objects.create(from_user=request.user, to_user=target, status='pending')
+    return JsonResponse({'ok': True, 'message': f'Friend request sent to {username}!'})
+
+
+@login_required(login_url="login")
+@require_POST
+def accept_friend_request(request, friendship_id):
+    try:
+        f = Friendship.objects.get(id=friendship_id, to_user=request.user, status='pending')
+        f.status = 'accepted'
+        f.save()
+        return JsonResponse({'ok': True})
+    except Friendship.DoesNotExist:
+        return JsonResponse({'ok': False, 'error': 'Request not found'})
+
+
+@login_required(login_url="login")
+@require_POST
+def decline_friend_request(request, friendship_id):
+    try:
+        f = Friendship.objects.get(id=friendship_id, to_user=request.user, status='pending')
+        f.delete()
+        return JsonResponse({'ok': True})
+    except Friendship.DoesNotExist:
+        return JsonResponse({'ok': False, 'error': 'Request not found'})
+
+
+@login_required(login_url="login")
+@require_POST
+def remove_friend(request, friend_id):
+    try:
+        target = User.objects.get(id=friend_id)
+        f = Friendship.objects.filter(
+            Q(from_user=request.user, to_user=target) |
+            Q(from_user=target, to_user=request.user),
+            status='accepted'
+        ).first()
+        if f:
+            f.delete()
+        return JsonResponse({'ok': True})
+    except User.DoesNotExist:
+        return JsonResponse({'ok': False, 'error': 'User not found'})
+
+
+@login_required(login_url="login")
+@require_POST
+def send_room_link(request):
+    username  = request.POST.get('username', '').strip()
+    room_link = request.POST.get('room_link', '').strip()
+    passcode  = request.POST.get('passcode', '').strip()  # ← NEW: grab passcode
+    try:
+        receiver = User.objects.get(username=username)
+        RoomLinkMessage.objects.create(
+            sender=request.user,
+            receiver=receiver,
+            #room_link=room_link
+            #room_link=room_link + (f' | 🔑 {passcode}' if passcode else '')  # ← NEW: append passcode if exists
+            room_link=room_link + (f' [passcode:{passcode}]' if passcode else '')  # ← simpler separator
+        )
+        return JsonResponse({'ok': True, 'message': 'Link sent!'})
+    except User.DoesNotExist:
+        return JsonResponse({'ok': False, 'error': 'User not found'})

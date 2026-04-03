@@ -26,8 +26,8 @@
     allFriendCards.forEach(card => card.style.display = 'none');
     getFriendPageCards(page).forEach(card => card.style.display = '');
 
-    const emptyMsg = document.getElementById('friendsEmpty');
-    emptyMsg.style.display = visibleFriendCards.length === 0 ? 'block' : 'none';
+    //const emptyMsg = document.getElementById('friendsEmpty');
+    //emptyMsg.style.display = visibleFriendCards.length === 0 ? 'block' : 'none';
 
     updateFriendDots(page);
     friendsPrevBtn.disabled = page === 0;
@@ -92,8 +92,8 @@
       allReqCards.forEach(card => card.style.display = 'none');
       getReqPageCards(page).forEach(card => card.style.display = '');
 
-      const emptyMsg = document.getElementById('requestsEmpty');
-      emptyMsg.style.display = visibleReqCards.length === 0 ? 'block' : 'none';
+      //const emptyMsg = document.getElementById('requestsEmpty');
+      //emptyMsg.style.display = visibleReqCards.length === 0 ? 'block' : 'none';
 
       updateReqDots(page);
       reqsPrevBtn.disabled = page === 0;
@@ -117,6 +117,10 @@
     showReqPage(0);
   }
 
+// ============================================================
+//  CSRF TOKEN
+// ============================================================
+const CSRF = document.cookie.match(/csrftoken=([^;]+)/)?.[1] || ''; // ← NEW: needed for all fetch() POST requests
 
   /* 
     ADD FRIEND BAR
@@ -125,14 +129,45 @@
     const val = document.getElementById('addFriendInput').value.trim();
     if (!val) return;
     // TODO: wire to send_friend_request view via fetch() POST when backend ready
-    alert('Friend request sent to: ' + val);
-    document.getElementById('addFriendInput').value = '';
+    //alert('Friend request sent to: ' + val); // ← REMOVED: replaced with real fetch() POST
+    //document.getElementById('addFriendInput').value = ''; // ← REMOVED: now inside .then() below
+
+      fetch('/friends/add/', { // ← NEW: real POST to send_friend_request view
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'X-CSRFToken': CSRF
+    },
+    body: `username=${encodeURIComponent(val)}`
+  })
+  .then(r => r.json())
+  .then(data => {
+    showFriendMsg(data.ok, data.ok ? data.message : data.error); // ← NEW: shows pastel message instead of alert
+    if (data.ok) document.getElementById('addFriendInput').value = ''; // ← NEW: clears input on success
+  });
+
   });
 
   document.getElementById('addFriendInput').addEventListener('keydown', e => {
     if (e.key === 'Enter') document.getElementById('addFriendBtn').click();
   });
 
+// ← NEW: pastel success/error message function (replaces alert())
+function showFriendMsg(success, text) {
+  let msg = document.getElementById('friendAddMsg');
+  if (!msg) {
+    msg = document.createElement('div');
+    msg.id = 'friendAddMsg';
+    msg.style.cssText = 'margin-top:8px; padding:8px 14px; border-radius:10px; font-size:13px; font-weight:700; text-align:center;';
+    document.querySelector('.rooms-join-wrap').after(msg);
+  }
+  msg.textContent      = text;
+  msg.style.background = success ? '#d4f5e2' : '#fde8f0'; // ← pastel green or pastel pink (no red! 🩷)
+  msg.style.color      = success ? '#2d7a4f' : '#b84c72';
+  msg.style.border     = success ? '2px solid #a8e6c1' : '2px solid #f5b8d0';
+  msg.style.display    = 'block';
+  setTimeout(() => msg.style.display = 'none', 3500);
+}
 
   /* 
      SHARE LINK MODAL — mirrors room_card.js pattern
@@ -142,6 +177,7 @@
   function openFriendShareModal(username) {
     document.getElementById('shareTargetName').textContent = username;
     document.getElementById('friendShareInput').value = '';
+    document.getElementById('friendSharePasscode').value = ''; // ← MOVED HERE: clears when modal opens
     friendShareBackdrop.classList.add('open');
   }
 
@@ -157,3 +193,76 @@
 
   // TODO: hook accept / remove / decline buttons to fetch() POST when backend is ready
   // TODO: replace placeholder cards with template loop from context
+
+
+// OLD: // TODO: wire send btn to send_room_link view via fetch() POST when backend ready // ← REMOVED: now done below
+document.getElementById('friendShareSendBtn').addEventListener('click', () => { // ← NEW: Send button now wired to backend
+  const username = document.getElementById('shareTargetName').textContent;
+  const link     = document.getElementById('friendShareInput').value.trim();
+  const passcode = document.getElementById('friendSharePasscode').value.trim(); // ← NEW: grab passcode
+  if (!link) return;
+  fetch('/friends/send-link/', { // ← NEW: POST to send_room_link view
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'X-CSRFToken': CSRF
+    },
+    //body: `username=${encodeURIComponent(username)}&room_link=${encodeURIComponent(link)}
+    body: `username=${encodeURIComponent(username)}&room_link=${encodeURIComponent(link)}&passcode=${encodeURIComponent(passcode)}` // ← NEW: include passcode
+  })
+  .then(r => r.json())
+  .then(data => {
+    alert(data.ok ? '✅ Link sent!' : '❌ ' + data.error);
+    if (data.ok) closeFriendShareModal();
+  });
+});
+
+
+// ============================================================
+//  FRIEND ACTIONS — accept, decline, remove, copy link
+// ============================================================
+
+// OLD: // TODO: hook accept / remove / decline buttons to fetch() POST when backend is ready // ← REMOVED: done below
+// OLD: // TODO: replace placeholder cards with template loop from context // ← REMOVED: done in friends.html
+
+function acceptRequest(friendshipId, btn) { // ← NEW: was a TODO, now wired to accept_friend_request view
+  fetch(`/friends/accept/${friendshipId}/`, {
+    method: 'POST',
+    headers: { 'X-CSRFToken': CSRF }
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.ok) location.reload(); // ← reloads so new friend appears in friends list
+  });
+}
+
+function declineRequest(friendshipId, btn) { // ← NEW: was a TODO, now wired to decline_friend_request view
+  fetch(`/friends/decline/${friendshipId}/`, {
+    method: 'POST',
+    headers: { 'X-CSRFToken': CSRF }
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.ok) document.getElementById(`req-card-${friendshipId}`)?.remove(); // ← removes card instantly, no reload
+  });
+}
+
+function removeFriend(friendId, btn) { // ← NEW: was a TODO, now wired to remove_friend view
+  if (!confirm('Remove this friend?')) return;
+  fetch(`/friends/remove/${friendId}/`, {
+    method: 'POST',
+    headers: { 'X-CSRFToken': CSRF }
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.ok) btn.closest('.friend-card')?.remove(); // ← removes card instantly, no reload
+  });
+}
+
+function copyLink(link, btn) { // ← NEW: copies room link from received links inbox to clipboard
+  navigator.clipboard.writeText(link).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = '✅ Copied!';
+    setTimeout(() => btn.textContent = orig, 2000); // ← resets button text after 2 seconds
+  });
+}

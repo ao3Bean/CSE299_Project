@@ -34,7 +34,7 @@
     <h2 class="rooms-panel-title">Friends</h2>
 
     <div class="rooms-grid" id="friendsGrid">
-
+      <!-- 
       <div class="dash-card friend-card">
         <div class="avatar-canvas-small">
           <img src="{% static 'img/avatars/skin/skin_1.png' %}"    class="avatar-layer-small" alt="">
@@ -42,6 +42,7 @@
           <img src="{% static 'img/avatars/hair/hair_1.png' %}"    class="avatar-layer-small" alt="">
           <img src="{% static 'img/avatars/face/face_1.png' %}"    class="avatar-layer-small" alt="">
         </div>
+        
         <span class="friend-username">placeholder_user</span>
         <div class="friend-actions">
           <button class="modal-btn friend-btn-remove" onclick="return false;">✕ Remove</button>
@@ -145,6 +146,41 @@
     <p class="rooms-empty-msg" id="friendsEmpty" style="display:none;">
       No friends yet — add one above! 👋
     </p>
+  
+   -->
+
+
+    <!-- NEW: real friend cards from database -->
+      {% for f in friends_list %}
+      <div class="dash-card friend-card" data-username="{{ f.user.username }}">
+        <div class="avatar-canvas-small">
+          <img src="{% static 'img/avatars/skin/' %}{{ f.profile.skin_color }}.png" class="avatar-layer-small" alt="">
+          <img src="{% static 'img/avatars/outfit/' %}{{ f.profile.clothes }}.png"  class="avatar-layer-small" alt="">
+          <img src="{% static 'img/avatars/hair/' %}{{ f.profile.hair }}.png"       class="avatar-layer-small" alt="">
+          <img src="{% static 'img/avatars/face/' %}{{ f.profile.face_expression }}.png" class="avatar-layer-small" alt="">
+        </div>
+        <span class="friend-username">{{ f.user.username }}</span>
+        <div class="friend-actions">
+          <button class="modal-btn friend-btn-remove"
+                  onclick="removeFriend({{ f.user.id }}, this)">✕ Remove</button>
+          <button class="modal-btn friend-btn-share"
+                  onclick="openFriendShareModal('{{ f.user.username }}')">⤴ Share Link</button>
+        </div>
+      </div>
+      {% empty %}
+      <!-- shown when user has no friends yet -->
+      <p class="rooms-empty-msg">No friends yet — add one above! 👋</p>
+      {% endfor %}
+      <!-- END NEW -->
+</div> 
+    
+
+    <!-- OLD: static empty message (now handled by empty above)
+    <p class="rooms-empty-msg" id="friendsEmpty" style="display:none;">
+      No friends yet — add one above! 👋
+    </p>
+    -->
+
 
     <!-- Pagination — exact same structure as rooms.html -->
     <div class="rooms-pagination">
@@ -168,7 +204,8 @@
     </h2>
 
     <div class="rooms-grid" id="requestsGrid">
-
+      
+      <!--
       <div class="dash-card friend-card">
         <div class="avatar-canvas-small">
           <img src="{% static 'img/avatars/skin/skin_1.png' %}"    class="avatar-layer-small" alt="">
@@ -202,6 +239,40 @@
     <p class="rooms-empty-msg" id="requestsEmpty" style="display:none;">
       No pending requests. 🕊️
     </p>
+  -->
+
+
+         <!-- NEW: real incoming friend requests from database -->
+      {% for r in requests_list %}
+      <div class="dash-card friend-card" id="req-card-{{ r.friendship.id }}">
+        <div class="avatar-canvas-small">
+          <img src="{% static 'img/avatars/skin/' %}{{ r.profile.skin_color }}.png" class="avatar-layer-small" alt="">
+          <img src="{% static 'img/avatars/outfit/' %}{{ r.profile.clothes }}.png"  class="avatar-layer-small" alt="">
+          <img src="{% static 'img/avatars/hair/' %}{{ r.profile.hair }}.png"       class="avatar-layer-small" alt="">
+          <img src="{% static 'img/avatars/face/' %}{{ r.profile.face_expression }}.png" class="avatar-layer-small" alt="">
+        </div>
+        <span class="friend-username">{{ r.user.username }}</span>
+        <div class="friend-actions">
+          <button class="modal-btn friend-btn-accept"
+                  onclick="acceptRequest({{ r.friendship.id }}, this)">✔ Accept</button>
+          <button class="modal-btn friend-btn-remove"
+                  onclick="declineRequest({{ r.friendship.id }}, this)">✕ Decline</button>
+        </div>
+      </div>
+      {% empty %}
+      <!-- shown when there are no pending requests -->
+      <p class="rooms-empty-msg">No pending requests. 🕊️</p>
+      {% endfor %}
+      </div>
+      <!-- END NEW -->
+
+    
+
+    <!-- OLD: static empty message (now handled by empty  above)
+    <p class="rooms-empty-msg" id="requestsEmpty" style="display:none;">
+      No pending requests. 🕊️
+    </p>
+    -->
 
     <div class="rooms-pagination">
       <button class="rooms-page-btn" aria-label="Previous">&larr;</button>
@@ -214,6 +285,30 @@
     </div>
 
   </div><!-- /requestsPanel -->
+
+ <!-- NEW: received room links inbox — only shows if someone sent you a link -->
+  {% if received_links %}
+  <div class="card rooms-panel" style="margin-top: 20px;">
+    <h2 class="rooms-panel-title">📬 Received Room Links</h2>
+    <div style="display:flex; flex-direction:column; gap:10px; padding:10px 0;">
+  {% for msg in received_links %}
+  
+<div style="display:flex; align-items:center; gap:10px; background:var(--window); border:2px solid var(--border); border-radius:12px; padding:10px 14px;">
+  <span style="font-weight:700; font-size:12px;">{{ msg.sender.username }}</span>
+  <span style="flex:1; font-size:12px; color:var(--text-muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ msg.link }}</span>
+  {% if msg.passcode %}
+  <span style="font-size:12px; font-weight:700; background:#fde8f0; border:2px solid #f5b8d0; border-radius:8px; padding:6px 10px; white-space:nowrap; color:#b84c72;">🔑 {{ msg.passcode }}</span>
+  {% endif %}
+  <button class="modal-btn friend-btn-share" onclick="copyLink('{{ msg.link }}', this)" style="white-space:nowrap;">📋 Copy</button>
+  <a href="{{ msg.link }}" target="_blank" class="modal-btn friend-btn-accept" style="white-space:nowrap; text-decoration:none;">Join →</a>
+</div>
+
+{% endfor %}
+    </div>
+  </div>
+  {% endif %}
+  <!-- END NEW -->
+
 
 </div><!-- /dashboard-container -->
 
@@ -238,9 +333,20 @@
         <input type="text" class="share-link-input" id="friendShareInput"
                placeholder="Paste a room link..."/>
         <!-- TODO: wire send btn to send_room_link view via fetch() POST when backend ready -->
-        <button class="share-copy-btn" onclick="return false;">Send</button>
+        <!-- OLD: <button class="share-copy-btn" onclick="return false;">Send</button> -->
+        <!-- NEW: wired to send_room_link view via fetch() in friends.js -->
+        <button class="share-copy-btn" id="friendShareSendBtn">Send</button>
       </div>
     </div>
+    
+    
+    <!-- NEW: optional passcode field -->
+    <div class="modal-section">
+      <div class="modal-section-title">Passcode <span style="font-size:11px; font-weight:400; color:var(--text-muted);">(optional — only if room is private)</span></div>
+      <input type="text" class="share-link-input" id="friendSharePasscode"
+             placeholder="Enter passcode if private..."/>
+    </div>
+    <!-- END NEW -->
 
     <div class="modal-footer">
       <button class="modal-btn modal-btn-cancel" id="closeFriendShareFooter">Close</button>
