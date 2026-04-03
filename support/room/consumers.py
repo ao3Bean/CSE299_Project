@@ -1,5 +1,6 @@
 import json
 import asyncio
+import time
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from .models import Room, Message
@@ -18,10 +19,13 @@ class RoomConsumer(AsyncWebsocketConsumer):
         if not hasattr(self.channel_layer, 'room_settings'):
             self.channel_layer.room_settings = {}
 
+        if not hasattr(self.channel_layer, 'timer_state'):
+            self.channel_layer.timer_state = {}
+
         # lock to avoid race conditions when multiple clients connect simultaneously
         if not hasattr(self.channel_layer, 'presence_lock'):
             self.channel_layer.presence_lock = asyncio.Lock()
-
+            
         #reject unauthenticated users
         if not self.user.is_authenticated:
             await self.close()
@@ -63,6 +67,17 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 'break_duration':    live.get('break_duration'),
             }))
 
+
+        if self.room_group_name in self.channel_layer.timer_state:
+            timer = self.channel_layer.timer_state[self.room_group_name]
+            await self.send(text_data=json.dumps({
+                'type': 'timer_sync',
+                'running': timer.get('running'),
+                'seconds_left': timer.get('seconds_left'),
+                'is_break_mode': timer.get('is_break_mode'),
+                'ts': timer.get('ts'),
+
+            }))
         # #Add user to presence set in channel layer
         # if self.room_group_name not in self.channel_layer.presence:
         #     self.channel_layer.presence[self.room_group_name] = {}
@@ -91,6 +106,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
             if not self.channel_layer.presence[self.room_group_name]:
                 del self.channel_layer.presence[self.room_group_name]
                 self.channel_layer.room_settings.pop(self.room_group_name, None)
+                self.channel_layer.timer_state.pop(self.room_group_name, None)
             else:
                 await self.broadcast_presence()
 
@@ -171,6 +187,33 @@ class RoomConsumer(AsyncWebsocketConsumer):
                     'break_duration':    break_dur,
                 }
             )
+        elif msg_type == 'timer_sync':
+            running       = data.get('running')
+            seconds_left  = int(data.get('seconds_left', 0))
+            is_break_mode = bool(data.get('is_break_mode', False))
+
+            # authoritative timestamp from server
+            ts = int(time.time() * 1000)
+
+            # store/update canonical timer state under lock to avoid races
+            async with getattr(self.channel_layer, 'presence_lock', asyncio.Lock()):
+                self.channel_layer.timer_state[self.room_group_name] = {
+                    'running':       running,
+                    'seconds_left':  seconds_left,
+                    'is_break_mode': is_break_mode,
+                    'ts':            ts,
+                }
+
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type':          'timer_sync',
+                    'running':       running,
+                    'seconds_left':  seconds_left,
+                    'is_break_mode': is_break_mode,
+                    'ts':            ts,
+                }
+            )
 
     #handlers for messages sent to the group
     async def chat_message(self, event):
@@ -220,4 +263,13 @@ class RoomConsumer(AsyncWebsocketConsumer):
             'background_preset': event.get('background_preset'),
             'focus_duration':    event.get('focus_duration'),
             'break_duration':    event.get('break_duration'),
+        }))
+
+    async def timer_sync(self, event):
+        await self.send(text_data=json.dumps({
+            'type':          'timer_sync',
+            'running':       event.get('running'),
+            'seconds_left':  event.get('seconds_left'),
+            'is_break_mode': event.get('is_break_mode'),
+            'ts':            event.get('ts'),
         }))

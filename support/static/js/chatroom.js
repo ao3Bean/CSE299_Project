@@ -179,11 +179,26 @@ const timerDisplay  = document.getElementById('timerDisplay');
 const timerBadge    = document.getElementById('timerModeBadge');
 const startBtn      = document.getElementById('timerStart');
 const resetBtn      = document.getElementById('timerReset');
+let syncingFromRemote = false;
 
 function updateTimerDisplay() {
   const m = Math.floor(currentSeconds / 60).toString().padStart(2, '0');
   const s = (currentSeconds % 60).toString().padStart(2, '0');
   timerDisplay.textContent = `${m}:${s}`;
+}
+
+
+function broadcastTimer(running) {
+  if (syncingFromRemote) return; //don't re-broadcast received syncs
+  if (chatSocket.readyState === WebSocket.OPEN) {
+    chatSocket.send(JSON.stringify({
+      type: 'timer_sync',
+      running: running,
+      seconds_left: currentSeconds,
+      is_break_mode: isBreakMode,
+      ts: Date.now()  //client may send but server will stamp authoritative ts
+    }));
+  }
 }
 
 function setTimerMode(breakMode) {
@@ -200,6 +215,7 @@ function startTimer() {
   timerRunning = true;
   startBtn.textContent = '⏸ Pause';
   startBtn.classList.add('running');
+  broadcastTimer(true);
 
   timerInterval = setInterval(() => {
     currentSeconds--;
@@ -207,13 +223,11 @@ function startTimer() {
 
     if (currentSeconds <= 0) {
       clearInterval(timerInterval);
+      // startBtn.textContent = '▶ Start';
+      // startBtn.classList.remove('running');
+      setTimerMode(!isBreakMode);  //switch mode automatically
       timerRunning = false;
-      startBtn.textContent = '▶ Start';
-      startBtn.classList.remove('running');
-      setTimerMode(!isBreakMode);  // switch mode automatically
-
-      // TODO: Broadcast timer state via WebSocket so all users sync
-      // ws.send(JSON.stringify({ type: 'timer_end', next_mode: isBreakMode ? 'break' : 'focus' }));
+      setTimeout(() => startTimer(), 0);
     }
   }, 1000);
 }
@@ -223,6 +237,7 @@ function pauseTimer() {
   timerRunning = false;
   startBtn.textContent = '▶ Start';
   startBtn.classList.remove('running');
+  broadcastTimer(false); 
 }
 
 startBtn.addEventListener('click', () => {
@@ -234,7 +249,7 @@ startBtn.addEventListener('click', () => {
 resetBtn.addEventListener('click', () => {
   pauseTimer();
   setTimerMode(false);
-  // TODO: Broadcast reset to other users
+  broadcastTimer(false); 
 });
 
 window.addEventListener('beforeunload', () => {
@@ -396,6 +411,31 @@ chatSocket.onmessage = function(e) {
       }
     }
   }
+  if (data.type === 'timer_sync') {
+    syncingFromRemote = true;
+  
+    const serverTs = data.ts || Date.now();
+    // compute adjusted remaining seconds accounting for elapsed ms since server ts
+    const elapsedMs = Math.max(0, Date.now() - serverTs);
+    const adjusted = Math.max(0, Math.round(data.seconds_left - (elapsedMs/1000)));
+  
+    isBreakMode = !!data.is_break_mode;
+    currentSeconds = adjusted;
+  
+    timerBadge.textContent = isBreakMode ? 'Break' : 'Focus';
+    timerBadge.classList.toggle('break-mode', isBreakMode);
+    updateTimerDisplay();
+  
+    if (data.running && !timerRunning) {
+      startTimer(); // startTimer will not re-broadcast because syncingFromRemote is true
+    } else if (!data.running && timerRunning) {
+      pauseTimer(); // pauseTimer will not re-broadcast because syncingFromRemote is true
+    }
+  
+    // small delay to ensure handlers don't rebroadcast while applying state
+    setTimeout(() => { syncingFromRemote = false; }, 0);
+  }
+
 };
 
 chatSocket.onclose = function(e) {
