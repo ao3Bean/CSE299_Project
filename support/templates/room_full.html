@@ -1,0 +1,18 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Room Full</title>
+    <link rel="stylesheet" href="{% static 'css/chatroom.css' %}">
+</head>
+<body class="room-max">
+    <div class="card room-max-card">
+        <div style="font-size:32px;">🚪</div>
+        <h2 style="font-size:20px;font-weight:900;">Sorry!</h2>
+        <p style="opacity:0.6;font-size:13px;">This room has reached its maximum capacity.</p>
+        <a href="{% url 'rooms' %}" class="modal-btn modal-btn-save" style="text-decoration: none;">← Back to Rooms</a>    
+    </div>
+</body>
+</html>

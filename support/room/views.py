@@ -144,3 +144,6 @@ def save_room_settings(request, room_id):
 
     room.save()
     return JsonResponse({'success': True})
+
+def room_full(request):
+    return render(request, 'room_full.html')

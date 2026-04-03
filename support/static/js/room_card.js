@@ -5,6 +5,7 @@ const closeShareFooter = document.getElementById('closeShareFooter');
 const shareLinkInput  = document.getElementById('shareLinkInput');
 const copyLinkBtn     = document.getElementById('copyLinkBtn');
 const copyConfirm     = document.getElementById('copyConfirm');
+const copyPassConfirm = document.getElementById('copyPassConfirm');
 const passcodeSection = document.getElementById('passcodeSection');
 const passcodeDisplay = document.getElementById('passcodeDisplay');
 const copyPasscodeBtn = document.getElementById('copyPasscodeBtn');
@@ -13,6 +14,7 @@ function openShareModal(roomId, roomName, isPrivate, passcode) {
   const link = `${window.location.origin}/room/${roomId}/`;
   shareLinkInput.value = link;
   copyConfirm.classList.remove('visible');
+  if(copyPassConfirm) copyPassConfirm.classList.remove('visible');
 
   if (isPrivate === 'true' && passcode) {
     passcodeSection.style.display = 'block';
@@ -55,7 +57,12 @@ copyLinkBtn.addEventListener('click', () => {
 });
 
 copyPasscodeBtn.addEventListener('click', () => {
-  navigator.clipboard.writeText(passcodeDisplay.value);
+  navigator.clipboard.writeText(passcodeDisplay.value).then(() => {
+  if (copyPassConfirm) {
+    copyPassConfirm.classList.add('visible');
+    setTimeout(() => copyPassConfirm.classList.remove('visible'), 2000); 
+  }
+  });
 });
 
 //Join Room

@@ -342,9 +342,12 @@ chatSocket.onmessage = function(e) {
   const data = JSON.parse(e.data);
 
   if (data.type === 'room_full') {
-    document.body.innerHTML = '';
-    alert(data.message || 'Room is full!');
-    window.location.href = '/rooms/';
+    // document.body.innerHTML = '';
+    document.documentElement.style.visibility = 'hidden';
+    const target = `/room/maxlimit/`;
+    window.location.replace(target);
+    // document.body.innerHTML = '';
+    // alert(data.message || 'Room is full!');
     return;
   }
 
@@ -397,7 +400,10 @@ chatSocket.onmessage = function(e) {
 
 chatSocket.onclose = function(e) {
   if (e.code === 4003) {
-    window.location.href = `/rooms/`;
+    // document.body.innerHTML = '';
+    document.documentElement.style.visibility = 'hidden';
+    const target = `/room/maxlimit/`;
+    window.location.replace(target);
   } else {
     console.warn('WebSocket closed sad:', e.code);
   }
@@ -544,6 +550,7 @@ const closeShareFooter = document.getElementById('closeShareFooter');
 const shareLinkInput   = document.getElementById('shareLinkInput');
 const copyLinkBtn      = document.getElementById('copyLinkBtn');
 const copyConfirm      = document.getElementById('copyConfirm');
+const copyPassConfirm      = document.getElementById('copyPassConfirm');
 
 // Set link on page load
 shareLinkInput.value = `${window.location.origin}/room/${ROOM_ID}/`;
@@ -569,6 +576,10 @@ const copyPasscodeBtn = document.getElementById('copyPasscodeBtn');
 if (copyPasscodeBtn) {
   copyPasscodeBtn.addEventListener('click', () => {
     const input = copyPasscodeBtn.closest('.share-link-wrap').querySelector('input');
-    navigator.clipboard.writeText(input.value);
+    navigator.clipboard.writeText(input.value).then(() => {
+      copyPassConfirm.classList.add('visible');
+      setTimeout(() => copyPassConfirm.classList.remove('visible'), 2000);
+    });
+
   });
 }
