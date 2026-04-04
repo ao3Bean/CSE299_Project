@@ -59,11 +59,15 @@
         <span class="nav-label">Rooms</span>
         <span class="nav-tooltip">Rooms</span>
       </a>
-
+      
+      <!--For badge-->
       <a href="{% url 'friends' %}" class="nav-item {% block nav_friends %}{% endblock %}">
         <span class="nav-icon">&#129309;</span>
         <span class="nav-label">Friends</span>
         <span class="nav-tooltip">Friends</span>
+        {% if unread_links_count %}
+        <span class="nav-badge">{{ unread_links_count }}</span>
+        {% endif %}
       </a>
 
       <a href="{% url 'tasks' %}" class="nav-item {% block nav_tasks %}{% endblock %}">

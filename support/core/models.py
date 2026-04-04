@@ -46,6 +46,7 @@ class Friendship(models.Model):
     to_user    = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_requests')
     status     = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
+    is_seen    = models.BooleanField(default=False)  # ← NEW: track if receiver has seen the request
 
     class Meta:
         unique_together = ('from_user', 'to_user')

@@ -24,6 +24,27 @@ DEFAULT_AVATAR = {
     'clothes': 'outfit_1',
 }
 
+
+
+# ← NEW: sidebar badge context processor
+def sidebar_context(request):
+    if not request.user.is_authenticated:
+        return {}
+    
+    unread_links = RoomLinkMessage.objects.filter(
+        receiver=request.user,
+        is_read=False
+    ).count()
+
+    unseen_requests = Friendship.objects.filter(
+        to_user=request.user,
+        status='pending',
+        is_seen=False  # ← only unseen requests
+    ).count()
+    return {
+        'unread_links_count': unread_links + unseen_requests
+    }
+
 #@login_required(login_url="login")
 def index(request):
     return render (request, "index.html")
@@ -290,7 +311,10 @@ def friends(request):
             'link':     link,
             'passcode': passcode,
         })
-
+    # ← NEW: mark all received links as read when user visits friends page
+    RoomLinkMessage.objects.filter(receiver=me, is_read=False).update(is_read=True)
+    # ← NEW: mark all pending requests as seen when user visits friends page
+    Friendship.objects.filter(to_user=me, status='pending', is_seen=False).update(is_seen=True)
     return render(request, "friends.html", {
         'friends_list':   friends_list,
         'requests_list':  requests_list,

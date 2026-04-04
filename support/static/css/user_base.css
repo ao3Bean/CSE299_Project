@@ -709,3 +709,24 @@
   transform: translateY(1px);
   box-shadow: 2px 2px 0 var(--border);
 }
+
+
+/* ── Sidebar notification badge ── */
+.nav-badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 800;
+    min-width: 16px;
+    height: 16px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    border: 1.5px solid var(--border);
+    line-height: 1;
+}
