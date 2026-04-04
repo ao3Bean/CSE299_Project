@@ -15,6 +15,9 @@ if (window.innerWidth > 640) {
   applySidebar(localStorage.getItem(STORE_KEY) === '1');
 }
 sidebar.classList.add('ready');
+const chatMessages = document.getElementById('chatMessages');
+const chatInput = document.getElementById('chatInput');
+const chatSend = document.getElementById('chatSend');
 
 toggle.addEventListener('click', () => applySidebar(!sidebar.classList.contains('expanded')));
 
@@ -187,6 +190,23 @@ function updateTimerDisplay() {
   timerDisplay.textContent = `${m}:${s}`;
 }
 
+// per-user avatar state (local)
+let localAvatarState = 'idle';
+let manualOverride = null; 
+let typingTimer = null;
+let typingDebounce = null;
+
+//send avatar state to server user specific
+function sendAvatarState(state, manual = false) {
+  if (chatSocket.readyState !== WebSocket.OPEN) return;
+  if (localAvatarState === state && !!manual === !!manualOverride) return;
+  localAvatarState = state;
+  chatSocket.send(JSON.stringify({
+    type: 'avatar_state',
+    state: state,
+    manual: !!manual
+  }));
+}
 
 function broadcastTimer(running) {
   if (syncingFromRemote) return; //don't re-broadcast received syncs
@@ -199,6 +219,20 @@ function broadcastTimer(running) {
       ts: Date.now()  //client may send but server will stamp authoritative ts
     }));
   }
+}
+
+
+// compute state derived from timer
+function stateFromTimer() {
+  if (timerRunning) return isBreakMode ? 'break' : 'focused';
+  return 'idle';
+}
+
+// apply timer-derived state if no manual override
+function applyStateFromTimer() {
+  if (manualOverride) return; // manual override persists
+  const s = stateFromTimer();
+  sendAvatarState(s, false);
 }
 
 function setTimerMode(breakMode) {
@@ -215,7 +249,9 @@ function startTimer() {
   timerRunning = true;
   startBtn.textContent = '⏸ Pause';
   startBtn.classList.add('running');
-  broadcastTimer(true);
+
+  if (!syncingFromRemote) broadcastTimer(true);
+  applyStateFromTimer();  // always derive from current isBreakMode
 
   timerInterval = setInterval(() => {
     currentSeconds--;
@@ -223,11 +259,19 @@ function startTimer() {
 
     if (currentSeconds <= 0) {
       clearInterval(timerInterval);
-      // startBtn.textContent = '▶ Start';
-      // startBtn.classList.remove('running');
-      setTimerMode(!isBreakMode);  //switch mode automatically
       timerRunning = false;
-      setTimeout(() => startTimer(), 0);
+      startBtn.textContent = '▶ Start';
+      startBtn.classList.remove('running');
+
+      // flip mode first, then broadcast, then restart
+      isBreakMode = !isBreakMode;
+      currentSeconds = isBreakMode ? BREAK_DURATION : FOCUS_DURATION;
+      timerBadge.textContent = isBreakMode ? 'Break' : 'Focus';
+      timerBadge.classList.toggle('break-mode', isBreakMode);
+      updateTimerDisplay();
+
+      broadcastTimer(false); // broadcast the stopped state with new mode
+      setTimeout(() => startTimer(), 0); // then restart
     }
   }, 1000);
 }
@@ -238,6 +282,8 @@ function pauseTimer() {
   startBtn.textContent = '▶ Start';
   startBtn.classList.remove('running');
   broadcastTimer(false); 
+  if (!manualOverride) sendAvatarState('idle', false);
+
 }
 
 startBtn.addEventListener('click', () => {
@@ -250,6 +296,8 @@ resetBtn.addEventListener('click', () => {
   pauseTimer();
   setTimerMode(false);
   broadcastTimer(false); 
+  if (!manualOverride) sendAvatarState('idle', false);
+
 });
 
 window.addEventListener('beforeunload', () => {
@@ -261,22 +309,47 @@ window.addEventListener('beforeunload', () => {
 
 updateTimerDisplay();
 
+// typing detection: debounce to avoid spam, show 'chatting' and revert after 3s
+if (chatInput) {
+  chatInput.addEventListener('input', () => {
+    // debounce short to avoid firing on every keystroke
+    if (typingDebounce) clearTimeout(typingDebounce);
+    typingDebounce = setTimeout(() => {
+      // send chatting state if not manual override
+      if (!manualOverride) sendAvatarState('chatting', false);
+      // reset the 3s revert timer
+      if (typingTimer) clearTimeout(typingTimer);
+      typingTimer = setTimeout(() => {
+        // revert to timer state after 3s of inactivity
+        if (!manualOverride) applyStateFromTimer();
+        typingTimer = null;
+      }, 3000);
+    }, 200); // small debounce
+  });
+}
 
-/*  Avatar State Demo Toggle  */
-// This is a DEMO trigger — in production, states come from WS events
+/*  Avatar State Toggle  */
 const stateBtns  = document.querySelectorAll('.state-btn');
 const avatarGrid = document.getElementById('avatarGrid');
 
 stateBtns.forEach(btn => {
   btn.addEventListener('click', () => {
-    stateBtns.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-
+    // toggle active
     const newState = btn.dataset.state;
-    // Apply chosen state to all avatars (demo only — real version targets individual users)
-    avatarGrid.querySelectorAll('.avatar-cell').forEach(cell => {
-      cell.dataset.state = newState;
-    });
+    const wasActive = btn.classList.contains('active');
+    stateBtns.forEach(b => b.classList.remove('active'));
+
+    if (wasActive) {
+      // clear manual override -> return to timer-derived state
+      manualOverride = null;
+      btn.classList.remove('active');
+      applyStateFromTimer();
+    } else {
+      // set manual override to newState
+      btn.classList.add('active');
+      manualOverride = newState;
+      sendAvatarState(newState, true);
+    }
   });
 });
 
@@ -342,15 +415,14 @@ audioPlayer.addEventListener('ended', () => loadTrack(currentTrack + 1)); // loo
 
 
 /*  Chat + Presence — WebSocket  */
-const chatMessages = document.getElementById('chatMessages');
-const chatInput    = document.getElementById('chatInput');
-const chatSend     = document.getElementById('chatSend');
-
 const WS_URL = `ws://${window.location.host}/ws/room/${ROOM_ID}/`; //getting room url from template
 const chatSocket = new WebSocket(WS_URL);
 
 chatSocket.onopen = function() {
   console.log('Connected to room:', ROOM_ID);
+  console.log('IS_HOST:', IS_HOST, 'USERNAME:', USERNAME);
+  const initial = timerRunning ? (isBreakMode ? 'break' : 'focused') : 'idle';
+  sendAvatarState(initial, false);
 };
 
 chatSocket.onmessage = function(e) {
@@ -462,7 +534,7 @@ function updateAvatarGrid(users) {
     const cell = document.createElement('div');
     cell.className = 'avatar-cell';
     cell.dataset.username = username;
-    cell.dataset.state = 'idle';
+    cell.dataset.state = avatar && avatar.state ? avatar.state : 'idle';
 
     // Build layer paths
     const base = '/static/img/chatroom/';

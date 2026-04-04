@@ -51,8 +51,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 return
 
             # reserve the user's slot immediately to avoid race windows
-            presence[self.user.username] = self.avatar_data
-
+            presence[self.user.username] = { **self.avatar_data, 'state': 'idle', 'manual': False } #avatar state and manual flag
 
         #join room group
         await self.channel_layer.group_add(self.room_group_name,self.channel_name)
@@ -214,6 +213,21 @@ class RoomConsumer(AsyncWebsocketConsumer):
                     'ts':            ts,
                 }
             )
+        elif msg_type == 'avatar_state':
+            # update this user's avatar state in presence and broadcast updated presence
+            state = data.get('state') or 'idle'
+            manual = bool(data.get('manual', False))
+
+            async with getattr(self.channel_layer, 'presence_lock', asyncio.Lock()):
+                pres = self.channel_layer.presence.setdefault(self.room_group_name, {})
+                if self.user.username in pres:
+                    pres[self.user.username].update({'state': state, 'manual': manual})
+                else:
+                    # safety fallback: insert avatar data if missing
+                    pres[self.user.username] = { **self.avatar_data, 'state': state, 'manual': manual }
+
+            # broadcast updated presence to everyone
+            await self.broadcast_presence()
 
     #handlers for messages sent to the group
     async def chat_message(self, event):
