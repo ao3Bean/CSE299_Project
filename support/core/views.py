@@ -384,3 +384,16 @@ def send_room_link(request):
         return JsonResponse({'ok': True, 'message': 'Link sent!'})
     except User.DoesNotExist:
         return JsonResponse({'ok': False, 'error': 'User not found'})
+
+#for username suggestions in friends page
+@login_required(login_url="login")
+def search_users(request):
+    query = request.GET.get('q', '').strip()
+    if len(query) < 1:
+        return JsonResponse({'users': []})
+    users = User.objects.filter(
+        username__icontains=query
+    ).exclude(
+        username=request.user.username  # ← don't show yourself
+    ).values_list('username', flat=True)[:6]  # ← max 6 suggestions
+    return JsonResponse({'users': list(users)})

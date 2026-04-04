@@ -28,4 +28,5 @@ urlpatterns = [
     path('friends/decline/<int:friendship_id>/', views.decline_friend_request, name='decline_friend_request'),
     path('friends/remove/<int:friend_id>/', views.remove_friend, name='remove_friend'),
     path('friends/send-link/', views.send_room_link, name='send_room_link'),
+    path('friends/search-users/', views.search_users, name='search_users'),
 ]

@@ -314,3 +314,67 @@ if (linksPanel) { // only runs if received links panel exists
  
   showLinkPage(0);
 }
+
+
+
+// ============================================================
+//  USERNAME SUGGESTIONS — NEW
+// ============================================================
+const addFriendInput = document.getElementById('addFriendInput');
+
+// ← NEW: create dropdown element
+const suggestionBox = document.createElement('div');
+suggestionBox.id = 'userSuggestions';
+suggestionBox.style.cssText = `
+    position:absolute; 
+    background:var(--window); 
+    border:2px solid var(--border);
+    border-radius:12px; 
+    box-shadow: 3px 3px 0 var(--border);
+    z-index:1000; 
+    width:100%;
+    max-height:200px; 
+    overflow-y:auto;
+    display:none;
+`;
+// ← position relative on parent
+addFriendInput.parentElement.style.position = 'relative';
+addFriendInput.parentElement.appendChild(suggestionBox);
+
+// ← NEW: fetch suggestions as user types
+addFriendInput.addEventListener('input', function() {
+    const query = this.value.trim();
+    if (query.length < 1) {
+        suggestionBox.style.display = 'none';
+        return;
+    }
+    fetch(`/friends/search-users/?q=${encodeURIComponent(query)}`)
+    .then(r => r.json())
+    .then(data => {
+        suggestionBox.innerHTML = '';
+        if (data.users.length === 0) {
+            suggestionBox.style.display = 'none';
+            return;
+        }
+        data.users.forEach(username => {
+            const item = document.createElement('div');
+            item.textContent = username;
+            item.style.cssText = 'padding:10px 14px; cursor:pointer; font-size:13px; font-weight:600; border-bottom:1px solid var(--border);';
+            item.addEventListener('mouseenter', () => item.style.background = '#fde8f0');
+            item.addEventListener('mouseleave', () => item.style.background = '');
+            item.addEventListener('click', () => {
+                addFriendInput.value = username; // ← fill input with clicked username
+                suggestionBox.style.display = 'none';
+            });
+            suggestionBox.appendChild(item);
+        });
+        suggestionBox.style.display = 'block';
+    });
+});
+
+// ← NEW: hide suggestions when clicking outside
+document.addEventListener('click', e => {
+    if (!addFriendInput.contains(e.target) && !suggestionBox.contains(e.target)) {
+        suggestionBox.style.display = 'none';
+    }
+});
