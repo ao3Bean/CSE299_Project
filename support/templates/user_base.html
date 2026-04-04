@@ -71,9 +71,12 @@
       </a>
 
       <a href="{% url 'tasks' %}" class="nav-item {% block nav_tasks %}{% endblock %}">
-        <span class="nav-icon">&#10003;</span>
-        <span class="nav-label">Tasks</span>
-        <span class="nav-tooltip">Tasks</span>
+         <span class="nav-icon">&#10003;</span>
+         <span class="nav-label">Tasks</span>
+         <span class="nav-tooltip">Tasks</span>
+         {% if incomplete_tasks_count %}
+         <span class="nav-badge-teal">{{ incomplete_tasks_count }}</span>
+         {% endif %}
       </a>
 
       <div class="nav-divider"></div>

@@ -41,8 +41,15 @@ def sidebar_context(request):
         status='pending',
         is_seen=False  # ← only unseen requests
     ).count()
+    #for task badge
+    # ← NEW: incomplete tasks count for sidebar badge
+    incomplete_tasks_count = Task.objects.filter(
+        user=request.user,
+        is_complete=False
+    ).count()
     return {
-        'unread_links_count': unread_links + unseen_requests
+        'unread_links_count': unread_links + unseen_requests,
+        'incomplete_tasks_count': incomplete_tasks_count,  # ← NEW
     }
 
 #@login_required(login_url="login")
