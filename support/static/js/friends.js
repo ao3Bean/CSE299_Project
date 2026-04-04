@@ -191,11 +191,9 @@ function showFriendMsg(success, text) {
     if (e.target === friendShareBackdrop) closeFriendShareModal();
   });
 
-  // TODO: hook accept / remove / decline buttons to fetch() POST when backend is ready
-  // TODO: replace placeholder cards with template loop from context
+  
 
 
-// OLD: // TODO: wire send btn to send_room_link view via fetch() POST when backend ready // ← REMOVED: now done below
 document.getElementById('friendShareSendBtn').addEventListener('click', () => { // ← NEW: Send button now wired to backend
   const username = document.getElementById('shareTargetName').textContent;
   const link     = document.getElementById('friendShareInput').value.trim();
@@ -222,8 +220,6 @@ document.getElementById('friendShareSendBtn').addEventListener('click', () => { 
 //  FRIEND ACTIONS — accept, decline, remove, copy link
 // ============================================================
 
-// OLD: // TODO: hook accept / remove / decline buttons to fetch() POST when backend is ready // ← REMOVED: done below
-// OLD: // TODO: replace placeholder cards with template loop from context // ← REMOVED: done in friends.html
 
 function acceptRequest(friendshipId, btn) { // ← NEW: was a TODO, now wired to accept_friend_request view
   fetch(`/friends/accept/${friendshipId}/`, {
@@ -265,4 +261,56 @@ function copyLink(link, btn) { // ← NEW: copies room link from received links 
     btn.textContent = '✅ Copied!';
     setTimeout(() => btn.textContent = orig, 2000); // ← resets button text after 2 seconds
   });
+}
+
+
+// Received Links Pagination 
+const LINKS_PER_PAGE_FIRST = 3;
+const LINKS_PER_PAGE_REST  = 3;
+ 
+const linksPanel = document.getElementById('received_links_panel');
+ 
+if (linksPanel) { // only runs if received links panel exists
+  const allLinkCards   = Array.from(linksPanel.querySelectorAll('.rooms-grid .received-link-card'));
+  const linksPrevBtn   = linksPanel.querySelector('.rooms-page-btn[aria-label="Previous"]');
+  const linksNextBtn   = linksPanel.querySelector('.rooms-page-btn[aria-label="Next"]');
+  let linksCurrentPage  = 0;
+  let visibleLinkCards  = allLinkCards;
+ 
+  function totalLinkPages() {
+    if (visibleLinkCards.length === 0) return 1;
+    const afterFirst = Math.max(0, visibleLinkCards.length - LINKS_PER_PAGE_FIRST);
+    return 1 + Math.ceil(afterFirst / LINKS_PER_PAGE_REST);
+  }
+ 
+  function getLinkPageCards(page) {
+    if (page === 0) return visibleLinkCards.slice(0, LINKS_PER_PAGE_FIRST);
+    const start = LINKS_PER_PAGE_FIRST + (page - 1) * LINKS_PER_PAGE_REST;
+    return visibleLinkCards.slice(start, start + LINKS_PER_PAGE_REST);
+  }
+ 
+  function showLinkPage(page) {
+    allLinkCards.forEach(card => card.style.display = 'none');
+    getLinkPageCards(page).forEach(card => card.style.display = '');
+ 
+    updateLinkDots(page);
+    linksPrevBtn.disabled = page === 0;
+    linksNextBtn.disabled = page >= totalLinkPages() - 1;
+    linksCurrentPage = page;
+  }
+ 
+  function updateLinkDots(page) {
+    const indicator = linksPanel.querySelector('.rooms-page-indicator');
+    indicator.innerHTML = '';
+    for (let i = 0; i < totalLinkPages(); i++) {
+      const dot = document.createElement('span');
+      dot.className = 'rooms-page-dot' + (i === page ? ' rooms-page-dot--active' : '');
+      indicator.appendChild(dot);
+    }
+  }
+ 
+  linksPrevBtn.addEventListener('click', () => { if (linksCurrentPage > 0) showLinkPage(linksCurrentPage - 1); });
+  linksNextBtn.addEventListener('click', () => { if (linksCurrentPage < totalLinkPages() - 1) showLinkPage(linksCurrentPage + 1); });
+ 
+  showLinkPage(0);
 }

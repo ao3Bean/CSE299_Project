@@ -28,12 +28,12 @@ def room_detail(request, room_id):
 @login_required
 def rooms_view(request): #django ORM to sql
     #Only show rooms hosted by this user (their saved spaces)
-    saved_rooms = Room.objects.filter(host=request.user,is_saved=True)
+    saved_rooms = Room.objects.filter(host=request.user,is_saved=True).order_by('-created_at')
     temp_rooms = Room.objects.filter(
         host=request.user,
         is_saved=False,
         expires_at__gt=timezone.now()  #calculate expiry for temp rooms, only show if not expired
-    )
+    ).order_by('-created_at')
     return render(request, 'rooms.html', { #path both for the loops in rooms.html so django can load them
         'rooms': saved_rooms,
         'temp_rooms': temp_rooms
@@ -43,7 +43,7 @@ def rooms_view(request): #django ORM to sql
 @login_required
 def community_view(request):
     # Only show public saved rooms
-    public_rooms = Room.objects.filter(is_private=False, is_saved=True) #django orm quesries db w/o sql
+    public_rooms = Room.objects.filter(is_private=False, is_saved=True).order_by('-created_at') #django orm quesries db w/o sql
     return render(request, 'community.html', {'rooms': public_rooms})
 
 
