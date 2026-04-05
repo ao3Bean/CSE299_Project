@@ -70,14 +70,15 @@ def create_room(request):
 @login_required
 def chatroom_view(request, room_id):
     room = get_object_or_404(Room, room_id=room_id)
+    profile = get_object_or_404(UserProfile, user=request.user)
 
     if request.user == room.host:
-        return render(request, 'chatroom.html', {'room': room})
+        return render(request, 'chatroom.html', {'room': room, 'profile': profile})
     
     if room.is_private and room.passcode:
         return redirect('verify_passcode', room_id=room_id)
     
-    return render(request, 'chatroom.html', {'room': room})
+    return render(request, 'chatroom.html', {'room': room, 'profile': profile})
 
 @login_required
 @require_POST #blocks any other request
@@ -97,6 +98,7 @@ def save_room(request, room_id):
 @login_required
 def verify_passcode(request, room_id):
     room = get_object_or_404(Room, room_id=room_id)
+    profile = get_object_or_404(UserProfile, user=request.user)
 
     if not room.is_private or not room.passcode:
         return redirect('chatroom', room_id=room_id)
@@ -109,7 +111,7 @@ def verify_passcode(request, room_id):
     if request.method == 'POST':
         entered_passcode = request.POST.get('passcode', '').strip()
         if entered_passcode == room.passcode:
-            return render(request, 'chatroom.html', {'room': room})
+            return render(request, 'chatroom.html', {'room': room, 'profile': profile})
         else:
             error = "Incorrect passcode. Please try again."
 

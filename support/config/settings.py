@@ -70,6 +70,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'core.views.sidebar_context',  # ← NEW: badge counts for sidebar
+                'core.context_processors.user_profile',  # ← NEW: user profile in templates
             ],
         },
     },

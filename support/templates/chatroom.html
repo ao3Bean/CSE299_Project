@@ -57,8 +57,16 @@
       <!-- User card -->
       <a href="#" class="user-card">
         <div class="user-avatar">
-          {# TODO: {{ request.user.profile.avatar }} #}
-          <span>{{ request.user.username|first|upper }}</span>
+          {% if profile.profile_pic == "avatar" %}
+            <div class="avatar-canvas-sidebar">
+              <img src="{% static 'img/avatars/skin/' %}{{ profile.skin_color }}.png" class="avatar-layer-sidebar">
+              <img src="{% static 'img/avatars/outfit/' %}{{ profile.clothes }}.png" class="avatar-layer-sidebar">
+              <img src="{% static 'img/avatars/hair/' %}{{ profile.hair }}.png" class="avatar-layer-sidebar">
+              <img src="{% static 'img/avatars/face/' %}{{ profile.face_expression }}.png" class="avatar-layer-sidebar">
+            </div>
+          {% else %}
+            <img src="{% static 'img/avatars/' %}{{ profile.profile_pic }}" alt="avatar" style="width:100%;height:100%;object-fit:cover;">
+          {% endif %}
         </div>
         <div class="user-info">
           <div class="user-name">{{ request.user.username }}</div>

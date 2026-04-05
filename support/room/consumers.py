@@ -263,12 +263,16 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 'skin': profile.skin_color,
                 'hair': profile.hair,
                 'outfit': profile.clothes,
+                'face': profile.face_expression,
+                'profile_pic': profile.profile_pic,
             }
         except UserProfile.DoesNotExist:
             return {
                 'skin': 'skin_1',
                 'hair': 'hair_1',
                 'outfit': 'outfit_1',
+                'face': 'face_1',
+                'profile_pic': 'avatar',
             }
         
     async def settings_update(self, event):
