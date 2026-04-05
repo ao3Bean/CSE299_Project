@@ -572,6 +572,10 @@ function updateAvatarGrid(users) {
 }
 
 function appendMessage(username, text, isSelf = false) {
+  if (!chatVisible && !isSelf) {
+    unreadCount++;
+    updateUnreadBadge();
+  }
   const wrap = document.createElement('div');
 
   if (isSelf) {
@@ -654,6 +658,69 @@ if (saveRoomBtn) {  //only exists if user is host
     }
   });
 }
+
+/* UI Toggles — Music, Timer, Chat */
+let unreadCount = 0;
+let chatVisible = true;
+
+const toggleMusic = document.getElementById('toggleMusic');
+const toggleTimer = document.getElementById('toggleTimer');
+const toggleChat  = document.getElementById('toggleChat');
+const unreadBadge = document.getElementById('unreadBadge');
+const musicCard   = document.querySelector('.music-card');
+const timerCard   = document.querySelector('.timer-card');
+const roomRight   = document.querySelector('.room-right');
+
+function updateUnreadBadge() {
+  if (chatVisible || unreadCount === 0) {
+    unreadBadge.style.display = 'none';
+    return;
+  }
+  unreadBadge.style.display = 'flex';
+  if (unreadCount > 10) {
+    unreadBadge.textContent = '';
+    unreadBadge.style.borderRadius = '50%';
+    unreadBadge.style.minWidth = '10px';
+    unreadBadge.style.height = '10px';
+  } else {
+    unreadBadge.textContent = unreadCount;
+    unreadBadge.style.borderRadius = '50%';
+    unreadBadge.style.minWidth = '16px';
+    unreadBadge.style.height = '16px';
+  }
+}
+
+toggleMusic.addEventListener('click', () => {
+  const isActive = toggleMusic.classList.contains('toggle-active');
+  toggleMusic.classList.toggle('toggle-active', !isActive);
+  toggleMusic.classList.toggle('toggle-inactive', isActive);
+  musicCard.style.display = isActive ? 'none' : '';
+  toggleMusic.querySelector('.nav-tooltip').textContent = isActive ? 'Show Music' : 'Hide Music';
+  toggleMusic.querySelector('.nav-label').textContent = isActive ? 'Music (off)' : 'Music';
+});
+
+toggleTimer.addEventListener('click', () => {
+  const isActive = toggleTimer.classList.contains('toggle-active');
+  toggleTimer.classList.toggle('toggle-active', !isActive);
+  toggleTimer.classList.toggle('toggle-inactive', isActive);
+  timerCard.style.display = isActive ? 'none' : '';
+  toggleTimer.querySelector('.nav-tooltip').textContent = isActive ? 'Show Timer' : 'Hide Timer';
+  toggleTimer.querySelector('.nav-label').textContent = isActive ? 'Timer (off)' : 'Timer';
+});
+
+toggleChat.addEventListener('click', () => {
+  const isActive = toggleChat.classList.contains('toggle-active');
+  toggleChat.classList.toggle('toggle-active', !isActive);
+  toggleChat.classList.toggle('toggle-inactive', isActive);
+  chatVisible = isActive ? false : true;
+  roomRight.style.display = isActive ? 'none' : '';
+  toggleChat.querySelector('.nav-tooltip').textContent = isActive ? 'Show Chat' : 'Hide Chat';
+  toggleChat.querySelector('.nav-label').textContent = isActive ? 'Chat (off)' : 'Chat';
+  if (chatVisible) {
+    unreadCount = 0;
+    updateUnreadBadge();
+  }
+});
 
 const shareBackdrop    = document.getElementById('shareModalBackdrop');
 const shareChatroomBtn = document.getElementById('shareChatroomBtn');
