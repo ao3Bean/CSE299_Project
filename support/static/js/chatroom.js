@@ -440,7 +440,7 @@ chatSocket.onmessage = function(e) {
 
   if (data.type === 'chat_message') {
     const isSelf = data.username === USERNAME;
-    appendMessage(data.username, data.message, isSelf);
+    appendMessage(data.username, data.message, isSelf, data.avatar);
   }
 
   if (data.type === 'system_message') {
@@ -571,7 +571,7 @@ function updateAvatarGrid(users) {
   });
 }
 
-function appendMessage(username, text, isSelf = false) {
+function appendMessage(username, text, isSelf = false, avatar = null) {
   if (!chatVisible && !isSelf) {
     unreadCount++;
     updateUnreadBadge();
@@ -585,9 +585,10 @@ function appendMessage(username, text, isSelf = false) {
         <span class="chat-msg-text">${escapeHtml(text)}</span>
       </div>`;
   } else {
+    const avatarHtml = buildChatAvatar(username, avatar);
     wrap.className = 'chat-msg chat-msg-other';
     wrap.innerHTML = `
-      <div class="chat-msg-avatar">${escapeHtml(username.charAt(0).toUpperCase())}</div>
+      <div class="chat-msg-avatar">${avatarHtml}</div>
       <div class="chat-msg-body">
         <span class="chat-msg-user">${escapeHtml(username)}</span>
         <span class="chat-msg-text">${escapeHtml(text)}</span>
@@ -596,6 +597,29 @@ function appendMessage(username, text, isSelf = false) {
 
   chatMessages.appendChild(wrap);
   chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function buildChatAvatar(username, avatar) {
+  if (!avatar) return escapeHtml(username.charAt(0).toUpperCase());
+  
+  const base = '/static/img/avatars/';
+  
+  if (avatar.profile_pic === 'avatar') {
+    // layered avatar
+    return `
+      <div class="avatar-canvas-sidebar" style="width:100%;height:100%;">
+        <img src="${base}skin/${avatar.skin}.png" class="avatar-layer-sidebar">
+        <img src="${base}outfit/${avatar.outfit}.png" class="avatar-layer-sidebar">
+        <img src="${base}hair/${avatar.hair}.png" class="avatar-layer-sidebar">
+        <img src="${base}face/${avatar.face}.png" class="avatar-layer-sidebar">
+      </div>`;
+  } else if (avatar.profile_pic) {
+    // preset image
+    return `<img src="${base}${avatar.profile_pic}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+  }
+  
+  // fallback to initial
+  return escapeHtml(username.charAt(0).toUpperCase());
 }
 
 function escapeHtml(str) {

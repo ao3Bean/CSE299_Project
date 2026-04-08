@@ -158,12 +158,17 @@ class RoomConsumer(AsyncWebsocketConsumer):
             if not message:
                 return
             await self.save_message(message)
+
+            #get user's data from presence
+            presence = self.channel_layer.presence.get(self.room_group_name, {})
+            avatar = presence.get(self.user.username, {})
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
                     'type': 'chat_message',
                     'message': message,
                     'username': self.user.username,
+                    'avatar': avatar,
                 }
             )
         elif msg_type == 'settings_update':
@@ -235,6 +240,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
             'type': 'chat_message',
             'message': event['message'],
             'username': event['username'],
+            'avatar': event.get('avatar'),
         }))
 
     @database_sync_to_async
