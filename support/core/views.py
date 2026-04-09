@@ -4,12 +4,13 @@ from django.contrib.auth.decorators import login_required
 from .models import UserProfile, Task, Friendship, RoomLinkMessage
 from django.contrib import messages
 from django.utils import timezone
-from datetime import date          # ← NEW: for today's date
+from datetime import date, timedelta, datetime, time          # ← NEW: for today's date
 from collections import Counter    # ← NEW: for counting most productive day
 import json
 from django.views.decorators.http import require_POST
 from django.db.models import Q
 from django.contrib.auth.models import User
+from room.models import Session
 
 
 
@@ -61,7 +62,56 @@ def index(request):
 
 @login_required(login_url="login")
 def user_dashboard(request):
-    return render(request, "user_dashboard.html")
+    THRESHOLD_SECONDS = 60
+
+    # parse selected date from GET ?date=YYYY-MM-DD (default: today)
+    selected_date_str = request.GET.get('date')
+    try:
+        selected_date = datetime.strptime(selected_date_str, "%Y-%m-%d").date() if selected_date_str else date.today()
+    except Exception:
+        selected_date = date.today()
+
+    # build timezone-aware day range for the selected date
+    start_naive = datetime.combine(selected_date, time.min)
+    start_of_day = timezone.make_aware(start_naive, timezone.get_current_timezone())
+    end_of_day = start_of_day + timedelta(days=1)
+
+    # Sessions for this user that touch the selected day
+    sessions_qs = Session.objects.filter(user=request.user).filter(
+        Q(start_time__gte=start_of_day, start_time__lt=end_of_day) |
+        Q(end_time__gte=start_of_day, end_time__lt=end_of_day) |
+        Q(start_time__lt=start_of_day, end_time__isnull=True)
+    )
+
+    total_seconds = 0
+    sessions_count = 0
+    for s in sessions_qs:
+        end = s.end_time if s.end_time else timezone.now()
+        duration = (end - s.start_time).total_seconds()
+        if duration >= THRESHOLD_SECONDS:
+            sessions_count += 1
+            total_seconds += int(duration)
+
+    hours = total_seconds // 3600
+    mins = (total_seconds % 3600) // 60
+    total_display = f"{hours}h {mins}m" if hours > 0 else f"{mins}m"
+
+    # tasks completed on the selected date
+    tasks_completed_today = Task.objects.filter(user=request.user, date=selected_date, is_complete=True).count()
+
+    # prev / next dates for simple navigation
+    prev_date = (selected_date - timedelta(days=1)).isoformat()
+    next_date = (selected_date + timedelta(days=1)).isoformat()
+
+    return render(request, "user_dashboard.html", {
+        'sessions_today_count': sessions_count,
+        'sessions_today_total': total_display,
+        'tasks_completed_today': tasks_completed_today,
+        'selected_date': selected_date.isoformat(),
+        'prev_date': prev_date,
+        'next_date': next_date,
+        'today': date.today().isoformat(),
+    })
 
 @login_required(login_url="login")
 def settings_view(request):

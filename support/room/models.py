@@ -50,12 +50,14 @@ class Message(models.Model):
 
 class Session(models.Model):
     room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name="sessions")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sessions", null=True, blank=True)  
     start_time = models.DateTimeField(auto_now_add=True)
     end_time = models.DateTimeField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
-        return f"Session in {self.room.name}"
+        username = self.user.username if self.user else "unknown"
+        return f"Session by {username} in {self.room.name} ({self.start_time:%Y-%m-%d %H:%M})"
     
 class RoomMembership(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

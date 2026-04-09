@@ -12,10 +12,23 @@
     <div class="welcome-content">
       <h1 class="welcome-title">Welcome back, {{ request.user.first_name|default:request.user.username|default:"User" }} 👋
       </h1>
+      
       <div class="quick-stats">
-        <span class="stat-item">🎯 3 active sessions</span>
-        <span class="stat-item">⏱️ 2h 15m today</span>
-        <span class="stat-item">✓ 8 tasks completed</span>
+        <div class="date-controls">
+          <a class="btn-small" href="?date={{ prev_date }}">◀</a>
+        </div>
+        <div style="margin-top:8px;">
+          <span class="stat-item">🎯 {{ sessions_today_count|default:0 }} sessions</span>
+          <span class="stat-item">⏱️ {{ sessions_today_total|default:"0m" }} on {{ selected_date|default:today }}</span>
+          <span class="stat-item">✓ {{ tasks_completed_today|default:0 }} tasks completed</span>
+        </div>
+        <div class="date-controls">
+          <a class="btn-small" href="?date={{ next_date }}">▶</a>
+          <form method="get" style="display:inline-block;">
+            <input type="date" name="date" value="{{ selected_date|default:today }}" />
+            <button type="submit" class="btn-small">Go</button>
+          </form>
+        </div>
       </div>
     </div>
   </div>
@@ -30,14 +43,8 @@
       <div class="dash-card-arrow">&rarr;</div>
      </a>
 
-    <a href="{% url 'focus' %}" class="dash-card dash-card-orange">
-      <div class="dash-card-icon">&#9201;</div>
-      <h3 class="dash-card-title">Focus</h3>
-      <p class="dash-card-desc">Start a focused work session</p>
-      <div class="dash-card-arrow">&rarr;</div>
-     </a>
 
-    <a href="{% url 'tasks' %}" class="dash-card dash-card-blue">
+    <a href="{% url 'tasks' %}" class="dash-card dash-card-orange">
       <div class="dash-card-icon">&#10003;</div>
       <h3 class="dash-card-title">Tasks</h3>
       <p class="dash-card-desc">Manage your to-do list</p>

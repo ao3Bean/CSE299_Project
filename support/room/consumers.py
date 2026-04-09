@@ -3,7 +3,7 @@ import asyncio
 import time
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
-from .models import Room, Message
+from .models import Room, Message, Session
 from core.models import UserProfile
 
 class RoomConsumer(AsyncWebsocketConsumer):
@@ -82,6 +82,9 @@ class RoomConsumer(AsyncWebsocketConsumer):
         #     self.channel_layer.presence[self.room_group_name] = {}
         # self.channel_layer.presence[self.room_group_name][self.user.username] = self.avatar_data #create dict of username for avatar data
 
+        # create or resume a Session record for this user/room
+        self.session_id = await self.start_or_resume_session()
+
         #Broadcast updated presence list to everyone in room
         await self.broadcast_presence()
 
@@ -95,6 +98,9 @@ class RoomConsumer(AsyncWebsocketConsumer):
         )
 
     async def disconnect(self, close_code):
+        #end session for this user/room
+        await self.end_session()
+
         #Remove from presence
         if (hasattr(self.channel_layer, 'presence') and
                 self.room_group_name in self.channel_layer.presence):
@@ -297,3 +303,44 @@ class RoomConsumer(AsyncWebsocketConsumer):
             'is_break_mode': event.get('is_break_mode'),
             'ts':            event.get('ts'),
         }))
+
+    @database_sync_to_async
+    def start_or_resume_session(self):
+        from django.utils import timezone
+        MERGE_GAP = 300  # seconds (5 minutes)
+        try:
+            room = Room.objects.get(room_id=self.room_id)
+            user = self.user
+            # resume any active session
+            sess = Session.objects.filter(room=room, user=user, is_active=True).order_by('-start_time').first()
+            if sess:
+                return sess.id
+            # resume recently ended session within gap
+            recent = Session.objects.filter(room=room, user=user, end_time__isnull=False).order_by('-end_time').first()
+            if recent:
+                delta = timezone.now() - recent.end_time
+                if delta.total_seconds() <= MERGE_GAP:
+                    recent.end_time = None
+                    recent.is_active = True
+                    recent.save()
+                    return recent.id
+            # create new session
+            s = Session.objects.create(room=room, user=user)
+            return s.id
+        except Exception:
+            return None
+
+    @database_sync_to_async
+    def end_session(self):
+        from django.utils import timezone
+        try:
+            sid = getattr(self, 'session_id', None)
+            if not sid:
+                return
+            s = Session.objects.get(id=sid)
+            if s.is_active:
+                s.end_time = timezone.now()
+                s.is_active = False
+                s.save()
+        except Session.DoesNotExist:
+            pass
