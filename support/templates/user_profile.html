@@ -67,12 +67,16 @@
 
          <!-- CHANGED: now reads from database instead of hardcoded -->
          <div class="about-item">
-             🎨 Hobbies: {{ profile.hobbies|default:"No hobbies added yet." }}
+            <!-- 🎨 Hobbies: {{ profile.hobbies|default:"No hobbies added yet." }}-->
+             <span class="about-label">🎨 Hobbies:</span>
+             <span class="about-value">{{ profile.hobbies|default:"No hobbies added yet." }}</span>
          </div>
 
          <!-- CHANGED: now reads from database instead of hardcoded -->
          <div class="about-item">
-             🎯 Focus Goal: {{ profile.focus_goal|default:"No focus goal set yet." }}
+            <!-- 🎯 Focus Goal: {{ profile.focus_goal|default:"No focus goal set yet." }} -->
+             <span class="about-label">🎯 Focus Goal:</span>
+             <span class="about-value">{{ profile.focus_goal|default:"No focus goal set yet." }}</span>
          </div>
 
          <!-- NEW: edit profile button -->

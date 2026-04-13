@@ -1,5 +1,9 @@
-
+/* ← NEW: Fredoka One font for About Info — fun bubbly Cadence vibe */
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+/* ← NEW: Comic Neue font for username and email */
+@import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap');
+
 .profile-section{
   display: flex;
   flex-direction: column;
@@ -35,7 +39,9 @@
   border-radius: 25px;
   border: 3px solid #ff8fb1;    /* pink border */
   color: #5a3e36;               /* soft brown text */
-  font-family: "Press Start 2P", "Inter", sans-serif;
+  /*font-family: "Press Start 2P", "Inter", sans-serif;*/
+  font-family: 'Comic Neue', cursive;  /* ← NEW */
+  font-weight: 1000;                    /* ← NEW */
   box-shadow: 4px 4px 0 #ff9f45;
   margin-top: 10px;
 }
@@ -45,6 +51,8 @@
   padding: 10px 20px;
   border-radius: 15px;
   border: 2px solid #ff8fb1;
+  font-family: 'Comic Neue', cursive;  /* ← NEW */
+  font-weight: 700;                    /* ← NEW */
 }
 
 .bulb-icon{
@@ -76,7 +84,7 @@
     position: absolute;
 
     left: 850px;     /* move right */
-    top: 80px;       /* move down */
+    top:  4px;       /* move down */
 
     width: 260px;
     min-height: 300px !important;
@@ -86,16 +94,18 @@
     border: 3px solid #ff8fb1;
     border-radius: 10px;
 
-    padding: 15px;
+    padding: 8px;
 
     box-shadow: 6px 6px 0 #ff9f45;
+    /*font-family: 'Fredoka One', cursive;  /* ← NEW: applies to all text in box */
 }
 
 /* Title */
 .about-title{
-    font-size: 30px;
+    font-size: 27px;
     margin-bottom: 15px;
     font-weight: bold;
+    font-family: 'Fredoka One', cursive;  /* ← NEW */
 }
 
 /* Content */
@@ -105,19 +115,39 @@
 
 /* Links */
 .about-link{
+    /*display: block;
+    margin-bottom: 10px;
+    text-decoration: none;
+    color: #333;*/
+
+
     display: block;
     margin-bottom: 10px;
     text-decoration: none;
     color: #333;
+    padding: 6px 10px;                    /* ← NEW: added padding */
+    border-radius: 10px;                  /* ← NEW: rounded corners */
+    transition: all 0.2s ease;           /* ← NEW: smooth transition */
+    border: 2px solid transparent;       /* ← NEW: invisible border by default */
+    font-weight: 700;                     /* ← NEW: bolder text */
 }
 
 .about-link:hover{
-    color: #ff6fae;
+    /*color: #ff6fae;*/
+    color: #ff6fae;                       /* existing */
+    background: rgba(255, 255, 255, 0.5); /* ← NEW: soft white background on hover */
+    border-color: #ff8fb1;               /* ← NEW: pink border appears on hover */
+    transform: translateX(4px);          /* ← NEW: slight slide right on hover */
+    box-shadow: 2px 2px 0 #ff8fb1;      /* ← NEW: cute shadow on hover */
 }
 
 /* Items */
 .about-item{
     margin-bottom: 10px;
+    /*font-family: 'Fredoka One', cursive;  /* ← NEW: fun font only here */
+    font-family: 'Nunito', sans-serif;  /* ← CHANGED: from Fredoka One to Nunito */
+    font-size: 15px;                      /* ← NEW: slightly bigger for readability */
+    letter-spacing: 0.3px;               /* ← NEW: slight spacing looks nice */
 }
 
 .card{
@@ -499,4 +529,21 @@
     height: 140%;
     object-fit: contain;
     pointer-events: none;
+}
+
+
+
+/* ← NEW: Fredoka One for headings only */
+.about-label {
+    font-family: 'Fredoka One', cursive;
+    font-size: 15px;
+    display: block;  /* ← puts value on new line */
+}
+
+/* ← NEW: thinner font for values */
+.about-value {
+    font-family: 'Nunito', sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+    color: #b10e9e;
 }
