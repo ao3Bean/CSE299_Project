@@ -31,6 +31,7 @@
       <a href="#features">Features</a>
     </li>
     <li><a href="#setting-up">Setting Up</a></li>
+    <li><a href="#project-structure">Project Structure</a></li>
     <li><a href="#showcase">Project Showcase</a></li>
     <li><a href="#contributors">Contributors</a></li>
   </ol>
@@ -43,12 +44,13 @@
 
 <!-- [![Product Name Screen Shot][product-screenshot]](https://example.com) -->
 This is the repository for our CSE 299 Junior Capstone Project.
-Other details will be updated as the project progresses.
+Our project Cadence is a web-based virtual co-working platform intended to support focused study and work through shared presence and synchronized activity rather than continuous direct interaction.
 
- Our project Cadence is a web-based virtual co-working platform intended to support focused study and work through shared presence and synchronized activity rather than continuous direct interaction.
- 
-<!-- Here's a blank template to get started. To avoid retyping too much info, do a search and replace with your text editor for the following: `github_username`, `repo_name`, `twitter_handle`, `linkedin_username`, `email_client`, `email`, `project_title`, `project_description`, `project_license` -->
+### Who is Cadence for?
+Candece is for students, hobbiest and remote workers who want a more interactive and engaging way to be productive. It is espescially aimed at people who prefer customization and real-time interaction with friends.
 
+### Our Inspiration
+The project was inspired by the idea of making an site that was focused on productivity. We took inspiration from popular games, focus apps, tools such as the Pomodoro Timer to create a site that willl help users be more productive and track their progress. We also wanted users to have 2D-avatar and this inspired us to make custom avatars specifically for this project.
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
@@ -57,21 +59,81 @@ Other details will be updated as the project progresses.
 
 * [![Djnago][djangoproject.com]][django-url]
 
-<!-- * [![Next][Next.js]][Next-url]
-<!-- * [![React][React.js]][React-url] -->
-<!-- * [![Vue][Vue.js]][Vue-url]
-* [![Angular][Angular.io]][Angular-url]
-* [![Svelte][Svelte.dev]][Svelte-url]
-* [![Laravel][Laravel.com]][Laravel-url]
-* [![Bootstrap][Bootstrap.com]][Bootstrap-url]
-* [![JQuery][JQuery.com]][JQuery-url] -->
+| Layer | Technology |
+|---|---|
+| Backend Framework | Django |
+| Real-time Communication | Django Channels + ASGI |
+| Channel Layer | In-Memory Channel |
+| Database | SQLite |
+| Frontend | HTML5, CSS3, JS |
+| Authentication | Django built-in auth |
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 
 <!-- GETTING STARTED -->
-## Features
+## Key Features
+### Authentication & Accounts
+- User signup and email/password authentication (register, login, logout)
+- Email verification and password reset flows
+- Account settings and profile page (display name, avatar, preferences)
+- Custom Avatar Customization for new users
+
+### Avatar Customization
+- Avatar creation page with skin, hair, outfit, and face expression options
+- Custom avatar art 
+
+### Chat Room Functionality
+<hr>
+
+#### Chat Room Creation & Settings
+- Create temporary or saved co-working rooms
+- Public or private rooms with optional passcode protection
+- Room settings: background preset, focus duration, break duration
+- Host can save room settings to DB; all users can apply settings live via WebSocket
+- Max participant limit per room with graceful full-room handling
+- Share room via copyable link and passcode modal
+- Join room via pasted link
+- Temporary rooms expire after 24 hours; saved rooms persist
+
+#### Presence & User Preferences
+- Fully customizable layered avatars (skin, outfit, hair, face, desk layer)
+- Avatar state broadcasting per user: idle, focused, break, chatting
+- Avatar state auto-changes based on timer (focus/break) with manual override
+- Typing in chat auto-triggers chatting state, reverts after 3 seconds of inactivity
+- Toggle music, timer and chat on/off per user via sidebar
+
+#### Pomodoro Timer
+- Synchronized across all users in the room via WebSocket
+- Any user can start, pause or reset — broadcasts to everyone
+- Configurable focus and break durations
+- Auto-switches between focus and break modes when timer hits zero
+- New joiners receive current timer state on connect
+
+#### Chatting
+- Real-time chat via WebSocket
+- System messages on user join/leave
+- Unread message badge on chat toggle when chat is hidden
+
+<hr>
+
+### Friends
+- Send and receive friend requests
+- Friends list page
+- See which friends are currently active
+- Share links with friends for quick access to chat rooms
+- In-app notifications for friend requests and shared room links
+
+### Tasks
+- Personal task list page
+- Create, complete and delete tasks
+- Calendar to keep track of tasks
+
+### Session Analytics
+- Track time spent in sessions
+- View session history and activity over time
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -122,12 +184,10 @@ copy .env.example .env
 __macOS/Linux__
 ```bash
 cp .env.example .env
-
 ```
 
 ### 5. Run migrations
 ```bash
-python main.py makemigrations
 python main.py migrate
 ```
 
@@ -137,10 +197,43 @@ python main.py runserver
 ```
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+
+<!-- USAGE EXAMPLES -->
+## Project Structure
+```bash
+# Project structure — top-level files and application modules
+root                    
+├── 📂 data               # database 
+├── 📂 others             # project reports, documentation and slides
+├── 📂 support            # main Django project 
+│   ├── 📂 accounts       # app for user functions
+│   ├── 📂 config         # app for Django settings and env config
+│   ├── 📂 core           # app for shared models and features 
+│   ├── 📂 room           # app for chat room functions
+│   ├── 📂 static         # static assests (img, css, js and etc)
+│   └── 📂 templates      # HTML templates for Django views
+├── 📄 .env.example       # example env file
+├── 📄 .gitignore         
+├── 📄 main.py <--------- # main entry point 
+└── 📄 README.md
+
+
+```
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 <!-- USAGE EXAMPLES -->
 ## Showcase
 
-Will update project demo, preview, uasge and etc here.
+![signup](data/signup.png)
+![avatar](data/avatar.png)
+![profile](data/profile.png)
+![pic](data/pic.png)
+![session](data/session.png)
+![room](data/room.png)
+![chatroom](data/chatroom.png)
+![task](data/task.png)
+![analytics](data/analytics.png)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -153,44 +246,10 @@ Will update project demo, preview, uasge and etc here.
 <ol>
   <li>Mahjabin Noor Nabila - <a href="https://github.com/ao3Bean">ao3Bean</a></li>
   <li>Ananya Sarkar - <a href="https://github.com/ananya0511sarkar-prog">ananya0511sarkar-prog</a></li>
-  <li>Nazia Faruque Diya - <a href="https://github.com/diyanazia-coder">diyanazia-coder</a></li>
 </ol>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-
-<!-- MARKDOWN LINKS & IMAGES -->
-<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/github_username/repo_name.svg?style=for-the-badge
-[contributors-url]: https://github.com/github_username/repo_name/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/github_username/repo_name.svg?style=for-the-badge
-[forks-url]: https://github.com/github_username/repo_name/network/members
-[stars-shield]: https://img.shields.io/github/stars/github_username/repo_name.svg?style=for-the-badge
-[stars-url]: https://github.com/github_username/repo_name/stargazers
-[issues-shield]: https://img.shields.io/github/issues/github_username/repo_name.svg?style=for-the-badge
-[issues-url]: https://github.com/github_username/repo_name/issues
-[license-shield]: https://img.shields.io/github/license/github_username/repo_name.svg?style=for-the-badge
-[license-url]: https://github.com/github_username/repo_name/blob/master/LICENSE.txt
-[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
-[linkedin-url]: https://linkedin.com/in/linkedin_username
-[product-screenshot]: images/screenshot.png
-<!-- Shields.io badges. You can a comprehensive list with many more badges at: https://github.com/inttter/md-badges -->
-[Next.js]: https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white
-[Next-url]: https://nextjs.org/
-[React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
-[React-url]: https://reactjs.org/
-[Vue.js]: https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D
-[Vue-url]: https://vuejs.org/
-[Angular.io]: https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white
-[Angular-url]: https://angular.io/
-[Svelte.dev]: https://img.shields.io/badge/Svelte-4A4A55?style=for-the-badge&logo=svelte&logoColor=FF3E00
-[Svelte-url]: https://svelte.dev/
-[Laravel.com]: https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white
-[Laravel-url]: https://laravel.com
-[Bootstrap.com]: https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white
-[Bootstrap-url]: https://getbootstrap.com
-[JQuery.com]: https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jquery&logoColor=white
-[JQuery-url]: https://jquery.com 
 
 [djangoproject.com]: https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=green
 [django-url]:https://www.djangoproject.com/

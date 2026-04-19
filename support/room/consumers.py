@@ -5,6 +5,8 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from .models import Room, Message, Session
 from core.models import UserProfile
+from django.utils import timezone
+
 
 class RoomConsumer(AsyncWebsocketConsumer):
 
@@ -306,7 +308,6 @@ class RoomConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def start_or_resume_session(self):
-        from django.utils import timezone
         MERGE_GAP = 300  # seconds (5 minutes)
         try:
             room = Room.objects.get(room_id=self.room_id)
@@ -332,7 +333,6 @@ class RoomConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def end_session(self):
-        from django.utils import timezone
         try:
             sid = getattr(self, 'session_id', None)
             if not sid:
