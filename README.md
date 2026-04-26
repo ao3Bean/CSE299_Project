@@ -231,9 +231,14 @@ root
 ![pic](data/pic.png)
 ![session](data/session.png)
 ![room](data/room.png)
+![passcode](data/passcode.png)
 ![chatroom](data/chatroom.png)
+![focus](data/focus.jpg)
+![break](data/break.jpg)
+![chatting](data/chatting.jpg)
 ![task](data/task.png)
 ![analytics](data/analytics.png)
+![focus](data/settings.jpg)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
