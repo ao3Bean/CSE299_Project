@@ -166,3 +166,122 @@
     margin: 0px;
   }
   
+/* Carousel styles for dashboard */
+.carousel-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.carousel-track-wrapper {
+  overflow: hidden;
+  flex: 1 1 auto;
+}
+
+.carousel-track {
+  display: flex;
+  gap: 16px;
+  list-style: none;
+  padding: 10px 0;
+  margin: 0;
+  transition: transform 0.35s ease;
+  will-change: transform;
+}
+
+.carousel-item {
+  min-width: 220px;
+  max-width: 320px;
+  flex: 0 0 auto;
+  background: var(--window);
+  border: 3px solid var(--border);
+  box-shadow: var(--shadow);
+  border-radius: 14px;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.carousel-item img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+}
+
+.carousel-btn {
+  background: var(--accent);
+  color: var(--text-color);
+  border: 3px solid var(--btn-border);
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 1.6rem;
+  cursor: pointer;
+  box-shadow: var(--btn-shadow);
+}
+
+.carousel-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+@media (max-width: 640px) {
+  .carousel-item { min-width: 160px; }
+  .carousel-btn { padding: 6px 10px; }
+}
+
+.modal.hidden { display: none; }
+
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+}
+
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(2px);
+  cursor: pointer;
+}
+
+.modal-content {
+  position: relative;
+  max-width: calc(100% - 48px);
+  max-height: calc(100% - 48px);
+  padding: 14px;
+  border-radius: 12px;
+  background: var(--window);
+  border: 3px solid var(--border);
+  box-shadow: var(--shadow);
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content img {
+  max-width: 100%;
+  max-height: 80vh;
+  border-radius: 8px;
+  display: block;
+}
+
+.modal-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: var(--accent);
+  border: 3px solid var(--btn-border);
+  padding: 6px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  z-index: 2;
+  box-shadow: var(--btn-shadow);
+  font-size: 1rem;
+}

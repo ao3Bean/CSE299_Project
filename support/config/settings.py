@@ -131,7 +131,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [BASE_DIR / 'support/static'] #where to look for static files in development
+STATICFILES_DIRS = [BASE_DIR / 'support/static', BASE_DIR / 'data/static'] #where to look for static files in development
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 PASSWORD_RESET_TIMEOUT = 3600

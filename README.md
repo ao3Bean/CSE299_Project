@@ -225,20 +225,20 @@ root
 <!-- USAGE EXAMPLES -->
 ## Showcase
 
-![signup](data/signup.png)
-![avatar](data/avatar.png)
-![profile](data/profile.png)
-![pic](data/pic.png)
-![session](data/session.png)
-![room](data/room.png)
-![passcode](data/passcode.png)
-![chatroom](data/chatroom.png)
-![focus](data/focus.jpg)
-![break](data/break.jpg)
-![chatting](data/chatting.jpg)
-![task](data/task.png)
-![analytics](data/analytics.png)
-![focus](data/settings.jpg)
+![signup](data/static/signup.png)
+![avatar](data/static/avatar.png)
+![profile](data/static/profile.png)
+![pic](data/static/pic.png)
+![session](data/static/session.png)
+![room](data/static/room.png)
+![passcode](data/static/passcode.png)
+![chatroom](data/static/chatroom.png)
+![focus](data/static/focus.jpg)
+![break](data/static/break.jpg)
+![chatting](data/static/chatting.jpg)
+![task](data/static/task.png)
+![analytics](data/static/analytics.png)
+![focus](data/static/settings.jpg)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

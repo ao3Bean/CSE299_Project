@@ -42,8 +42,8 @@
                 Work alongside friends, track your goals, and feel present —
                 without the noise of traditional social media.
             </p>
-            <a href="{% url 'user_dashboard' %}" class="btn">Start Your Session</a>
-            <a href="{% url 'avatar' %}" class="btn secondary">Learn More</a>
+            <a href="{% url 'login' %}" class="btn">Start Your Session</a>
+            <!-- <a href="" class="btn secondary">Learn More</a> -->
         </div>
     </div>
 
@@ -67,20 +67,37 @@
             </div>
 
             <div class="grid-item">
-                <h3>Minimal & Cozy</h3>
-                <p>
-                    Designed with warmth and simplicity in mind,
-                    so your workspace feels calm instead of overwhelming.
-                </p>
-            </div>
-
-            <div class="grid-item">
                 <h3>Purpose-Driven Social</h3>
                 <p>
                     Connect with others through productivity and shared presence —
                     not endless scrolling.
                 </p>
             </div>
+        </div>
+    </div>
+
+    <!-- CALL TO ACTION -->
+    <!-- CAROUSEL (Dashboard) -->
+    <div class="container">
+        <div class="carousel-container">
+            <button class="carousel-btn prev" aria-label="Previous">‹</button>
+            <div class="carousel-track-wrapper">
+                <ul class="carousel-track">
+                    <li class="carousel-item"><img src="{% static 'room.png' %}" alt="analytics"></li>
+                    <li class="carousel-item"><img src="{% static 'session.png' %}" alt="session"></li>
+                    <li class="carousel-item"><img src="{% static 'profile.png' %}" alt="profile"></li>
+                    <li class="carousel-item"><img src="{% static 'task.png' %}" alt="task"></li>
+                    <li class="carousel-item"><img src="{% static 'chatroom.png' %}" alt="chatroom"></li>
+                    <li class="carousel-item"><img src="{% static 'avatar.png' %}" alt="avatar"></li>
+                    <li class="carousel-item"><img src="{% static 'break.jpg' %}" alt="break"></li>
+                    <li class="carousel-item"><img src="{% static 'focus.jpg' %}" alt="focus"></li>
+                    <li class="carousel-item"><img src="{% static 'pic.png' %}" alt="pic"></li>
+                    <li class="carousel-item"><img src="{% static 'signup.png' %}" alt="signup"></li>
+                    <li class="carousel-item"><img src="{% static 'analytics.png' %}" alt="analytics"></li>
+                    <li class="carousel-item"><img src="{% static 'chatting.JPG' %}" alt="chatting"></li>
+                </ul>
+            </div>
+            <button class="carousel-btn next" aria-label="Next">›</button>
         </div>
     </div>
 
@@ -101,5 +118,97 @@
         <p>© 2026 Cadence. Designed with warmth & focus.</p>
     </footer>
 
+    <div id="img-modal" class="modal hidden" aria-hidden="true" role="dialog">
+        <div class="modal-backdrop" id="modal-backdrop"></div>
+        <div class="modal-content" role="document">
+          <button class="modal-close" id="modal-close" aria-label="Close">✕</button>
+          <img id="modal-img" src="" alt="Preview">
+        </div>
+      </div>
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const track = document.querySelector('.carousel-track');
+            if (!track) return;
+            const items = Array.from(track.querySelectorAll('.carousel-item'));
+            const nextBtn = document.querySelector('.carousel-btn.next');
+            const prevBtn = document.querySelector('.carousel-btn.prev');
+            let index = 0;
+        
+            function update() {
+                const item = items[0];
+                if (!item) return;
+                const itemWidth = item.getBoundingClientRect().width;
+                const gap = 16; // mirrors CSS .carousel-track gap
+                track.style.transform = `translateX(-${index * (itemWidth + gap)}px)`;
+            }
+        
+            // Circular navigation (wraps using modulo)
+            if (nextBtn) nextBtn.addEventListener('click', () => {
+                index = (index + 1) % items.length;
+                update();
+            });
+            if (prevBtn) prevBtn.addEventListener('click', () => {
+                index = (index - 1 + items.length) % items.length;
+                update();
+            });
+        
+            window.addEventListener('resize', () => update());
+            update();
+        
+            // Safety: only allow previewing images served from the app static path
+            function isAllowedSrc(src) {
+                try {
+                    const url = new URL(src, window.location.href);
+                    // require same-origin and static path (adjust if STATIC_URL is different)
+                    return url.origin === window.location.origin && url.pathname.startsWith('/static/');
+                } catch (e) {
+                    return false;
+                }
+            }
+        
+            // Modal behavior: open when clicking any carousel image
+            const modal = document.getElementById('img-modal');
+            const modalImg = document.getElementById('modal-img');
+            const modalClose = document.getElementById('modal-close');
+            const modalBackdrop = document.getElementById('modal-backdrop');
+        
+            function openModal(src, alt) {
+                if (!isAllowedSrc(src)) {
+                    console.warn('Blocked opening image with disallowed src:', src);
+                    return;
+                }
+                modalImg.src = src;
+                modalImg.alt = alt || '';
+                modal.classList.remove('hidden');
+                modal.setAttribute('aria-hidden', 'false');
+                document.body.style.overflow = 'hidden';
+                modalClose.focus();
+            }
+        
+            function closeModal() {
+                modal.classList.add('hidden');
+                modal.setAttribute('aria-hidden', 'true');
+                modalImg.src = '';
+                document.body.style.overflow = '';
+            }
+        
+            // click on carousel images to open modal
+            items.forEach(item => {
+                const img = item.querySelector('img');
+                if (!img) return;
+                img.style.cursor = 'zoom-in';
+                img.addEventListener('click', () => {
+                    openModal(img.src, img.alt);
+                });
+            });
+        
+            modalClose.addEventListener('click', closeModal);
+            modalBackdrop.addEventListener('click', closeModal);
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') closeModal();
+            });
+        });
+        </script>
+        
 </body>
 </html>
